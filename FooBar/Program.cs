@@ -1,4 +1,6 @@
 ﻿using System;
+using Foo;
+using Bar;
 
 namespace FooBar
 {
@@ -6,7 +8,9 @@ namespace FooBar
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("Hello from FooBar!");
+						Foo.Foo.Hello();
+						Bar.Bar.Hello();
         }
     }
 }

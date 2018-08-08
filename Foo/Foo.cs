@@ -2,11 +2,11 @@
 
 namespace Foo
 {
-    class Foo
+    public class Foo
     {
-        static void Main(string[] args)
+        public static void Hello()
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("Hello from Foo!");
         }
     }
 }

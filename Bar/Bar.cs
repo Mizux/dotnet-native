@@ -2,11 +2,11 @@
 
 namespace Bar
 {
-    class Program
+    public class Bar
     {
-        static void Main(string[] args)
+        public static void Hello()
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("Hello from Bar!");
         }
     }
 }
