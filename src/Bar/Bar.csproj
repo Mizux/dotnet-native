@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <AssemblyTitle>Mizux.Bar</AssemblyTitle>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 </Project>
