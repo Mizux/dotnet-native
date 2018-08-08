@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+		<RootNamespace>Foo.linux_x64</RootNamespace>
+		<RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+  </PropertyGroup>
+</Project>
