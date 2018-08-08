@@ -2,5 +2,10 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFramework>netstandard2.0</TargetFramework>
+		<RuntimeIdentifiers>linux-x64;osx-x64;win-x64</RuntimeIdentifiers>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Foo.osx-x64\Foo.osx-x64.csproj" />
+  </ItemGroup>
 </Project>
