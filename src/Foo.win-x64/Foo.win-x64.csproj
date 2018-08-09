@@ -1,9 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Foo.win_x64</RootNamespace>
 		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
-
 </Project>

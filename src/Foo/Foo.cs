@@ -7,6 +7,7 @@ namespace Foo
         public static void Hello()
         {
             Console.WriteLine("Hello from Foo!");
+            Native.Internal();
         }
     }
 }

@@ -5,7 +5,13 @@
 		<RuntimeIdentifiers>linux-x64;osx-x64;win-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition=" '$(RuntimeIdentifier)' == 'linux-x64' ">
+    <ProjectReference Include="..\Foo.linux-x64\Foo.linux-x64.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(RuntimeIdentifier)' == 'osx-x64' ">
     <ProjectReference Include="..\Foo.osx-x64\Foo.osx-x64.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(RuntimeIdentifier)' == 'win-x64' ">
+    <ProjectReference Include="..\Foo.win-x64\Foo.win-x64.csproj" />
   </ItemGroup>
 </Project>
