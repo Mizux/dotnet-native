@@ -1,0 +1,20 @@
+sudo: required
+language: generic
+
+matrix:
+  include:
+# Makefile builder
+    - os: linux
+      dist: trusty
+      language: cpp
+      compiler: gcc
+    - os: osx
+      osx_image: xode9.4
+      language: cpp
+      compiler: clang
+
+install:
+  - ./.travis/install.sh
+
+script:
+  - ./.travis/script.sh
