@@ -3,7 +3,7 @@
 namespace Foo {
   public class Native {
     public static void Internal() {
-      Console.Write("Foo.osx-x64");
+      Console.WriteLine("Hello from Foo.osx-x64!");
     }
   }
 }

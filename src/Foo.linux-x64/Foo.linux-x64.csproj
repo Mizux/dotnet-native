@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <OutputType>Library</OutputType>
     <TargetFramework>netstandard2.0</TargetFramework>
-		<RootNamespace>Foo.linux_x64</RootNamespace>
-		<RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+    <RootNamespace>Foo.linux_x64</RootNamespace>
+    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
   </PropertyGroup>
 </Project>

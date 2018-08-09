@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(RuntimeIdentifier)' == 'linux-x64' ">
-    <ProjectReference Include="..\Foo.linux-x64\Foo.linux-x64.csproj" />
+    <ProjectReference Include="..\Foo.linux-x64\Foo.linux-x64.csproj" PrivateAssets='none'/>
   </ItemGroup>
   <ItemGroup Condition=" '$(RuntimeIdentifier)' == 'osx-x64' ">
     <ProjectReference Include="..\Foo.osx-x64\Foo.osx-x64.csproj" />
