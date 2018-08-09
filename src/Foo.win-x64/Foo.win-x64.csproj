@@ -6,7 +6,7 @@
     <RootNamespace>Foo.win_x64</RootNamespace>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
 
-    <version>1.0.0-beta</version>
+    <version>1.0.0</version>
     <authors>Mizux</authors>
     <description>Simulate native wrapper of Foo/Native C++</description>
     <tags>native</tags>

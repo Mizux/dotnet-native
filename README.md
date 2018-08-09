@@ -59,18 +59,18 @@ Hello from Foo.linux-x64!
 ### Packing
 let's try to first pack Foo.linux-x64:
 ```bash
-dotnet pack src/Foo.linux-x64/Foo.linux-x64.csproj                                                               
+dotnet pack src/Foo.linux-x64/Foo.linux-x64.csproj -o ../../package
 Microsoft (R) Build Engine version 15.7.179.6572 for .NET Core
 Copyright (C) Microsoft Corporation. All rights reserved.
 
   Restore completed in 64.86 ms for .../dotnet/src/Foo.linux-x64/Foo.linux-x64.csproj.
   Foo.linux-x64 -> .../dotnet/src/Foo.linux-x64/bin/Debug/netstandard2.0/linux-x64/Foo.linux-x64.dll
-  Successfully created package '.../dotnet/src/Foo.linux-x64/bin/Debug/Foo.linux-x64.1.0.0-beta.nupkg'.
+  Successfully created package '.../dotnet/package/Foo.linux-x64.1.0.0.nupkg'.
 ```
 Let's take a look at the layout
 ```bash
-unzip -l src/Foo.linux-x64/bin/Debug/Foo.linux-x64.1.0.0-beta.nupkg
-Archive:  src/Foo.linux-x64/bin/Debug/Foo.linux-x64.1.0.0-beta.nupkg
+unzip -l package/Foo.linux-x64.1.0.0.nupkg
+Archive:  package/Foo.linux-x64.1.0.0.nupkg
   Length      Date    Time    Name
 ---------  ---------- -----   ----
       503  2018-08-09 16:51   _rels/.rels
