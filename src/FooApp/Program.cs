@@ -1,13 +1,11 @@
 ﻿using System;
 using Foo;
-using Bar;
 
-namespace FooBar {
+namespace FooApp {
   class Program {
     static void Main(string[] args) {
-      Console.WriteLine("Hello from FooBarApp!");
+      Console.WriteLine("Hello from FooApp!");
       Foo.Foo.Hello();
-      Bar.Bar.Hello();
     }
   }
 }
