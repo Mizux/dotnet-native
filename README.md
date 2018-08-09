@@ -1,3 +1,6 @@
+[![Build
+Status](https://travis-ci.org/mizux/dotnet.svg?branch=master)](https://travis-ci.org/mizux/dotnet)
+
 # Introduction
 Try to build a Native (win-x64, linux-x64, osx-x64) C# Netstandard2.0 package.  
 e.g. You have a cross platform C++ library with .Net wrapper thanks to SWIG.  
