@@ -1,5 +1,5 @@
 [![Build
-Status](https://travis-ci.org/mizux/dotnet.svg?branch=master)](https://travis-ci.org/mizux/dotnet)
+Status](https://travis-ci.org/Mizux/dotnet.svg?branch=master)](https://travis-ci.org/Mizux/dotnet)
 
 # Introduction
 Try to build a Native (win-x64, linux-x64, osx-x64) C# Netstandard2.0 package.  
