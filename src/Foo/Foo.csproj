@@ -2,25 +2,36 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFramework>netstandard2.0</TargetFramework>
-		<RuntimeIdentifiers>linux-x64;osx-x64;win-x64</RuntimeIdentifiers>
-    <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
+    <RuntimeIdentifiers>win-x64;osx-x64;linux-x64</RuntimeIdentifiers>
 
     <AssemblyName>Mizux.Foo</AssemblyName>
     <version>1.0.0</version>
     <authors>Mizux</authors>
     <description>Meta Package depending on each Native package</description>
     <tags>native</tags>
+    <PackageOutputPath>../../package</PackageOutputPath>
   </PropertyGroup>
 
   <!-- When building localy we want to be able to only depends on one RID to test -->
   <!-- dotnet pack -runtime xxx keep RuntimeIdentifier empty... -->
-  <ItemGroup Condition="('$(RuntimeIdentifier)' == 'linux-x64') Or ('$(RuntimeIdentifier)' == '')">
+  <ItemGroup Condition="'$(RuntimeIdentifier)' == 'linux-x64'">
     <ProjectReference Include="..\Foo.linux-x64\Foo.linux-x64.csproj" />
   </ItemGroup>
-  <ItemGroup Condition="('$(RuntimeIdentifier)' == 'osx-x64') Or ('$(RuntimeIdentifier)' == '')">
+  <ItemGroup Condition="'$(RuntimeIdentifier)' == 'osx-x64'">
     <ProjectReference Include="..\Foo.osx-x64\Foo.osx-x64.csproj" />
   </ItemGroup>
-  <ItemGroup Condition="('$(RuntimeIdentifier)' == 'win-x64') Or ('$(RuntimeIdentifier)' == '')">
+  <ItemGroup Condition="'$(RuntimeIdentifier)' == 'win-x64'">
     <ProjectReference Include="..\Foo.win-x64\Foo.win-x64.csproj" />
   </ItemGroup>
+
+  <!-- use when trying to pack an all in one package -->
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == ''">
+  <RestoreSources>$(RestoreSources);../../package;https://api.nuget.org/v3/index.json</RestoreSources>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(RuntimeIdentifier)' == ''">
+    <PackageReference Include="Mizux.Foo.linux-x64" Version="1.0.0" />
+    <PackageReference Include="Mizux.Foo.osx-x64" Version="1.0.0" />
+    <PackageReference Include="Mizux.Foo.win-x64" Version="1.0.0" />
+  </ItemGroup>
+
 </Project>
