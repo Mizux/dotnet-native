@@ -29,5 +29,5 @@ build_script:
   - dotnet build --runtime win-x64 src\FooApp\FooApp.csproj
 
 test_script:
-  - dotnet dotnet src\FooApp\bin\Debug\netcoreapp2.1\win-x64\Mizux.FooApp.dll
+  - dotnet dotnet src\FooApp\bin\x64\Debug\netcoreapp2.1\win-x64\Mizux.FooApp.dll
 
