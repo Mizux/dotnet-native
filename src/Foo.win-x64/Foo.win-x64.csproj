@@ -3,9 +3,9 @@
     <OutputType>Library</OutputType>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <RootNamespace>Foo.win_x64</RootNamespace>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
 
+    <AssemblyName>Mizux.Foo.win-x64</AssemblyName>
     <version>1.0.0</version>
     <authors>Mizux</authors>
     <description>Simulate native wrapper of Foo/Native C++</description>
@@ -14,9 +14,9 @@
   <ItemGroup>
     <!-- Simulate native swig wrapper depending on the .so -->
     <Compile Include="Native.cs" />
-    <!-- Simulate native shared lib -->
+    <!-- Simulate native shared lib consumed by the Native.cs wrapper -->
     <Content Include="*.dll">
-      <PackagePath>runtimes/linux-x64/netstandard2.0/%(Filename).so</PackagePath>
+      <PackagePath>runtimes/linux-x64/lib/netstandard2.0/%(Filename).so</PackagePath>
       <Pack>true</Pack>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -3,8 +3,17 @@
     <OutputType>Library</OutputType>
     <TargetFramework>netstandard2.0</TargetFramework>
 		<RuntimeIdentifiers>linux-x64;osx-x64;win-x64</RuntimeIdentifiers>
+    <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
+
+    <AssemblyName>Mizux.Foo</AssemblyName>
+    <version>1.0.0</version>
+    <authors>Mizux</authors>
+    <description>Meta Package depending on each Native package</description>
+    <tags>native</tags>
   </PropertyGroup>
 
+  <!-- When building localy we want to be able to only depends on one RID to test -->
+  <!-- dotnet pack -runtime xxx keep RuntimeIdentifier empty... -->
   <ItemGroup Condition="('$(RuntimeIdentifier)' == 'linux-x64') Or ('$(RuntimeIdentifier)' == '')">
     <ProjectReference Include="..\Foo.linux-x64\Foo.linux-x64.csproj" />
   </ItemGroup>

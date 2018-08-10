@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>Mizux.Foo.Test</AssemblyName>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
@@ -16,5 +16,4 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Foo\Foo.csproj" />
   </ItemGroup>
-
 </Project>
