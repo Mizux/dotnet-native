@@ -10,6 +10,7 @@
     <authors>Mizux</authors>
     <description>Simulate native wrapper of Foo/Native C++</description>
     <tags>native</tags>
+    <BuildOutputTargetFolder>runtimes/osx-x64/lib</BuildOutputTargetFolder>
     <PackageOutputPath>../../package</PackageOutputPath>
   </PropertyGroup>
 
@@ -18,7 +19,7 @@
     <Compile Include="Native.cs" />
     <!-- Simulate native shared lib consumed by the Native.cs wrapper -->
     <Content Include="*.dylib">
-      <PackagePath>runtimes/linux-x64/lib/netstandard2.0/%(Filename).so</PackagePath>
+      <PackagePath>runtimes/osx-x64/lib/netstandard2.0/%(Filename)%(Extension)</PackagePath>
       <Pack>true</Pack>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
