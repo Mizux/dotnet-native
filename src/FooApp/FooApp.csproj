@@ -3,6 +3,13 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <AssemblyName>Mizux.FooApp</AssemblyName>
+
+    <AssemblyName>Mizux.FooApp</AssemblyName>
+    <version>1.0.0</version>
+    <authors>Mizux</authors>
+    <description>Simple App consuming Foo</description>
+    <tags></tags>
+    <PackageOutputPath>../../package</PackageOutputPath>
   </PropertyGroup>
 
   <ItemGroup>

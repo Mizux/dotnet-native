@@ -10,7 +10,9 @@
     <authors>Mizux</authors>
     <description>Simulate native wrapper of Foo/Native C++</description>
     <tags>native</tags>
+    <PackageOutputPath>../../package</PackageOutputPath>
   </PropertyGroup>
+
   <ItemGroup>
     <!-- Simulate native swig wrapper depending on the .so -->
     <Compile Include="Native.cs" />
