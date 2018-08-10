@@ -1,5 +1,6 @@
 [![Build
 Status](https://travis-ci.org/Mizux/dotnet.svg?branch=master)](https://travis-ci.org/Mizux/dotnet)
+[![Build status](https://ci.appveyor.com/api/projects/status/xbtj9qs2s3d5u2dj/branch/master?svg=true)](https://ci.appveyor.com/project/Mizux/dotnet/branch/master)
 
 # Introduction
 Try to build a Native (win-x64, linux-x64, osx-x64) C# Netstandard2.0 package.  
