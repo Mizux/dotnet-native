@@ -3,7 +3,7 @@ set -x -e
 if [ "${TRAVIS_OS_NAME}" == osx ];then
   # Installer changes path but won't be picked up in current terminal session
   # Need to explicitly add location
-		export PATH=/usr/local/share/dotnet:"${PATH}";
+  export PATH=/usr/local/share/dotnet:"${PATH}";
 fi
 
 dotnet --info
