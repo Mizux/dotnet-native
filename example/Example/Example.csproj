@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+
+    <AssemblyName>Mizux.Example</AssemblyName>
+    <version>1.0.0</version>
+    <authors>Mizux</authors>
+    <description>Example using the meta package Foo</description>
+    <tags>example</tags>
+    <PackageOutputPath>../../package</PackageOutputPath>
+    <RestoreSources>$(RestoreSources);../../package;https://api.nuget.org/v3/index.json</RestoreSources>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Mizux.Foo" Version="1.0.0" />
+  </ItemGroup>
+
+</Project>
