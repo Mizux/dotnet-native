@@ -1,13 +1,10 @@
-[![Build Status](
-https://travis-ci.org/Mizux/dotnet.svg?branch=master)](
-https://travis-ci.org/Mizux/dotnet)
-[![Build Status](
-https://ci.appveyor.com/api/projects/status/xbtj9qs2s3d5u2dj/branch/master?svg=true)](
-https://ci.appveyor.com/project/Mizux/dotnet/branch/master)
+[![Build
+Status](https://travis-ci.org/Mizux/dotnet.svg?branch=master)](https://travis-ci.org/Mizux/dotnet)
+[![Build status](https://ci.appveyor.com/api/projects/status/xbtj9qs2s3d5u2dj/branch/master?svg=true)](https://ci.appveyor.com/project/Mizux/dotnet/branch/master)
 
 # Introduction
-Try to build a Native (win-x64, linux-x64, osx-x64) C# Netstandard2.0 package.  
-e.g. You have a cross platform C++ library with .Net wrapper thanks to SWIG.  
+Try to build a netstandard2.0 native (for win-x64, linux-x64 and osx-x64) nuget package using `dotnet` cli.  
+e.g. You have a cross platform C++ library and a netstandard2.0 wrapper thanks to SWIG.  
 Then you want to provide a cross platform nuget package to consume it in a "pure" .Net Project...
 
 # Requirement
@@ -15,7 +12,7 @@ You'll need the ".Net Core SDK 2.1.302" !
 
 # Layout
 
-* [`src/Foo.linux-x64`](src/Foo.linux-x64) Contains the hypothetical C++ unix 64bits shared library with its C# wrapper source code.
+* [`src/Foo.linux-x64`](src/Foo.linux-x64) Contains the hypothetical C++ unix 64bits shared library with its wrapper source code.
 * [`src/Foo.osx-x64`](src/Foo.osx-x64) Contains the hypothetical C++ osx 64bits shared library with its C# wrapper source code.
 * [`src/Foo.win-x64`](src/Foo.win-x64) Contains the hypothetical C++ win 64bits shared library with its C# wrapper source code.
 
@@ -23,18 +20,24 @@ You'll need the ".Net Core SDK 2.1.302" !
 * [`src/FooApp`](src/FooApp) Is a Generic C# application using the meta Foo library.
 
 ```
-Foo.linux-x64 -+
-Foo.osx-x64 ---+-> Foo -> FooApp
-Foo.win-x64 ---+
+Mizux.Foo.linux-x64 -+
+Mizux.Foo.osx-x64 ---+-> Mizux.Foo -> Mizux.FooApp
+Mizux.Foo.win-x64 ---+
 ```
 
 # Build process
-We want two modes:
+We want two use case scenario:
 1. Locally, be able to only build/pack for the current host machine i.e. passing a [Runtime Identifier (RID)](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog)
 2. Be able to create a multi-platforms (ed. here platform means OS) Foo package provided you have the three Native Foo.*-x64 package already available on Nuget.org.  
 i.e. You have already publish the Native packages...
 
-## Linux Use Case
+## Linux Use Case Scenario 1
+We would like to build Foo which only depends on Foo.linux-x64 in order to test locally.  
+e.g. The pipeline which build the shared lib for osx and win can't be run on linux.
+```
+Mizux.Foo.linux-x64 -> Mizux.Foo -> Mizux.FooApp
+```
+
 ### Building
 You can build using the command:
 ```bash
