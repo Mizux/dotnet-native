@@ -9,11 +9,14 @@
     <description>Example using the meta package Foo</description>
     <tags>example</tags>
     <PackageOutputPath>../../package</PackageOutputPath>
-    <RestoreSources>$(RestoreSources);../../package;https://api.nuget.org/v3/index.json</RestoreSources>
+    <RestoreSources>../../package;$(RestoreSources);https://api.nuget.org/v3/index.json</RestoreSources>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(RuntimeIdentifier)' == ''" >
     <PackageReference Include="Mizux.Foo" Version="1.0.0" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(RuntimeIdentifier)' != ''" >
+    <ProjectReference Include="../../src/Foo/Foo.csproj" />
   </ItemGroup>
 
 </Project>

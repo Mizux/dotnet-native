@@ -26,7 +26,7 @@
 
   <!-- use when trying to pack an all in one package -->
   <PropertyGroup Condition="'$(RuntimeIdentifier)' == ''">
-  <RestoreSources>$(RestoreSources);../../package;https://api.nuget.org/v3/index.json</RestoreSources>
+  <RestoreSources>../../package;$(RestoreSources);https://api.nuget.org/v3/index.json</RestoreSources>
   </PropertyGroup>
   <ItemGroup Condition="'$(RuntimeIdentifier)' == ''">
     <PackageReference Include="Mizux.Foo.linux-x64" Version="1.0.0" />
