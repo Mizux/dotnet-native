@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <!-- Simulate native swig wrapper depending on the .so -->
-    <Compile Include="Native.cs" />
+    <Compile Include="Native.osx.cs" />
     <!-- Simulate native shared lib consumed by the Native.cs wrapper -->
     <Content Include="*.dylib">
       <PackagePath>runtimes/osx-x64/lib/netstandard2.0/%(Filename)%(Extension)</PackagePath>
