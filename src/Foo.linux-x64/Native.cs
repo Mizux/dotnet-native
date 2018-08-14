@@ -2,8 +2,9 @@
 
 namespace Foo {
   public class Native {
-    public static void Internal() {
-      Console.WriteLine("Hello from Foo.linux-x64!");
+    public static void Internal(int level) {
+      Console.WriteLine($"[{level}] Enter Foo.linux-x64");
+      Console.WriteLine($"[{level}] Exit Foo.linux-x64");
     }
   }
 }

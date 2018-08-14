@@ -1,11 +1,12 @@
 ﻿using System;
-using Foo;
 
 namespace FooApp {
   class Program {
     static void Main(string[] args) {
-      Console.WriteLine("Hello from FooApp!");
-      Foo.Foo.Hello();
+      int level = 1;
+      Console.WriteLine($"[{level}] Enter FooApp");
+      Foo.Foo.Hello(level+1);
+      Console.WriteLine($"[{level}] Exit FooApp");
     }
   }
 }
