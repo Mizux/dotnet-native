@@ -1,13 +1,12 @@
 ﻿using System;
-using Foo;
 
 namespace Example {
   class Program {
     static void Main(string[] args) {
-      Console.WriteLine("Hello from Example!");
-      Console.WriteLine("Calling Foo:...");
-      Foo.Foo.Hello();
-      Console.WriteLine("Calling Foo:...DONE");
+      int level = 1;
+      Console.WriteLine($"[{level}] Enter Example");
+      Foo.Native.Internal(level+1);
+      Console.WriteLine($"[{level}] Exit Example");
     }
   }
 }
