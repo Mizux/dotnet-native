@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+
+    <AssemblyName>Mizux.Bar</AssemblyName>
+    <version>1.0.0</version>
+    <authors>Mizux</authors>
+    <description>Simple Library</description>
+    <tags>sample</tags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageOutputPath>../../package</PackageOutputPath>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <Compile Include="Bar.cs" />
+  </ItemGroup>
+</Project>
