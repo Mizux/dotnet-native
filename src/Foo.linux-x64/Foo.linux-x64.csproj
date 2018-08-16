@@ -11,6 +11,7 @@
     <description>Simulate native wrapper of Foo/Native C++</description>
     <tags>native</tags>
     <BuildOutputTargetFolder>runtimes/linux-x64/lib</BuildOutputTargetFolder>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageOutputPath>../../package</PackageOutputPath>
   </PropertyGroup>
 
@@ -20,6 +21,11 @@
     <!-- Simulate native shared lib consumed by the Native.cs wrapper -->
     <Content Include="*.so">
       <PackagePath>runtimes/linux-x64/lib/netstandard2.0/%(Filename)%(Extension)</PackagePath>
+      <Pack>true</Pack>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_._">
+      <PackagePath>lib/netstandard2.0/_._</PackagePath>
       <Pack>true</Pack>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
