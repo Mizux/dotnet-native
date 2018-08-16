@@ -22,16 +22,17 @@ i.e. We won't/can't rely on VS since we want a portable cross-platform cli proce
 
 # Build process
 We want two use case scenario:
-1. Locally, be able to only build for the current host architecture i.e. passing a [Runtime Identifier (RID)](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog)  
-Here we "chain" project using `ProjectReference`
-note: This is usefull when the C++ has a pecialized builds for Windows, Linux and MacOS. i.e. You can generate the .Net wrapper and shared library which is specific for each platform only on this platform (i.e. no cross compilation available).
+1. Locally, be able to only build for the current host `OS Platform` i.e. passing a [Runtime Identifier (RID)](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog)  
+Here we "chain" project using `ProjectReference`.  
+note: This is usefull when the C++ has a complex/custom build process for Windows, Linux and MacOS. 
+i.e. You can generate the .Net wrapper and shared library which is specific for each OS Platform only on this Os Platform (i.e. no cross compilation available/supported for the native library).
 ```
 Native.cpp -(GCC)-> Native.so --------+
 Native.cpp -(SWIG)-> Native.{rid}.cs -+-> Foo.{rid}-x64.csproj -(ProjectReference)> Foo.csproj -(ProjectReference)> FooApp.csproj
 ```
 
-2. Be able to create a multi-architecture Foo package provided you have the three Native Foo.*-x64 package already available on Nuget.org.  
-Here we "chain" project using `PackageReference` since we can't build all architecture package on one host.  
+2. Be able to create a cross-platform (ed "OS" Platform like linux-x64 not "Target" Platform like netstandard2.0) Foo package provided you have the three native Foo.*-x64 package already available on Nuget.org (or locally).  
+Here we "chain" project using `PackageReference` since we can't build all OS platform package on one platform.  
 i.e. You have already generated the Native packages on each architecture:
 ```
 package/Mizux.Foo.linux-x64.nupkg -+
@@ -93,7 +94,7 @@ dotnet .../dotnet/src/FooApp/bin/Debug/netcoreapp2.1/linux-x64/Mizux.FooApp.dll
 
 note: `dotnet run -r linux-x64 --project ...` doesn't work (Bug ?) since contrary to the build command the `--runtime` is "ignored" and dotnet look for `bin/$(Configuration)/$(TargetFramework)/Mizux.FooApp.dll` (note the missing RID in the path).
 
-### Packing
+### Packing RID dependent project: Mizux.Foo.{rid}
 Let's try to first pack `Foo.linux-x64`. Since it is architecture dependent you need to put file in
 `runtimes/{rid}/lib/{tfm}/*.dll`.  
 src: https://natemcmaster.com/blog/2016/05/19/nuget3-rid-graph/#what-goes-in-the-runtimes-folder
@@ -147,4 +148,73 @@ provided you have generated the three architecture dependent `Foo.{rid}` nuget p
 package/Mizux.Foo.linux-x64.nupkg -+
 package/Mizux.Foo.osx-x64.nupkg ---+-(PackageReference)> Mizux.Foo.nupkg -(PackageReference)> Mizux.Example.csproj
 package/Mizux.Foo.win-x64.nupkg ---+
+```
+note: we suppose the three OS platform dependent package have been generated using the use case scenario 1.
+
+### Packing meta project: Mizux.Foo
+Let's try to first pack `Foo`. Since it is architecture independent you need to put file in `lib/{tfm}/*.dll`.  
+
+To make `Mizux.Foo` dependent on `Mizux.Foo.{rid}` we use a `runtime.json` file containing:
+```json
+{
+  "runtimes": {
+    "linux-x64": {
+      "Mizux.Foo": {
+        "Mizux.Foo.linux-x64": "1.0.0"
+      }
+    },
+    "osx-x64": {
+      "Mizux.Foo": {
+        "Mizux.Foo.osx-x64": "1.0.0"
+      }
+    },
+    "win-x64": {
+      "Mizux.Foo": {
+        "Mizux.Foo.win-x64": "1.0.0"
+      }
+    }
+  }
+}
+```
+src: https://github.com/Mizux/dotnet/blob/master/src/Foo/runtime.json  
+And you can add it to the nuget package using in the .csproj:
+```xml
+<ItemGroup Condition="'$(RuntimeIdentifier)' == ''">
+  <Content Include="runtime.json">
+    <PackagePath>runtime.json</PackagePath>
+    <Pack>true</Pack>
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </Content>
+</ItemGroup>
+```
+
+You can use:
+```bash
+dotnet build src/Foo
+Microsoft (R) Build Engine version 15.7.179.6572 for .NET Core
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Restore completed in 37.37 ms for .../dotnet/src/Foo/Foo.csproj.
+Foo -> .../dotnet/src/Foo/bin/Debug/netstandard2.0/Mizux.Foo.dll
+Successfully created package '.../package/Mizux.Foo.1.0.0.nupkg'
+```
+Also since we **don't** specify a RID the outputpath is `bin/$(Configuration)/$(TargetFramework)`.
+
+**/!\ I didn't manage to add a Foo.cs file (depending on Mizux.Foo.{RID}) when no RID is specified /!\  
+I think I should try to use a Reference Assembly (once it will be clearly documented how it works with native libs)**
+
+Let's take a look at the layout
+```bash
+unzip -l package/Mizux.Foo.1.0.0.nupkg
+Archive:  package/Mizux.Foo.1.0.0.nupkg
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+      ...  2018-00-00 00:42   _rels/.rels
+      ...  2018-00-00 00:42   Mizux.Foo.nuspec
+     ....  2018-00-00 00:42   lib/netstandard2.0/Mizux.Foo.dll
+     ....  2018-00-00 00:42   runtime.json
+      ...  2018-00-00 00:42   [Content_Types].xml
+      ...  2018-00-00 00:42   package/services/metadata/core-properties/3c4a144ec0f241cd9771e06f9a1479db.psmdcp
+---------                     -------
+     ....                     6 files
 ```
