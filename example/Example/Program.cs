@@ -5,7 +5,7 @@ namespace Example {
     static void Main(string[] args) {
       int level = 1;
       Console.WriteLine($"[{level}] Enter Example");
-      Foo.Native.Internal(level+1);
+      Foo.Foo.Hello(level+1);
       Console.WriteLine($"[{level}] Exit Example");
     }
   }
