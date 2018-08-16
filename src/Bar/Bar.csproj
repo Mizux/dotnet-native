@@ -4,6 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
 
+    <PackageId>mizux.bar</PackageId>
     <AssemblyName>Mizux.Bar</AssemblyName>
     <version>1.0.0</version>
     <authors>Mizux</authors>

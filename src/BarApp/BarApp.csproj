@@ -13,6 +13,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Mizux.Bar" Version="1.0.0" PrivateAssets="all" />
+    <PackageReference Include="mizux.Bar" Version="1.0.0" PrivateAssets="all" />
   </ItemGroup>
 </Project>
