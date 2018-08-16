@@ -32,17 +32,22 @@
   <PropertyGroup Condition="('$(RuntimeIdentifier)' == '') And Exists('../../package')">
     <RestoreSources>../../package;$(RestoreSources);https://api.nuget.org/v3/index.json</RestoreSources>
   </PropertyGroup>
+  <ItemGroup Condition="'$(RuntimeIdentifier)' == ''">
+    <Content Include="runtime.json">
+      <PackagePath>runtime.json</PackagePath>
+      <Pack>true</Pack>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <!--
   <ItemGroup Condition="('$(RuntimeIdentifier)' == '') And Exists('../../package/Mizux.Foo.linux-x64.1.0.0.nupkg')">
-    <!--<ProjectReference Include="..\Foo.linux-x64\Foo.linux-x64.csproj" />-->
     <PackageReference Include="Mizux.Foo.linux-x64" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup Condition="('$(RuntimeIdentifier)' == '') And Exists('../../package/Mizux.Foo.osx-x64.1.0.0.nupkg')">
-    <!--<ProjectReference Include="..\Foo.osx-x64\Foo.osx-x64.csproj" />-->
     <PackageReference Include="Mizux.Foo.osx-x64" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup Condition="('$(RuntimeIdentifier)' == '') And Exists('../../package/Mizux.Foo.win-x64.1.0.0.nupkg')">
-    <!--<ProjectReference Include="..\Foo.win-x64\Foo.win-x64.csproj" />-->
     <PackageReference Include="Mizux.Foo.win-x64" Version="1.0.0" />
   </ItemGroup>
-
+  -->
 </Project>
