@@ -4,13 +4,14 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+    <BuildOutputTargetFolder Condition="'$(RuntimeIdentifier)' != ''">runtimes/$(RuntimeIdentifier)/lib</BuildOutputTargetFolder>
 
     <AssemblyName>Mizux.Foo.linux-x64</AssemblyName>
     <version>1.0.0</version>
     <authors>Mizux</authors>
     <description>Simulate native wrapper of Foo/Native C++</description>
-    <tags>native</tags>
-    <BuildOutputTargetFolder>runtimes/linux-x64/lib</BuildOutputTargetFolder>
+    <PackageTags>native</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageOutputPath>../../package</PackageOutputPath>
   </PropertyGroup>
@@ -24,8 +25,8 @@
       <Pack>true</Pack>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="_._">
-      <PackagePath>lib/netstandard2.0/_._</PackagePath>
+    <Content Include="$(OutputPath)/ref/*.dll">
+      <PackagePath>ref/$(TargetFramework)/%(Filename)%(Extension)</PackagePath>
       <Pack>true</Pack>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

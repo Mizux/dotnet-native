@@ -4,16 +4,17 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
     <AssemblyName>Mizux.Example.Native</AssemblyName>
-    <version>1.0.0</version>
-    <authors>Mizux</authors>
-    <description>Example using the package Mizux.Foo.linux-x64</description>
-    <tags>example</tags>
+    <Version>1.0.0</Version>
+    <Authors>Mizux</Authors>
+
+    <Description>Example using the package Mizux.Foo.linux-x64</Description>
+    <PackageTags>example</PackageTags>
     <PackageOutputPath>../../package</PackageOutputPath>
     <RestoreSources>../../package;$(RestoreSources);https://api.nuget.org/v3/index.json</RestoreSources>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Mizux.Foo.linux-x64" Version="1.0.0" PrivateAssets="all" />
+    <PackageReference Include="Mizux.Foo.linux-x64" Version="1.0.0" />
   </ItemGroup>
 
 </Project>

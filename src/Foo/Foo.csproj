@@ -3,17 +3,24 @@
     <OutputType>Library</OutputType>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RuntimeIdentifiers>win-x64;osx-x64;linux-x64</RuntimeIdentifiers>
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-
     <AssemblyName>Mizux.Foo</AssemblyName>
-    <version>1.0.0</version>
-    <authors>Mizux</authors>
-    <description>Meta Package depending on each Native package</description>
-    <tags></tags>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <!-- Nuget Properties-->
+  <PropertyGroup>
+    <PackageId>Mizux.Foo</PackageId>
+    <Authors>Mizux</Authors>
+    <Description>Meta Package depending on each Native package</Description>
+    <PackageTags>native</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageOutputPath>../../package</PackageOutputPath>
   </PropertyGroup>
 
+  <!-- Build Properties-->
+  <PropertyGroup>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
   <!-- When building localy we want to be able to only depends on one RID to test -->
   <ItemGroup Condition="'$(RuntimeIdentifier)' == 'linux-x64'">
     <ProjectReference Include="..\Foo.linux-x64\Foo.linux-x64.csproj" />
@@ -27,18 +34,16 @@
 
   <ItemGroup>
     <Compile Include="Foo.cs" />
-  </ItemGroup>
-
-  <!-- use when trying to pack an all in one package -->
-  <!-- dotnet pack doesn't set RuntimeIdentifier, so we can use this... -->
-  <!--
-  <ItemGroup Condition="'$(RuntimeIdentifier)' == ''">
     <Content Include="runtime.json">
       <PackagePath>runtime.json</PackagePath>
       <Pack>true</Pack>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+
+  <!-- use when trying to pack an all in one package -->
+  <!-- dotnet pack doesn't set RuntimeIdentifier, so we can use this... -->
+  <!--
   <PropertyGroup Condition="Exists('../../package')">
     <RestoreSources>../../package;$(RestoreSources);https://api.nuget.org/v3/index.json</RestoreSources>
   </PropertyGroup>
