@@ -9,29 +9,29 @@
     <version>1.0.0</version>
     <authors>Mizux</authors>
     <description>Meta Package depending on each Native package</description>
-    <tags>native</tags>
+    <tags></tags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageOutputPath>../../package</PackageOutputPath>
   </PropertyGroup>
 
   <!-- When building localy we want to be able to only depends on one RID to test -->
   <ItemGroup Condition="'$(RuntimeIdentifier)' == 'linux-x64'">
-    <Compile Include="Foo.cs" />
     <ProjectReference Include="..\Foo.linux-x64\Foo.linux-x64.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(RuntimeIdentifier)' == 'osx-x64'">
-    <Compile Include="Foo.cs" />
     <ProjectReference Include="..\Foo.osx-x64\Foo.osx-x64.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(RuntimeIdentifier)' == 'win-x64'">
-    <Compile Include="Foo.cs" />
     <ProjectReference Include="..\Foo.win-x64\Foo.win-x64.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Foo.cs" />
   </ItemGroup>
 
   <!-- use when trying to pack an all in one package -->
   <!-- dotnet pack doesn't set RuntimeIdentifier, so we can use this... -->
-  <PropertyGroup Condition="('$(RuntimeIdentifier)' == '') And Exists('../../package')">
-    <RestoreSources>../../package;$(RestoreSources);https://api.nuget.org/v3/index.json</RestoreSources>
-  </PropertyGroup>
+  <!--
   <ItemGroup Condition="'$(RuntimeIdentifier)' == ''">
     <Content Include="runtime.json">
       <PackagePath>runtime.json</PackagePath>
@@ -39,7 +39,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <!--
+  <PropertyGroup Condition="Exists('../../package')">
+    <RestoreSources>../../package;$(RestoreSources);https://api.nuget.org/v3/index.json</RestoreSources>
+  </PropertyGroup>
   <ItemGroup Condition="('$(RuntimeIdentifier)' == '') And Exists('../../package/Mizux.Foo.linux-x64.1.0.0.nupkg')">
     <PackageReference Include="Mizux.Foo.linux-x64" Version="1.0.0" />
   </ItemGroup>
