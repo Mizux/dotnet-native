@@ -21,6 +21,8 @@
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <BuildOutputTargetFolder Condition="'$(RuntimeIdentifier)' != ''">runtimes/$(RuntimeIdentifier)/lib</BuildOutputTargetFolder>
+    <!--<NoBuild>true</NoBuild>
+    <IncludeBuildOutput>false</IncludeBuildOutput>-->
   </PropertyGroup>
   <!-- When building localy we want to be able to only depends on one RID to test -->
   <ItemGroup Condition="'$(RuntimeIdentifier)' == 'linux-x64'">
