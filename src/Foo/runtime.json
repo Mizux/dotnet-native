@@ -2,17 +2,17 @@
   "runtimes": {
     "linux-x64": {
       "Mizux.Foo": {
-        "Mizux.Foo.linux-x64": "1.0.0"
+        "runtime.linux-x64.Mizux.Foo": "1.0.0"
       }
     },
     "osx-x64": {
       "Mizux.Foo": {
-        "Mizux.Foo.osx-x64": "1.0.0"
+        "runtime.Foo.osx-x64.Mizux.Foo": "1.0.0"
       }
     },
     "win-x64": {
       "Mizux.Foo": {
-        "Mizux.Foo.win-x64": "1.0.0"
+        "runtime.Foo.win-x64.Mizux.Foo": "1.0.0"
       }
     }
   }

@@ -14,10 +14,10 @@
     <PackageProjectUrl>https://github.com/Mizux/dotnet</PackageProjectUrl>
     <PackageTags>native</PackageTags>
     <PackageOutputPath>../../package</PackageOutputPath>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
     <BuildOutputTargetFolder Condition="'$(RuntimeIdentifier)' != ''">runtimes/$(RuntimeIdentifier)/lib</BuildOutputTargetFolder>
   </PropertyGroup>
 
@@ -30,7 +30,7 @@
       <Pack>true</Pack>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="$(OutputPath)/ref/*.dll" Condition="Exists('$(OutputPath)/ref')">
+    <Content Include="$(OutputPath)/ref/*.dll">
       <PackagePath>ref/$(TargetFramework)/%(Filename)%(Extension)</PackagePath>
       <Pack>true</Pack>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
