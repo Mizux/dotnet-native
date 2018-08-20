@@ -18,7 +18,7 @@
 
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
-    <BuildOutputTargetFolder Condition="'$(RuntimeIdentifier)' != ''">runtimes\$(RuntimeIdentifier)\lib</BuildOutputTargetFolder>
+    <BuildOutputTargetFolder Condition="'$(RuntimeIdentifier)' != ''">runtimes/$(RuntimeIdentifier)/lib</BuildOutputTargetFolder>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,11 +26,11 @@
     <Compile Include="Native.linux.cs" />
     <!-- Simulate native shared lib consumed by the Native.cs wrapper -->
     <Content Include="*.so">
-      <PackagePath>runtimes\linux-x64\lib\netstandard2.0\%(Filename)%(Extension)</PackagePath>
+      <PackagePath>runtimes/linux-x64/lib/netstandard2.0/%(Filename)%(Extension)</PackagePath>
       <Pack>true</Pack>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="$(OutputPath)/ref/*.dll" Condition="Exists('$(OutputPath)\ref')">
+    <Content Include="$(OutputPath)/ref/*.dll" Condition="Exists('$(OutputPath)/ref')">
       <PackagePath>ref/$(TargetFramework)/%(Filename)%(Extension)</PackagePath>
       <Pack>true</Pack>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -24,15 +24,15 @@
   <!-- When building localy we want to be able to only depends on one RID to test -->
   <ItemGroup Condition="'$(RuntimeIdentifier)' == 'linux-x64'">
     <Compile Include="Foo.cs" />
-    <ProjectReference Include="..\runtime.linux-x64.Foo\project.csproj" />
+    <ProjectReference Include="../runtime.linux-x64.Foo/runtime.linux64-x64.Foo.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(RuntimeIdentifier)' == 'osx-x64'">
     <Compile Include="Foo.cs" />
-    <ProjectReference Include="..\runtime.osx-x64.Foo\project.csproj" />
+    <ProjectReference Include="../runtime.osx-x64.Foo/runtime.osx-x64.Foo.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(RuntimeIdentifier)' == 'win-x64'">
     <Compile Include="Foo.cs" />
-    <ProjectReference Include="..\runtime.win-x64.Foo\project.csproj" />
+    <ProjectReference Include="../runtime.win-x64.Foo/runtime.win-x64.Foo.csproj" />
   </ItemGroup>
 
   <ItemGroup>
