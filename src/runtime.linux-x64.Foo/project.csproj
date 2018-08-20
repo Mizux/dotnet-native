@@ -3,17 +3,21 @@
     <OutputType>Library</OutputType>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+    <AssemblyName>runtime.linux-x64.Mizux.Foo</AssemblyName>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
     <BuildOutputTargetFolder Condition="'$(RuntimeIdentifier)' != ''">runtimes/$(RuntimeIdentifier)/lib</BuildOutputTargetFolder>
 
-    <AssemblyName>Mizux.Foo.linux-x64</AssemblyName>
-    <version>1.0.0</version>
-    <authors>Mizux</authors>
-    <description>Simulate native wrapper of Foo/Native C++</description>
+    <PackageId>runtime.linux-x64.Mizux.Foo</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Mizux</Authors>
+    <Description>Simulate native wrapper of Foo/Native C++</Description>
+    <Copyright>Copyright 2018 Google LLC</Copyright>
+    <PackageLicenseUrl>https://github.com/Mizux/dotnet/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/Mizux/dotnet</PackageProjectUrl>
     <PackageTags>native</PackageTags>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageOutputPath>../../package</PackageOutputPath>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>

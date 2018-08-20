@@ -4,9 +4,10 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
     <AssemblyName>Mizux.Example.Native</AssemblyName>
+
+    <PackageId>Mizux.Example.Native</PackageId>
     <Version>1.0.0</Version>
     <Authors>Mizux</Authors>
-
     <Description>Example using the package Mizux.Foo.linux-x64</Description>
     <PackageTags>example</PackageTags>
     <PackageOutputPath>../../package</PackageOutputPath>
@@ -14,7 +15,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Mizux.Foo.linux-x64" Version="1.0.0" />
+    <PackageReference Include="runtime.linux-x64.Mizux.Foo" Version="1.0.0" />
   </ItemGroup>
-
 </Project>
