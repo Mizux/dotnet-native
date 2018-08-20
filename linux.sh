@@ -16,9 +16,12 @@ dotnet pack src/runtime.osx-x64.Foo
 dotnet build src/runtime.win-x64.Foo
 dotnet pack src/runtime.win-x64.Foo
 
+### list content of each nupkg
+for i in package/*.nupkg; do unzip -l $i; done
+
 ## Create the meta package Mizux.Foo
 dotnet build src/Foo
-dotnet pack src/Foo
+unzip -l package/Mizux.Foo.1.0.0.nupkg
 
 ## try consuming it
 dotnet build -r linux-x64 example/Example
