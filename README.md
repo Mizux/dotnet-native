@@ -12,12 +12,12 @@ You'll need the ".Net Core SDK 2.1.302" to get the dotnet cli.
 i.e. We won't/can't rely on VS since we want a portable cross-platform cli process. 
 
 # Layout
-* [`src/Foo.linux-x64`](src/Foo.linux-x64) Contains the hypothetical C++ unix 64bits shared library with its wrapper source code.
-* [`src/Foo.osx-x64`](src/Foo.osx-x64) Contains the hypothetical C++ osx 64bits shared library with its C# wrapper source code.
-* [`src/Foo.win-x64`](src/Foo.win-x64) Contains the hypothetical C++ win 64bits shared library with its C# wrapper source code.
+* [`src/runtime.linux-x64.Foo`](src/runtime.linux-x64.Foo) Contains the hypothetical C++ unix 64bits shared library with its wrapper source code.
+* [`src/runtime.osx-x64.Foo`](src/runtime.osx-x64.Foo) Contains the hypothetical C++ osx 64bits shared library with its C# wrapper source code.
+* [`src/runtime.win-x64.Foo`](src/runtime.win-x64.Foo) Contains the hypothetical C++ win 64bits shared library with its C# wrapper source code.
 
 * [`src/Foo`](src/Foo) Is a Generic C# library which depends on all previous package according to the runtime identifier set on the cli.
-* [`src/FooApp`](src/FooApp) Is a Generic C# Project Application with a ProjectReference to Foo project.
+* [`src/FooApp`](src/FooApp) Is a Generic C# Project Application with a **`ProjectReference`** to `Foo` project.
 
 
 # Build process
@@ -28,16 +28,16 @@ note: This is usefull when the C++ has a complex/custom build process for Window
 i.e. You can generate the .Net wrapper and shared library which is specific for each OS Platform only on this Os Platform (i.e. no cross compilation available/supported for the native library).
 ```
 Native.cpp -(GCC)-> Native.so --------+
-Native.cpp -(SWIG)-> Native.{rid}.cs -+-> Foo.{rid}-x64.csproj -(ProjectReference)> Foo.csproj -(ProjectReference)> FooApp.csproj
+Native.cpp -(SWIG)-> Native.{rid}.cs -+-> runtime.{rid}.Foo.csproj -(ProjectReference)> Foo.csproj -(ProjectReference)> FooApp.csproj
 ```
 
 2. Be able to create a cross-platform (ed "OS" Platform like linux-x64 not "Target" Platform like netstandard2.0) Foo package provided you have the three native Foo.*-x64 package already available on Nuget.org (or locally).  
 Here we "chain" project using `PackageReference` since we can't build all OS platform package on one platform.  
 i.e. You have already generated the Native packages on each architecture:
 ```
-package/Mizux.Foo.linux-x64.nupkg -+
-package/Mizux.Foo.osx-x64.nupkg ---+-(PackageReference)> Mizux.Foo.nupkg -(PackageReference)> Mizux.Example.csproj
-package/Mizux.Foo.win-x64.nupkg ---+
+package/runtime.linux-x64.Mizux.Foo.nupkg -+
+package/runtime.osx-x64.Mizux.Foo.nupkg ---+-(PackageReference)> Foo.csproj -(build)> Mizux.Foo.nupkg -(PackageReference)> Example.csproj
+package/runtime.win-x64.Mizux.Foo.nupkg ---+
 ```
 
 ## Use Case Scenario 1: FooApp using Foo.csproj
@@ -45,7 +45,7 @@ We would like to build `Foo.csproj` which only depends on `Foo.linux-x64.csproj`
 note: The pipeline will be similar for osx-x64 and win-x64 architecture, don't hesitate to look at the CI log.
 ```
 Native.cpp -(GCC)-> Native.so --------+
-Native.cpp -(SWIG)-> Native.linux.cs -+-> Foo.linux-x64.csproj -(ProjectReference)> Foo.csproj -(ProjectReference)> FooApp.csproj
+Native.cpp -(SWIG)-> Native.linux.cs -+-> runtime.linux-x64.Foo.csproj -(ProjectReference)> Foo.csproj -(ProjectReference)> FooApp.csproj
 ```
 note: we suppose the `GCC` and `SWIG` has already been performed so we have the `Native.so` and `Native.linux.so` already provided in this sample repository.
 
@@ -53,7 +53,7 @@ note: we suppose the `GCC` and `SWIG` has already been performed so we have the 
 To only depends on a specific project according to the targeted RID you can use
 ```xml
 <ItemGroup Condition="'$(RuntimeIdentifier)' == 'linux-x64'">
-  <ProjectReference Include="..\Foo.linux-x64\Foo.linux-x64.csproj" />
+  <ProjectReference Include="..\runtime.linux-x64.Foo\project.csproj" />
 </ItemGroup>
 ```
 src: https://github.com/Mizux/dotnet/blob/master/src/Foo/Foo.csproj#L17
@@ -66,10 +66,10 @@ dotnet build --runtime linux-x64 src/FooApp/FooApp.csproj
 Microsoft (R) Build Engine version 15.7.179.6572 for .NET Core
 Copyright (C) Microsoft Corporation. All rights reserved.
 
-  Restore completed in 55.96 ms for ...dotnet/src/Foo.linux-x64/Foo.linux-x64.csproj.
+  Restore completed in 55.96 ms for ...dotnet/src/runtime.linux-x64.Foo/project.csproj.
   Restore completed in 55.96 ms for .../dotnet/src/FooApp/FooApp.csproj.
   Restore completed in 55.96 ms for .../dotnet/src/Foo/Foo.csproj.
-  Foo.linux-x64 -> .../dotnet/src/Foo.linux-x64/bin/Debug/netstandard2.0/linux-x64/Foo.linux-x64.dll
+  runtime.linux-x64.Foo -> .../dotnet/src/Foo.linux-x64/bin/Debug/netstandard2.0/linux-x64/Foo.linux-x64.dll
   Foo -> .../dotnet/src/Foo/bin/Debug/netstandard2.0/linux-x64/Foo.dll
   FooApp -> .../dotnet/src/FooApp/bin/Debug/netcoreapp2.1/linux-x64/Mizux.FooApp.dll
 

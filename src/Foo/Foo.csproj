@@ -4,36 +4,38 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RuntimeIdentifiers>win-x64;osx-x64;linux-x64</RuntimeIdentifiers>
     <AssemblyName>Mizux.Foo</AssemblyName>
-    <Version>1.0.0</Version>
-  </PropertyGroup>
 
-  <!-- Nuget Properties-->
-  <PropertyGroup>
+    <!-- Nuget Properties-->
     <PackageId>Mizux.Foo</PackageId>
+    <Version>1.0.0</Version>
     <Authors>Mizux</Authors>
     <Description>Meta Package depending on each Native package</Description>
+    <Copyright>Copyright 2018 Google LLC</Copyright>
+    <PackageLicenseUrl>https://github.com/Mizux/dotnet/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/Mizux/dotnet</PackageProjectUrl>
     <PackageTags>native</PackageTags>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageOutputPath>../../package</PackageOutputPath>
-  </PropertyGroup>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 
-  <!-- Build Properties-->
-  <PropertyGroup>
+    <!-- Build Properties-->
+    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
   </PropertyGroup>
   <!-- When building localy we want to be able to only depends on one RID to test -->
   <ItemGroup Condition="'$(RuntimeIdentifier)' == 'linux-x64'">
+    <Compile Include="Foo.cs" />
     <ProjectReference Include="..\runtime.linux-x64.Foo\project.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(RuntimeIdentifier)' == 'osx-x64'">
+    <Compile Include="Foo.cs" />
     <ProjectReference Include="..\runtime.osx-x64.Foo\project.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(RuntimeIdentifier)' == 'win-x64'">
+    <Compile Include="Foo.cs" />
     <ProjectReference Include="..\runtime.win-x64.Foo\project.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Foo.cs" />
     <Content Include="runtime.json">
       <PackagePath>runtime.json</PackagePath>
       <Pack>true</Pack>

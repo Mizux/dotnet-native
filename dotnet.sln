@@ -5,11 +5,11 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CF5EE9C6-310A-4173-99CC-DA7881DCCE54}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "project", "src\runtime.linux-x64.Foo\project.csproj", "{C3A1A112-439E-45F5-8EE2-C9C475F6C561}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "project", "src\runtime.linux-x64.Foo\runtime.linux-x64.Foo.csproj", "{C3A1A112-439E-45F5-8EE2-C9C475F6C561}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "project", "src\runtime.osx-x64.Foo\project.csproj", "{19A546DE-336B-41B8-A415-E741FBABFBDA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "project", "src\runtime.osx-x64.Foo\runtime.osx-x64.Foo.csproj", "{19A546DE-336B-41B8-A415-E741FBABFBDA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "project", "src\runtime.win-x64.Foo\project.csproj", "{8F8AF346-6CD8-465E-A826-9C2DF04C246F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "project", "src\runtime.win-x64.Foo\runtime.win-x64.Foo.csproj", "{8F8AF346-6CD8-465E-A826-9C2DF04C246F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "project", "src\Foo\project.csproj", "{54AF810A-F3B2-457D-ADD1-C5461FFAB4B1}"
 EndProject
