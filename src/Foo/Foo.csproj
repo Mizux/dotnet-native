@@ -55,12 +55,12 @@
     <RestoreSources>../../package;$(RestoreSources);https://api.nuget.org/v3/index.json</RestoreSources>
   </PropertyGroup>
   <ItemGroup Condition="('$(RuntimeIdentifier)' == '') And Exists('../../package/runtime.linux-x64.Mizux.Foo.1.0.0.nupkg')">
-    <PackageReference Include="Mizux.Foo.linux-x64" Version="1.0.0" />
+    <PackageReference Include="runtime.linux-x64.Mizux.Foo" Version="1.0.0" PrivateAssets="none"/>
   </ItemGroup>
   <ItemGroup Condition="('$(RuntimeIdentifier)' == '') And Exists('../../package/runtime.osx-x64.Mizux.Foo.1.0.0.nupkg')">
-    <PackageReference Include="Mizux.Foo.osx-x64" Version="1.0.0" />
+    <PackageReference Include="runtime.osx-x64.Mizux.Foo" Version="1.0.0" PrivateAssets="none" />
   </ItemGroup>
   <ItemGroup Condition="('$(RuntimeIdentifier)' == '') And Exists('../../package/runtime.win-x64.Mizux.Foo.1.0.0.nupkg')">
-    <PackageReference Include="Mizux.Foo.win-x64" Version="1.0.0" />
+    <PackageReference Include="runtime.win-x64.Mizux.Foo" Version="1.0.0" PrivateAssets="none" />
   </ItemGroup>
 </Project>
