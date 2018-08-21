@@ -27,7 +27,7 @@
     <Compile Include="Native.linux.cs" />
     <!-- Simulate native shared lib consumed by the Native.cs wrapper -->
     <Content Include="*.so">
-      <PackagePath>runtimes/linux-x64/lib/native/%(Filename)%(Extension)</PackagePath>
+      <PackagePath>runtimes/linux-x64/native/%(Filename)%(Extension)</PackagePath>
       <Pack>true</Pack>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

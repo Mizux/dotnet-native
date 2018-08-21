@@ -27,7 +27,7 @@
     <Compile Include="Native.win.cs" />
     <!-- Simulate native shared lib consumed by the Native.cs wrapper -->
     <Content Include="*.dll">
-      <PackagePath>runtimes/win-x64/lib/native/%(Filename)%(Extension)</PackagePath>
+      <PackagePath>runtimes/win-x64/native/%(Filename)%(Extension)</PackagePath>
       <Pack>true</Pack>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
