@@ -5,7 +5,7 @@
     <RuntimeIdentifiers>win-x64;osx-x64;linux-x64</RuntimeIdentifiers>
     <AssemblyName>Mizux.Foo</AssemblyName>
 
-    <!-- Nuget Properties-->
+    <!-- Nuget Properties -->
     <PackageId>Mizux.Foo</PackageId>
     <Version>1.0.0</Version>
     <Authors>Mizux</Authors>
@@ -15,28 +15,26 @@
     <PackageProjectUrl>https://github.com/Mizux/dotnet</PackageProjectUrl>
     <PackageTags>native</PackageTags>
     <PackageOutputPath>../../package</PackageOutputPath>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 
-    <!-- Build Properties-->
+    <!-- Build Properties -->
+    <!-- we want to create a Meta-Project only referencing runtime Project(s) -->
     <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <IncludeBuildOutput>false</IncludeBuildOutput>
-    <!--
-    <NoBuild>true</NoBuild>
-    <BuildOutputTargetFolder Condition="'$(RuntimeIdentifier)' != ''">runtimes/$(RuntimeIdentifier)/lib</BuildOutputTargetFolder>
-    -->
+    <!--<NoBuild>true</NoBuild>-->
   </PropertyGroup>
-  <!-- When building localy we want to be able to only depends on one RID to test
-  <ItemGroup Condition="'$(RuntimeIdentifier)' == 'linux-x64'">
-    <ProjectReference Include="../runtime.linux-x64.Foo/runtime.linux-x64.Foo.csproj" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(RuntimeIdentifier)' == 'osx-x64'">
-    <ProjectReference Include="../runtime.osx-x64.Foo/runtime.osx-x64.Foo.csproj" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(RuntimeIdentifier)' == 'win-x64'">
-    <ProjectReference Include="../runtime.win-x64.Foo/runtime.win-x64.Foo.csproj" />
-  </ItemGroup>
-  -->
+
+  <!-- Need to copy one of the reference assembly generated -->
+  <Target Name="ValidateRuntimeRef" BeforeTargets="Build">
+    <Error
+      Text="You must locally build at least one runtime Project."
+      Condition="
+      !Exists('../runtime.linux-x64.Foo/bin/$(Configuration)/$(TargetFramework)/linux-x64/ref') AND
+      !Exists('../runtime.osx-x64.Foo/bin/$(Configuration)/$(TargetFramework)/osx-x64/ref') AND
+      !Exists('../runtime.win-x64.Foo/bin/$(Configuration)/$(TargetFramework)/win-x64/ref')"
+      />
+  </Target>
 
   <ItemGroup>
     <Content Include="../runtime.linux-x64.Foo/bin/$(Configuration)/$(TargetFramework)/linux-x64/ref/*.dll">
@@ -61,9 +59,16 @@
     </Content>
   </ItemGroup>
 
-  <!-- use when trying to pack an all in one package -->
-  <!-- dotnet pack doesn't set RuntimeIdentifier, so we can use this... -->
-  <!--
+  <!-- Need to add dependency so Meta-Project will pull runtime Project(s) -->
+  <Target Name="ValidateRuntimePack" BeforeTargets="Pack">
+    <Error
+      Text="You must locally pack at least one runtime Project."
+      Condition="
+      !Exists('../../package/runtime.linux-x64.Mizux.Foo.*.nupkg') AND
+      !Exists('../../package/runtime.osx-x64.Mizux.Foo.*.nupkg') AND
+      !Exists('../../package/runtime.win-x64.Mizux.Foo.*.nupkg')"
+      />
+  </Target>
   <PropertyGroup Condition="Exists('../../package')">
     <RestoreSources>../../package;$(RestoreSources);https://api.nuget.org/v3/index.json</RestoreSources>
   </PropertyGroup>
@@ -76,5 +81,4 @@
   <ItemGroup Condition="('$(RuntimeIdentifier)' == '') And Exists('../../package/runtime.win-x64.Mizux.Foo.1.0.0.nupkg')">
     <PackageReference Include="runtime.win-x64.Mizux.Foo" Version="1.0.0" PrivateAssets="none" />
   </ItemGroup>
-  -->
 </Project>
