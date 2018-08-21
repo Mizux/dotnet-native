@@ -21,7 +21,9 @@ for i in package/*.nupkg; do unzip -l $i; done
 
 ## Create the meta package Mizux.Foo
 dotnet build src/Foo
-unzip -l package/Mizux.Foo.1.0.0.nupkg
+dotnet pack src/Foo
+unzip -l package/Mizux.Foo.*.nupkg
 
 ## try consuming it
-dotnet build -r linux-x64 example/Example
+dotnet build example/Example
+dotnet run --project example/Example
