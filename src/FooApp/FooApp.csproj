@@ -8,12 +8,13 @@
     <PackageId>Mizux.FooApp</PackageId>
     <Version>1.0.0</Version>
     <Authors>Mizux</Authors>
-    <Description>Simple App consuming Foo.csproj</Description>
+    <Description>Simple App consuming Foo package</Description>
     <PackageTags></PackageTags>
     <PackageOutputPath>../../package</PackageOutputPath>
+    <RestoreSources>../../package;$(RestoreSources);https://api.nuget.org/v3/index.json</RestoreSources>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Foo\Foo.csproj" />
+    <PackageReference Include="Mizux.Foo" Version="1.0.0" />
   </ItemGroup>
 </Project>
