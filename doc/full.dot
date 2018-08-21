@@ -1,0 +1,72 @@
+@startdot
+digraph Make {
+  rankdir=BT;
+  node [shape=note, style="rounded,filled", color=black, fillcolor=royalblue];
+  CPP [label="Native.cpp"];
+
+  subgraph clusterLinux {
+    color=crimson;
+    label = "Linux Host";
+    node [shape=note, style="rounded,filled", color=black, fillcolor=darkviolet];
+    LINUX_LIB [label="Native.so\nruntimes/linux-x64/native", shape=component, fillcolor=royalblue];
+    LINUX_CS [label="Native.cs"];
+    LINUX_CSPROJ [label="runtime.linux-x64.Foo.csproj"];
+    LINUX_DLL [label="Mizux.Foo.dll\nruntimes/linux-x64/lib/netstandard2.0", shape=component];
+    LINUX_NUPKG [label="runtime.linux-x64.Mizux.Foo.nupkg", shape=folder];
+    LINUX_CS -> LINUX_DLL [label="dotnet build"];
+    LINUX_CSPROJ -> LINUX_DLL [label="dotnet build"];
+    LINUX_DLL -> LINUX_NUPKG [label="dotnet pack"];
+    LINUX_LIB -> LINUX_NUPKG [label="dotnet pack"];
+  }
+
+  subgraph clusterOsx {
+    color=forestgreen;
+    label = "macOS Host";
+    node [shape=note, style="rounded,filled", color=black, fillcolor=darkviolet];
+    OSX_LIB [label="Native.dylib\nruntimes/osx-x64/native", shape=component, fillcolor=royalblue];
+    OSX_CS [label="Native.cs"];
+    OSX_CSPROJ [label="runtime.osx-x64.Foo.csproj"];
+    OSX_DLL [label="Mizux.Foo.dll\nruntimes/osx-x64/lib/netstandard2.0", shape=component];
+    OSX_NUPKG [label="runtime.osx-x64.Mizux.Foo.nupkg", shape=folder];
+    OSX_CS -> OSX_DLL [label="dotnet build"];
+    OSX_CSPROJ -> OSX_DLL [label="dotnet build"];
+    OSX_DLL -> OSX_NUPKG [label="dotnet pack"];
+    OSX_LIB -> OSX_NUPKG [label="dotnet pack"];
+  }
+  subgraph clusterWin {
+    color=dodgerblue;
+    label = "Windows Host";
+    node [shape=note, style="rounded,filled", color=black, fillcolor=darkviolet];
+    WIN_LIB [label="Native.dll\nruntimes/win-x64/native", shape=component, fillcolor=royalblue];
+    WIN_CS [label="Native.cs"];
+    WIN_CSPROJ [label="runtime.win-x64.Foo.csproj"];
+    WIN_DLL [label="Mizux.Foo.dll\nruntimes/win-x64/lib/netstandard2.0", shape=component];
+    WIN_NUPKG [label="runtime.win-x64.Mizux.Foo.nupkg", shape=folder];
+    WIN_CS -> WIN_DLL [label="dotnet build"];
+    WIN_CSPROJ -> WIN_DLL [label="dotnet build"];
+    WIN_DLL -> WIN_NUPKG [label="dotnet pack"];
+    WIN_LIB -> WIN_NUPKG [label="dotnet pack"];
+  }
+  subgraph clusterAny {
+    color=dimgrey;
+    label = "(Linux|macOS|Windows) Host";
+    node [shape=note, style="rounded,filled", color=black, fillcolor=darkviolet];
+    FOO_CSPROJ [label="Foo.csproj"];
+    FOO_REFASS [label="Mizux.Foo.dll\nref/netstandard2.0", shape=component];
+    FOO_NUPKG [label="runtime.win-x64.Mizux.Foo.nupkg", shape=folder];
+    FOO_CSPROJ -> FOO_NUPKG [label="dotnet pack"];
+    FOO_REFASS -> FOO_NUPKG [label="dotnet pack"];
+  }
+  CPP -> LINUX_CS [label="SWIG"];
+  CPP -> LINUX_LIB [label="GCC", style=dashed];
+  CPP -> OSX_CS [label="SWIG"];
+  CPP -> OSX_LIB [label="Clang", style=dashed];
+  CPP -> WIN_CS [label="SWIG"];
+  CPP -> WIN_LIB [label="VS 2017", style=dashed];
+
+  LINUX_NUPKG -> FOO_CSPROJ [label="PackageReference"];
+  OSX_NUPKG -> FOO_CSPROJ [label="PackageReference"];
+  WIN_NUPKG -> FOO_CSPROJ [label="PackageReference"];
+}
+@enddot
+# vim: set tw=0 ts=2 sw=2 expandtab:
