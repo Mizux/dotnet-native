@@ -26,8 +26,15 @@ before_build:
   - dotnet --info
 
 build_script:
-  - dotnet build --runtime win-x64 src\FooApp\FooApp.csproj
+  - dotnet build src\runtime.win-x64.Foo
+  - dotnet pack src\runtime.win-x64.Foo
+  - dotnet build src\Foo
+  - dotnet pack src\Foo
+  - for i in package\*; do
+      unzip -l $i;
+    done
+  - dotnet build src\FooApp
 
 test_script:
-  - dotnet src\FooApp\bin\x64\Debug\netcoreapp2.1\win-x64\Mizux.FooApp.dll
+  - dotnet run --project src\FooApp
 
