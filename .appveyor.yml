@@ -30,9 +30,7 @@ build_script:
   - dotnet pack src\runtime.win-x64.Foo
   - dotnet build src\Foo
   - dotnet pack src\Foo
-  - for i in package\*; do
-      unzip -l $i;
-    done
+  - FOR %%I IN (package\*) DO unzip -l %%I
   - dotnet build src\FooApp
 
 test_script:
