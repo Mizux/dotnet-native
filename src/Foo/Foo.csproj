@@ -77,11 +77,6 @@
       <Pack>true</Pack>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="runtime.json">
-      <PackagePath>runtime.json</PackagePath>
-      <Pack>true</Pack>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
 <!-- Need to add some dependencies so Meta-Project will pull runtime Project(s) -->
@@ -119,6 +114,7 @@
       Text="You must locally 'dotnet pack' at least one runtime.{rid}.Foo Project."
       Condition="!Exists('@(RuntimeLinux)') AND !Exists('@(RuntimeOsx)') AND !Exists('@(RuntimeWin)')" />
   </Target>
+
   <PropertyGroup>
     <RestoreSources>../../package;$(RestoreSources)</RestoreSources>
   </PropertyGroup>
@@ -130,5 +126,18 @@
   </ItemGroup>
   <ItemGroup Condition="Exists('../../package/runtime.win-x64.Mizux.Foo.1.0.0.nupkg')">
     <PackageReference Include="runtime.win-x64.Mizux.Foo" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <RuntimeLinux Include="../../package/runtime.linux-x64.Mizux.Foo.*.nupkg" />
+    <RuntimeOsx Include="../../package/runtime.osx-x64.Mizux.Foo.*.nupkg" />
+    <RuntimeWin Include="../../package/runtime.win-x64.Mizux.Foo.*.nupkg" />
+    <Content
+      Include="runtime.json"
+      Condition="Exists('@(RuntimeLinux)') AND Exists('@(RuntimeOsx)') AND Exists('@(RuntimeWin)')">
+      <PackagePath>runtime.json</PackagePath>
+      <Pack>true</Pack>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>
