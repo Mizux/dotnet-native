@@ -62,17 +62,26 @@
   </Target>
 
   <ItemGroup>
-    <Content Include="../runtime.linux-x64.Foo/bin/$(Configuration)/$(TargetFramework)/linux-x64/ref/*.dll">
+    <RefLinux Include="../runtime.linux-x64.Foo/bin/$(Configuration)/$(TargetFramework)/linux-x64/ref/*.dll" />
+    <RefOsx Include="../runtime.osx-x64.Foo/bin/$(Configuration)/$(TargetFramework)/osx-x64/ref/*.dll" />
+    <RefWin Include="../runtime.win-x64.Foo/bin/x64/$(Configuration)/$(TargetFramework)/win-x64/ref/*.dll" />
+    <Content
+      Include="@(RefLinux)"
+      Condition="Exists('@(RefLinux)')">
       <PackagePath>ref/$(TargetFramework)/%(Filename)%(Extension)</PackagePath>
       <Pack>true</Pack>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="../runtime.osx-x64.Foo/bin/$(Configuration)/$(TargetFramework)/osx-x64/ref/*.dll">
+    <Content
+      Include="@(RefOsx)"
+      Condition="Exists('@(RefOsx)')">
       <PackagePath>ref/$(TargetFramework)/%(Filename)%(Extension)</PackagePath>
       <Pack>true</Pack>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="../runtime.win-x64.Foo/x64/bin/$(Configuration)/$(TargetFramework)/win-x64/ref/*.dll">
+    <Content
+      Include="@(RefWin)"
+      Condition="Exists('@(RefWin)')">
       <PackagePath>ref/$(TargetFramework)/%(Filename)%(Extension)</PackagePath>
       <Pack>true</Pack>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
