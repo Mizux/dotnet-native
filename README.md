@@ -35,7 +35,7 @@ Native.cpp -(SWIG)-> Native.{rid}.cs -+-> runtime.{rid}.Foo.csproj -(ProjectRefe
 
 2. Be able to create a cross-RID Foo package provided you have the three native runtime.{rid}.Mizux.Foo packages available locally.  
 Here we "chain" project using `PackageReference` since we can't build all OS platform package on one platform.  
-i.e. You have already generated the Native packages on each architecture: ![Full Pipeline](doc/full.svg)
+i.e. You have already generated the Native packages on each architecture: ![Legend](doc/legend.svg) ![Full Pipeline](doc/full_pipeline.svg)
 
 ## Scenario 1: Local Package one RID 
 We would like to build `Foo.csproj` which only depends on `Foo.linux-x64.csproj` in order to test locally.  
