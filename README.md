@@ -1,52 +1,58 @@
-[![Build
-Status](https://travis-ci.org/Mizux/dotnet.svg?branch=master)](https://travis-ci.org/Mizux/dotnet)
+[![Build Status](https://travis-ci.org/Mizux/dotnet.svg?branch=master)](https://travis-ci.org/Mizux/dotnet)
 [![Build status](https://ci.appveyor.com/api/projects/status/xbtj9qs2s3d5u2dj/branch/master?svg=true)](https://ci.appveyor.com/project/Mizux/dotnet/branch/master)
 
 # Introduction
-Try to build a netstandard2.0 native (for win-x64, linux-x64 and osx-x64) nuget package using [`dotnet/cli`](https://github.com/dotnet/cli) and the *new* .csproj format.  
-e.g. You have a cross platform C++ library and a netstandard2.0 wrapper thanks to SWIG.  
-Then you want to provide a cross platform nuget package to consume it in a "pure" .Net Project...
+Try to build a .NetStandard2.0 native (for win-x64, linux-x64 and osx-x64) nuget package using [`dotnet/cli`](https://github.com/dotnet/cli) and the *new* .csproj format.  
+e.g. You have a cross platform C++ library and a .NetStandard2.0 wrapper on it thanks to SWIG.  
+Then you want to provide a cross-platform Nuget package to consume it in a .NetCoreApp2.1 project...
+
+## Table of Content
+* [Requirement](#requirement)
+* [Directory Layout](#directory-layout)
+* [Build Process](#build-process)
+* [Local Mizux.Foo Package](#local-mizux-foo-package)
+  * [Building a Local Mizux.Foo Package](#building-local-mizux-foo-package)
+* [Complete Mizux.Foo Package](#complete-mizux-foo-package)
+  * [Building a Complete Mizux.Foo Package](#building-local-mizux-foo-package)
+* [Appendices](#appendices)
+  * [Ressources](#ressources)
+  * [Issues](#issues)
+* [Misc](#misc)
 
 # Requirement
 You'll need the ".Net Core SDK 2.1.302" to get the dotnet cli.
 i.e. We won't/can't rely on VS 2017 since we want a portable cross-platform [`dotnet/cli`](https://github.com/dotnet/cli) pipeline. 
 
-# Layout
-* [`src/runtime.linux-x64.Foo`](src/runtime.linux-x64.Foo) Contains the hypothetical C++ unix 64bits shared library with its .NetStandard2.0 wrapper source code.
-* [`src/runtime.osx-x64.Foo`](src/runtime.osx-x64.Foo) Contains the hypothetical C++ osx 64bits shared library with its .NetStandard2.0 wrapper source code.
-* [`src/runtime.win-x64.Foo`](src/runtime.win-x64.Foo) Contains the hypothetical C++ win 64bits shared library with its .NetStandard2.0 wrapper source code.
+# Directory Layout
+* [`src/runtime.linux-x64.Foo`](src/runtime.linux-x64.Foo) Contains the hypothetical C++ linux-x64 shared library with its .NetStandard2.0 wrapper source code.
+* [`src/runtime.osx-x64.Foo`](src/runtime.osx-x64.Foo) Contains the hypothetical C++ osx-x64 shared library with its .NetStandard2.0 wrapper source code.
+* [`src/runtime.win-x64.Foo`](src/runtime.win-x64.Foo) Contains the hypothetical C++ win-x64 shared library with its .NetStandard2.0 wrapper source code.
 * [`src/Foo`](src/Foo) Is a Meta-Project .NetStandard2.0 library which should depends on all previous available packages.
 * [`src/FooApp`](src/FooApp) Is a Generic C# Project Application with a **`PackageReference`** to `Foo` project.
 
-# Observed Behaviour
-Some notes concerning the current behaviour of `dotnet <cmd>` against various `.csproj` properties.
+# Build Process
+We have two use case scenario:
+1. Locally, be able to build a Foo package which **only** target the local `OS Platform`, i.e. building for only one [Runtime Identifier (RID)](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog).  
+note: This is usefull when the C++ build is a complex process for Windows, Linux and MacOS.  
+i.e. You don't support cross-compilation for the native library.
 
-# Build process
-We want two use case scenario:
-1. Locally, be able to only build for the current host `OS Platform` only.  
-i.e. passing a [Runtime Identifier (RID)](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog)  
-Here we "chain" project using `ProjectReference`.  
-note: This is usefull when the C++ has a complex/custom build process for Windows, Linux and MacOS. 
-i.e. You can generate the .Net wrapper and shared library which is specific for each OS Platform only on this Os Platform (i.e. no cross compilation available/supported for the native library).
-```
-Native.cpp -(GCC)-> Native.so --------+
-Native.cpp -(SWIG)-> Native.{rid}.cs -+-> runtime.{rid}.Foo.csproj -(ProjectReference)> Foo.csproj -(ProjectReference)> FooApp.csproj
-```
+2. Be able to create a complete cross-platform (ed. platform as multiple rid) Foo package.  
+i.e. First you generate each native Nuget package (`runtime.{rid}.Mizux.Foo.nupkg`) on each native architecture,  
+then copy paste these artifacts on one native machine to generate the meta-package `Mizux.Foo`.
+The pipeline should be as follow:
 
-2. Be able to create a cross-RID Foo package provided you have the three native runtime.{rid}.Mizux.Foo packages available locally.  
-Here we "chain" project using `PackageReference` since we can't build all OS platform package on one platform.  
-i.e. You have already generated the Native packages on each architecture: ![Legend](doc/legend.svg) ![Full Pipeline](doc/full_pipeline.svg)
+## Local Mizux.Foo Package 
+Let's start with scenario 1: Create a *Local* `Mizux.Foo.nupkg` package targeting **one** [Runtime Identifier (RID)](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog).  
+We would like to build a `Mizux.Foo.nupkg` package which only depends on one `runtime.{rid}.Mizux.Foo.nupkg` in order to dev/test locally.  
 
-## Scenario 1: Local Package one RID 
-We would like to build `Foo.csproj` which only depends on `Foo.linux-x64.csproj` in order to test locally.  
-note: The pipeline will be similar for osx-x64 and win-x64 architecture, don't hesitate to look at the CI log.
-```
-Native.cpp -(GCC)-> Native.so --------+
-Native.cpp -(SWIG)-> Native.linux.cs -+-> runtime.linux-x64.Foo.csproj -(ProjectReference)> Foo.csproj -(ProjectReference)> FooApp.csproj
-```
-note: we suppose the `GCC` and `SWIG` has already been performed so we have the `Native.so` and `Native.linux.so` already provided in this sample repository.
+The pipeline for `linux-x64` should be as follow:  
+note: The pipeline will be similar for `osx-x64` and `win-x64` architecture, don't hesitate to look at the CI log.
+![Local Pipeline](doc/local_pipeline.svg)
+![Legend](doc/legend.svg)
 
-### Building
+### Building Local Mizux.Foo Package 
+note: for simplicity, in this git repository, we suppose the `g++` and `swig` has been performed so we have the C++ shared lbrary `Native.so` and the swig generated C# wrapper `Native.cs` already available.
+
 To only depends on a specific project according to the targeted RID you can use
 ```xml
 <ItemGroup Condition="'$(RuntimeIdentifier)' == 'linux-x64'">
@@ -137,40 +143,39 @@ Length      Date    Time    Name
 ....                     6 files
 ```
 
-## Scenario 2: Multi-RID package
-We would like to build `Exemple.csproj` which only depends (i.e. `PackageReference`) on `Mizux.Foo` nuget package in order to test locally.  
+## Complete Mizux.Foo Package
+Let's start with scenario 2: Create a *Complete* `Mizux.Foo.nupkg` package targeting multiple [Runtime Identifier (RID)](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog).  
+We would like to build a `Mizux.Foo.nupkg` package which depends on several `runtime.{rid}.Mizux.Foo.nupkg`.  
+
+The pipeline should be as follow:  
 note: This pipeline should be run on any architecture,
 provided you have generated the three architecture dependent `Foo.{rid}` nuget package.
-```
-package/Mizux.Foo.linux-x64.nupkg -+
-package/Mizux.Foo.osx-x64.nupkg ---+-(PackageReference)> Mizux.Foo.nupkg -(PackageReference)> Mizux.Example.csproj
-package/Mizux.Foo.win-x64.nupkg ---+
-```
-note: we suppose the three OS platform dependent package have been generated using the use case scenario 1.
+![Full Pipeline](doc/full_pipeline.svg)
+![Legend](doc/legend.svg)
 
-### Packing meta project: Mizux.Foo
+### Building Complete Mizux.Foo Package 
 Let's try to first pack `Foo`. Since it is architecture independent you need to put file in `lib/{tfm}/*.dll`.  
 
 To make `Mizux.Foo` dependent on `Mizux.Foo.{rid}` we use a `runtime.json` file containing:
 ```json
 {
-"runtimes": {
-"linux-x64": {
-"Mizux.Foo": {
-"Mizux.Foo.linux-x64": "1.0.0"
-}
-},
-"osx-x64": {
-"Mizux.Foo": {
-"Mizux.Foo.osx-x64": "1.0.0"
-}
-},
-"win-x64": {
-"Mizux.Foo": {
-"Mizux.Foo.win-x64": "1.0.0"
-}
-}
-}
+  "runtimes": {
+    "linux-x64": {
+      "Mizux.Foo": {
+          "Mizux.Foo.linux-x64": "1.0.0"
+      }
+    },
+    "osx-x64": {
+      "Mizux.Foo": {
+        "Mizux.Foo.osx-x64": "1.0.0"
+      }
+    },
+    "win-x64": {
+      "Mizux.Foo": {
+        "Mizux.Foo.win-x64": "1.0.0"
+      }
+    }
+  }
 }
 ```
 src: https://github.com/Mizux/dotnet/blob/master/src/Foo/runtime.json  
@@ -197,31 +202,36 @@ Successfully created package '.../package/Mizux.Foo.1.0.0.nupkg'
 ```
 Also since we **don't** specify a RID the outputpath is `bin/$(Configuration)/$(TargetFramework)`.
 
-                                                                                                       **/!\ I didn't manage to add a Foo.cs file (depending on Mizux.Foo.{RID}) when no RID is specified /!\  
-  I think I should try to use a Reference Assembly (once it will be clearly documented how it works with native libs)**
+**/!\ I didn't manage to add a Foo.cs file (depending on Mizux.Foo.{RID}) when no RID is specified /!\  
+I think I should try to use a Reference Assembly (once it will be clearly documented how it works with native libs)**
 
-  Let's take a look at the layout
-  ```bash
-  unzip -l package/Mizux.Foo.1.0.0.nupkg
-  Archive:  package/Mizux.Foo.1.0.0.nupkg
-  Length      Date    Time    Name
-  ---------  ---------- -----   ----
-  ...  2018-00-00 00:42   _rels/.rels
-  ...  2018-00-00 00:42   Mizux.Foo.nuspec
-  ....  2018-00-00 00:42   lib/netstandard2.0/Mizux.Foo.dll
-  ....  2018-00-00 00:42   runtime.json
-  ...  2018-00-00 00:42   [Content_Types].xml
-  ...  2018-00-00 00:42   package/services/metadata/core-properties/3c4a144ec0f241cd9771e06f9a1479db.psmdcp
-  ---------                     -------
-  ....                     6 files
-  ```
+Let's take a look at the layout
+```bash
+unzip -l package/Mizux.Foo.1.0.0.nupkg
+Archive:  package/Mizux.Foo.1.0.0.nupkg
+Length      Date    Time    Name
+---------  ---------- -----   ----
+...  2018-00-00 00:42   _rels/.rels
+...  2018-00-00 00:42   Mizux.Foo.nuspec
+....  2018-00-00 00:42   lib/netstandard2.0/Mizux.Foo.dll
+....  2018-00-00 00:42   runtime.json
+...  2018-00-00 00:42   [Content_Types].xml
+...  2018-00-00 00:42   package/services/metadata/core-properties/3c4a144ec0f241cd9771e06f9a1479db.psmdcp
+---------                     -------
+....                     6 files
+```
 
-# Ressources
+# Appendices
 
-  * 
+## Ressources
+Coming soon
+
+## Issues
+Coming soon
 
 # Misc
-  Image has been generated using:
-  ```sh
-  plantuml -tpng doc/{file}.dot
-  ```
+Image has been generated using [plantuml](http://plantuml.com/):
+```bash
+plantuml -Tpng doc/{file}.dot
+```
+So you can find the dot source files in [doc](doc).

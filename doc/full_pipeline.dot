@@ -1,6 +1,6 @@
 @startdot
 digraph Make {
-  rankdir=BT;
+  rankdir=TD;
   node [shape=note, style="rounded,filled", color=black, fillcolor=royalblue];
   CPP [label="Native.h/Native.cpp"];
   SWIG [label="Native.swig", fillcolor=white];
@@ -10,7 +10,7 @@ digraph Make {
     color=crimson;
     label = "Linux Host";
     node [shape=note, style="rounded,filled", color=black, fillcolor=darkviolet];
-    LINUX_LIB [label="Native.so\nruntimes/linux-x64/native", shape=component, fillcolor=royalblue];
+    LINUX_LIB [label="Native.so\nruntimes/linux-x64/native/", shape=component, fillcolor=royalblue];
     LINUX_CS [label="NativeLinuxWrapper.cs"];
     LINUX_CSPROJ [label="runtime.linux-x64.Foo.csproj"];
     LINUX_DLL [label="Mizux.Foo.dll\nruntimes/linux-x64/lib/netstandard2.0/", shape=component];
@@ -31,7 +31,7 @@ digraph Make {
     color=forestgreen;
     label = "macOS Host";
     node [shape=note, style="rounded,filled", color=black, fillcolor=darkviolet];
-    OSX_LIB [label="Native.dylib\nruntimes/osx-x64/native", shape=component, fillcolor=royalblue];
+    OSX_LIB [label="Native.dylib\nruntimes/osx-x64/native/", shape=component, fillcolor=royalblue];
     OSX_CS [label="NativeOsxWrapper.cs"];
     OSX_CSPROJ [label="runtime.osx-x64.Foo.csproj"];
     OSX_DLL [label="Mizux.Foo.dll\nruntimes/osx-x64/lib/netstandard2.0/", shape=component];
@@ -52,7 +52,7 @@ digraph Make {
     color=dodgerblue;
     label = "Windows Host";
     node [shape=note, style="rounded,filled", color=black, fillcolor=darkviolet];
-    WIN_LIB [label="Native.dll\nruntimes/win-x64/native", shape=component, fillcolor=royalblue];
+    WIN_LIB [label="Native.dll\nruntimes/win-x64/native/", shape=component, fillcolor=royalblue];
     WIN_CS [label="NativeWinWrapper.cs"];
     WIN_CSPROJ [label="runtime.win-x64.Foo.csproj"];
     WIN_DLL [label="Mizux.Foo.dll\nruntimes/win-x64/lib/netstandard2.0/", shape=component];
@@ -74,15 +74,18 @@ digraph Make {
     label = "Any Previous Host";
     node [shape=note, style="rounded,filled", color=black, fillcolor=darkviolet];
     FOO_REF [label="Mizux.Foo.dll\nref/netstandard2.0/", shape=component];
+    FOO_RT [label="runtime.json"];
     FOO_CSPROJ [label="Foo.csproj"];
-    FOO_NUPKG [label="runtime.win-x64.Mizux.Foo.nupkg", shape=folder];
+    FOO_NUPKG [label="Mizux.Foo.nupkg", shape=folder];
 
     LINUX_CSPROJ -> FOO_REF [label="dotnet build", style=bold];
     OSX_CSPROJ -> FOO_REF [label="dotnet build", style=bold];
     WIN_CSPROJ -> FOO_REF [label="dotnet build", style=bold];
     FOO_REF -> FOO_CSPROJ [label="Content", style=dashed];
+    FOO_RT -> FOO_CSPROJ [label="Content", style=dashed];
     FOO_CSPROJ -> FOO_NUPKG [label="dotnet pack", style=bold];
     FOO_REF -> FOO_NUPKG [label="pack", style=dashed];
+    FOO_RT -> FOO_NUPKG [label="pack", style=dashed];
   }
   LINUX_NUPKG -> FOO_CSPROJ [label="PackageReference", style=dashed];
   OSX_NUPKG -> FOO_CSPROJ [label="PackageReference", style=dashed];
