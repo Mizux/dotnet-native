@@ -15,6 +15,7 @@ Then you want to provide a cross-platform Nuget package to consume it in a .NetC
     * [Building a Local Mizux.Foo Package](#building-local-mizuxfoo-package)
     * [Testing the Local Mizux.Foo Package](#testing-local-mizuxfoo-package)
   * [Complete Mizux.Foo Package](#complete-mizuxfoo-package)
+    * [Building all runtime Mizux.Foo Package](#building-all-runtime-mizuxfoo-package)
     * [Building a Complete Mizux.Foo Package](#building-complete-mizuxfoo-package)
     * [Testing the Complete Mizux.Foo Package](#testing-complete-mizuxfoo-package)
 * [Appendices](#appendices)
@@ -61,12 +62,14 @@ note: The pipeline will be similar for `osx-x64` and `win-x64` architecture, don
 ![Legend](doc/legend.svg)
 
 ### Building local runtime Mizux.Foo Package 
-note: for simplicity, in this git repository, we suppose the `g++` and `swig` process has been already performed.  
+disclaimer: for simplicity, in this git repository, we suppose the `g++` and `swig` process has been already performed.  
 Thus we have the C++ shared library `Native.so` and the swig generated C# wrapper `Native.cs` already available.  
 note: For a C++ CMake cross-platform project sample, take a look at [Mizux/cmake-cpp](https://github.com/Mizux/cmake-cpp).   
 note: For a C++/Swig CMake cross-platform project sample, take a look at [Mizux/cmake-swig](https://github.com/Mizux/cmake-swig). 
 
-Here some dev-note concerning the csproj.
+So first let's create the local `runtime.{rid}.Mizux.Foo.nupkg` nuget package.
+
+Here some dev-note concerning this `runtime.{rid}.Foo.csproj`.
 - `AssemblyName` must be `Mizux.Foo.dll` i.e. all {rid} projects **must** generate an assembly with the **same** name (i.e. no {rid} in the name)
   ```xml
   <RuntimeIdentifier>{rid}</RuntimeIdentifier>
@@ -75,7 +78,7 @@ Here some dev-note concerning the csproj.
   ```
 - Once you specify a `RuntimeIdentifier` then `dotnet build` or `dotnet build -r {rid}` 
 will behave identically (save you from typing it).
-  - note: not the case if you use `RuntimeIdentifiers` (note the 's')
+  - note: not the case if you use `RuntimeIdentifiers` (notice the 's')
 - It is [recommended](https://docs.microsoft.com/en-us/nuget/create-packages/native-packages)
 to add the tag `native` to the 
 [nuget package tags](https://docs.microsoft.com/en-us/dotnet/core/tools/csproj#packagetags)
@@ -86,109 +89,117 @@ to add the tag `native` to the
   ```xml
   <BuildOutputTargetFolder>runtimes/$(RuntimeIdentifier)/lib</BuildOutputTargetFolder>
   ```
-- Generate the Reference Assembly (but don't include it in the nupkg !) using:
+  note: Every files with an extension different from `.dll` will be filter out by nuget.
+- Add the native shared library to the nuget package in the repository `runtimes/{rib}/native`. e.g. for linux-x64:
+  ```xml
+  <Content Include="*.so">
+    <PackagePath>runtimes/linux-x64/native/%(Filename)%(Extension)</PackagePath>
+    <Pack>true</Pack>
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </Content>
+  ```
+- Generate the runtime package to a defined directory (i.e. so later in meta Foo package we will be able to locate it)
+  ```xml
+  <PackageOutputPath>{...}/package</PackageOutputPath>
+  ```
+- Generate the Reference Assembly (but don't include it to this runtime nupkg !, see below for explanation) using:
   ```xml
   <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
   ```
 
-Then you can create the package using:
+Then you can generate the package using:
 ```bash
 dotnet pack src/runtime.{rid}.Foo
 ```
 note: this will automatically trigger the `dotnet build`.
 
-### Building local Mizux.Foo Package 
+If everything good the package (located where your `PackageOutputPath` was defined) should have this layout:
+```
+{...}/package/runtime.{rid}.Mizux.Foo.nupkg:
+\- runtime.{rid}.Mizux.Foo.nuspec
+\- runtimes
+   \- {rid}
+      \- lib
+         \- {framework}
+            \- Mizux.Foo.dll
+      \- native
+         \- *.so / *.dylib / *.dll
+... 
+```
+note: `{rid}` could be `linux-x64` and `{framework}` could be `netstandard2.0`
+
+tips: since nuget package are zip archive you can use `unzip -l <package>.nupkg` to study their layout.
+
+### Building local Mizux.Foo Package
+So now, let's create the local `Mizux.Foo.nupkg` nuget package which will depend on our previous runtime package.
+
+Here some dev-note concerning this `Foo.csproj`.
+- This package is a meta-package so we don't want to ship an empty assembly file:
+  ```xml
+  <IncludeBuildOutput>false</IncludeBuildOutput>
+  ```
+- Add the previous package directory:
+  ```xml
+  <RestoreSources>{...}/package;$(RestoreSources)</RestoreSources>
+  ```
+- Add dependency (i.e. `PackageReference`) on each runtime package(s) availabe:
+  ```xml
+  <ItemGroup Condition="Exists('{...}/package/runtime.linux-x64.Mizux.Foo.1.0.0.nupkg')">
+    <PackageReference Include="runtime.linux-x64.Mizux.Foo" Version="1.0.0" />
+  </ItemGroup>
+  ```
+  Thanks to the `RestoreSource` we can work locally we our just builded package
+  without the need to upload it on [nuget.org](https://www.nuget.org/).
+- To expose the .Net Surface API the `Foo.csproj` must contains a least one 
+[Reference Assembly](https://docs.microsoft.com/en-us/nuget/reference/nuspec#explicit-assembly-references) of the previously rumtime package.
+  ```xml
+  <Content Include="../runtime.{rid}.Foo/bin/$(Configuration)/$(TargetFramework)/{rid}/ref/*.dll">
+    <PackagePath>ref/$(TargetFramework)/%(Filename)%(Extension)</PackagePath>
+    <Pack>true</Pack>
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </Content>
+  ```
+
+Then you can generate the package using:
+```bash
+dotnet pack src/.Foo
+```
+
+If everything good the package (located where your `PackageOutputPath` was defined) should have this layout:
+```
+{...}/package/Mizux.Foo.nupkg:
+\- Mizux.Foo.nuspec
+\- ref
+   \- {framework}
+      \- Mizux.Foo.dll
+... 
+```
+note: `{framework}` could be `netstandard2.0`
 
 ### Testing local Mizux.Foo Package 
+We can test everything is working by using the `FooApp` project.
 
-To only depends on a specific project according to the targeted RID you can use
-```xml
-<ItemGroup Condition="'$(RuntimeIdentifier)' == 'linux-x64'">
-<ProjectReference Include="..\runtime.linux-x64.Foo\project.csproj" />
-</ItemGroup>
+First you can build it using:
 ```
-src: https://github.com/Mizux/dotnet/blob/master/src/Foo/Foo.csproj#L17
+dotnet build src/FooApp
+```
+note: Since FooApp `PackageReference` Foo and add `{...}/package` to the `RestoreSource`.
+During the build of FooApp you can see that `Mizux.Foo` and
+`runtime.{rid}.Mizux.Foo` are automatically installed in the nuget cache.
 
-You can build using the dotnet\cli command with the `--runtime linux-x64` option:
+Then you can run it using:
+```
+dotnet build src/FooApp
+```
+
+You should see something like this
 ```bash
-# build the shared library from the C++ source code
-# Generate the .cs wrapper from the C++ source code using SWIG
-dotnet build --runtime linux-x64 src/FooApp/FooApp.csproj
-Microsoft (R) Build Engine version 15.7.179.6572 for .NET Core
-Copyright (C) Microsoft Corporation. All rights reserved.
-
-Restore completed in 55.96 ms for ...dotnet/src/runtime.linux-x64.Foo/project.csproj.
-Restore completed in 55.96 ms for .../dotnet/src/FooApp/FooApp.csproj.
-Restore completed in 55.96 ms for .../dotnet/src/Foo/Foo.csproj.
-runtime.linux-x64.Foo -> .../dotnet/src/Foo.linux-x64/bin/Debug/netstandard2.0/linux-x64/Foo.linux-x64.dll
-Foo -> .../dotnet/src/Foo/bin/Debug/netstandard2.0/linux-x64/Foo.dll
-FooApp -> .../dotnet/src/FooApp/bin/Debug/netcoreapp2.1/linux-x64/Mizux.FooApp.dll
-
-  Build succeeded.
-  0 Warning(s)
-0 Error(s)
-  ```
-  You can see that `Foo.osx-x64.csproj` and `Foo.win-x64.csproj` are ignored during build.  
-  Also since we specify a RID the outputpath is `bin/$(Configuration)/$(TargetFramework)/$(RuntimeIdentifier)`.
-
-### Running
-  You can try running the FooApp using:
-  ```bash
-  dotnet .../dotnet/src/FooApp/bin/Debug/netcoreapp2.1/linux-x64/Mizux.FooApp.dll
-  [1] Enter FooApp
-  [2] Enter Foo
-  [3] Enter Foo.linux-x64
-  [3] Exit Foo.linux-x64
-  [2] Exit Foo
-  [1] Exit FooApp
-  ```
-
-  note: `dotnet run -r linux-x64 --project ...` doesn't work (Bug ?) since contrary to the build command the `--runtime` is "ignored" and dotnet look for `bin/$(Configuration)/$(TargetFramework)/Mizux.FooApp.dll` (note the missing RID in the path).
-
-### Packing RID dependent project: Mizux.Foo.{rid}
-  Let's try to first pack `Foo.linux-x64`. Since it is architecture dependent you need to put file in
-  `runtimes/{rid}/lib/{tfm}/*.dll`.  
-src: https://natemcmaster.com/blog/2016/05/19/nuget3-rid-graph/#what-goes-in-the-runtimes-folder
-
-You can use:
-```xml
-<BuildOutputTargetFolder>runtimes/linux-x64/lib</BuildOutputTargetFolder>
-```
-to put the output assembly in the correct directory inside the nuget package.  
-For the shared library simply use:
-```xml
-<ItemGroup>
-<Content Include="*.so">
-<PackagePath>runtimes/linux-x64/lib/netstandard2.0/%(Filename)%(Extension)</PackagePath>
-<Pack>true</Pack>
-<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-</Content>
-</ItemGroup>
-```
-
-```bash
-dotnet pack src/Foo.linux-x64
-Microsoft (R) Build Engine version 15.7.179.6572 for .NET Core
-Copyright (C) Microsoft Corporation. All rights reserved.
-
-Restore completed in 64.86 ms for .../dotnet/src/Foo.linux-x64/Foo.linux-x64.csproj.
-Foo.linux-x64 -> .../dotnet/src/Foo.linux-x64/bin/Debug/netstandard2.0/linux-x64/Foo.linux-x64.dll
-Successfully created package '.../dotnet/package/Foo.linux-x64.1.0.0.nupkg'.
-```
-Let's take a look at the layout
-```bash
-unzip -l package/Mizux.Foo.linux-x64.1.0.0.nupkg
-Archive:  package/Mizux.Foo.linux-x64.1.0.0.nupkg
-Length      Date    Time    Name
----------  ---------- -----   ----
-...  2018-00-00 00:42   _rels/.rels
-...  2018-00-00 00:42   Mizux.Foo.linux-x64.nuspec
-....  2018-00-00 00:42   runtimes/linux-x64/lib/netstandard2.0/Mizux.Foo.linux-x64.dll
-....  2018-00-00 00:42   runtimes/linux-x64/lib/netstandard2.0/Native.so
-...  2018-00-00 00:42   [Content_Types].xml
-...  2018-00-00 00:42   package/services/metadata/core-properties/3c4a144ec0f241cd9771e06f9a1479db.psmdcp
----------                     -------
-....                     6 files
+[1] Enter FooApp
+[2] Enter Foo
+[3] Enter Foo.{rid}
+[3] Exit Foo.{rid}
+[2] Exit Foo
+[1] Exit FooApp
 ```
 
 ## Complete Mizux.Foo Package
@@ -201,85 +212,72 @@ provided you have generated the three architecture dependent `Foo.{rid}` nuget p
 ![Full Pipeline](doc/full_pipeline.svg)
 ![Legend](doc/legend.svg)
 
-### Building Complete Mizux.Foo Package 
-Let's try to first pack `Foo`. Since it is architecture independent you need to put file in `lib/{tfm}/*.dll`.  
+### Building All runtime Mizux.Foo Package 
+Like in the previous scenario, on each targeted OS Platform you can build the coresponding
+`runtime.{rid}.Mizux.Foo.nupkg` package.
 
-To make `Mizux.Foo` dependent on `Mizux.Foo.{rid}` we use a `runtime.json` file containing:
-```json
-{
-  "runtimes": {
-    "linux-x64": {
-      "Mizux.Foo": {
-          "Mizux.Foo.linux-x64": "1.0.0"
-      }
-    },
-    "osx-x64": {
-      "Mizux.Foo": {
-        "Mizux.Foo.osx-x64": "1.0.0"
-      }
-    },
-    "win-x64": {
-      "Mizux.Foo": {
-        "Mizux.Foo.win-x64": "1.0.0"
-      }
-    }
-  }
-}
+Simply run on each platform
+```bash
+dotnet build src/runtime.{rid}.Foo
+dotnet pack src/runtime.{rid}.Foo
+```
+note: replace `{rid}` by the Runtime Identifier associated to the current OS platform.
+
+Then on one machine used, you copy all other packages in the `{...}/package` so
+when building `Foo.csproj` we can have access to all package...
+
+### Building Complete Mizux.Foo Package 
+This is the same step than in the previous scenario, since we "see" all runtime
+packages in `{...}/package`, the project will depends on each of them.
+
+Once copied all runtime package locally, simply run:
+```bash
+dotnet build src/Foo
+dotnet pack src/Foo
 ```
 
 ### Testing Complete Mizux.Foo Package 
+We can test everything is working by using the `FooApp` project.
 
+First you can build it using:
+```
+dotnet build src/FooApp
+```
+note: Since FooApp `PackageReference` Foo and add `{...}/package` to the `RestoreSource`.
+During the build of FooApp you can see that `Mizux.Foo` and
+`runtime.{rid}.Mizux.Foo` are automatically installed in the nuget cache.
 
-src: https://github.com/Mizux/dotnet/blob/master/src/Foo/runtime.json  
-And you can add it to the nuget package using in the .csproj:
-```xml
-<ItemGroup Condition="'$(RuntimeIdentifier)' == ''">
-<Content Include="runtime.json">
-<PackagePath>runtime.json</PackagePath>
-<Pack>true</Pack>
-<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-</Content>
-</ItemGroup>
+Then you can run it using:
+```
+dotnet build src/FooApp
 ```
 
-You can use:
+You should see something like this
 ```bash
-dotnet build src/Foo
-Microsoft (R) Build Engine version 15.7.179.6572 for .NET Core
-Copyright (C) Microsoft Corporation. All rights reserved.
-
-Restore completed in 37.37 ms for .../dotnet/src/Foo/Foo.csproj.
-Foo -> .../dotnet/src/Foo/bin/Debug/netstandard2.0/Mizux.Foo.dll
-Successfully created package '.../package/Mizux.Foo.1.0.0.nupkg'
-```
-Also since we **don't** specify a RID the outputpath is `bin/$(Configuration)/$(TargetFramework)`.
-
-**/!\ I didn't manage to add a Foo.cs file (depending on Mizux.Foo.{RID}) when no RID is specified /!\  
-I think I should try to use a Reference Assembly (once it will be clearly documented how it works with native libs)**
-
-Let's take a look at the layout
-```bash
-unzip -l package/Mizux.Foo.1.0.0.nupkg
-Archive:  package/Mizux.Foo.1.0.0.nupkg
-Length      Date    Time    Name
----------  ---------- -----   ----
-...  2018-00-00 00:42   _rels/.rels
-...  2018-00-00 00:42   Mizux.Foo.nuspec
-....  2018-00-00 00:42   lib/netstandard2.0/Mizux.Foo.dll
-....  2018-00-00 00:42   runtime.json
-...  2018-00-00 00:42   [Content_Types].xml
-...  2018-00-00 00:42   package/services/metadata/core-properties/3c4a144ec0f241cd9771e06f9a1479db.psmdcp
----------                     -------
-....                     6 files
+[1] Enter FooApp
+[2] Enter Foo
+[3] Enter Foo.{rid}
+[3] Exit Foo.{rid}
+[2] Exit Foo
+[1] Exit FooApp
 ```
 
 # Appendices
+Few links on the subject...
 
 ## Ressources
-Coming soon
+- [.NET Core RID Catalog](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog)
+- [Creating native packages](https://docs.microsoft.com/en-us/nuget/create-packages/native-packages)
+- [Blog on Nuget Rid Graph](https://natemcmaster.com/blog/2016/05/19/nuget3-rid-graph/)
+
+- [Common MSBuild project properties](https://docs.microsoft.com/en-us/visualstudio/msbuild/common-msbuild-project-properties?view=vs-2017)
+- [MSBuild well-known item metadata](https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild-well-known-item-metadata?view=vs-2017)
+- [Additions to the csproj format for .NET Core](https://docs.microsoft.com/en-us/dotnet/core/tools/csproj)
 
 ## Issues
-Coming soon
+Some issue related to this process
+- [Nuget needs to support dependencies specific to target runtime #1660](https://github.com/NuGet/Home/issues/1660)
+- [Improve documentation on creating native packages #238](https://github.com/NuGet/docs.microsoft.com-nuget/issues/238)
 
 # Misc
 Image has been generated using [plantuml](http://plantuml.com/):
