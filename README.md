@@ -249,7 +249,7 @@ During the build of FooApp you can see that `Mizux.Foo` and
 
 Then you can run it using:
 ```
-dotnet build src/FooApp
+dotnet run --project src/FooApp
 ```
 
 You should see something like this
