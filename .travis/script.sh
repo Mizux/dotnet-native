@@ -17,7 +17,7 @@ elif [ "${TRAVIS_OS_NAME}" == osx ];then
 fi
 dotnet build src/Foo;
 dotnet pack src/Foo;
-for i in package/*; do
+for i in packages/*; do
   unzip -l $i;
 done
 

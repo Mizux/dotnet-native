@@ -17,13 +17,13 @@ dotnet build src/runtime.win-x64.Foo
 dotnet pack src/runtime.win-x64.Foo
 
 ### list content of each nupkg
-for i in package/*.nupkg; do unzip -l $i; done
+for i in packages/*.nupkg; do unzip -l $i; done
 
 ## Create the meta package Mizux.Foo
 dotnet build src/Foo
 dotnet pack src/Foo
-unzip -l package/Mizux.Foo.*.nupkg
+unzip -l packages/Mizux.Foo.*.nupkg
 
 ## try consuming it
-dotnet build example/Example
-dotnet run --project example/Example
+dotnet build src/FooApp
+dotnet run --project src/FooApp

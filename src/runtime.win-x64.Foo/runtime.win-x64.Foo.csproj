@@ -13,12 +13,12 @@
     <PackageLicenseUrl>https://github.com/Mizux/dotnet/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/Mizux/dotnet</PackageProjectUrl>
     <PackageTags>native</PackageTags>
-    <PackageOutputPath>../../package</PackageOutputPath>
+    <PackageOutputPath>../../packages</PackageOutputPath>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
-    <BuildOutputTargetFolder Condition="'$(RuntimeIdentifier)' != ''">runtimes/$(RuntimeIdentifier)/lib</BuildOutputTargetFolder>
+    <BuildOutputTargetFolder>runtimes/$(RuntimeIdentifier)/lib</BuildOutputTargetFolder>
   </PropertyGroup>
 
   <ItemGroup>

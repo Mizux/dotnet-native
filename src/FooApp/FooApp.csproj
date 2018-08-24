@@ -10,8 +10,8 @@
     <Authors>Mizux</Authors>
     <Description>Simple App consuming Foo package</Description>
     <PackageTags></PackageTags>
-    <PackageOutputPath>../../package</PackageOutputPath>
-    <RestoreSources>../../package;$(RestoreSources);https://api.nuget.org/v3/index.json</RestoreSources>
+    <PackageOutputPath>../../packages</PackageOutputPath>
+    <RestoreSources>../../packages;$(RestoreSources);https://api.nuget.org/v3/index.json</RestoreSources>
   </PropertyGroup>
 
   <ItemGroup>

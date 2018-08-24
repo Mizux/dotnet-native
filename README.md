@@ -100,7 +100,7 @@ to add the tag `native` to the
   ```
 - Generate the runtime package to a defined directory (i.e. so later in meta Foo package we will be able to locate it)
   ```xml
-  <PackageOutputPath>{...}/package</PackageOutputPath>
+  <PackageOutputPath>{...}/packages</PackageOutputPath>
   ```
 - Generate the Reference Assembly (but don't include it to this runtime nupkg !, see below for explanation) using:
   ```xml
@@ -115,7 +115,7 @@ note: this will automatically trigger the `dotnet build`.
 
 If everything good the package (located where your `PackageOutputPath` was defined) should have this layout:
 ```
-{...}/package/runtime.{rid}.Mizux.Foo.nupkg:
+{...}/packages/runtime.{rid}.Mizux.Foo.nupkg:
 \- runtime.{rid}.Mizux.Foo.nuspec
 \- runtimes
    \- {rid}
@@ -140,11 +140,11 @@ Here some dev-note concerning this `Foo.csproj`.
   ```
 - Add the previous package directory:
   ```xml
-  <RestoreSources>{...}/package;$(RestoreSources)</RestoreSources>
+  <RestoreSources>{...}/packages;$(RestoreSources)</RestoreSources>
   ```
 - Add dependency (i.e. `PackageReference`) on each runtime package(s) availabe:
   ```xml
-  <ItemGroup Condition="Exists('{...}/package/runtime.linux-x64.Mizux.Foo.1.0.0.nupkg')">
+  <ItemGroup Condition="Exists('{...}/packages/runtime.linux-x64.Mizux.Foo.1.0.0.nupkg')">
     <PackageReference Include="runtime.linux-x64.Mizux.Foo" Version="1.0.0" />
   </ItemGroup>
   ```
@@ -167,7 +167,7 @@ dotnet pack src/.Foo
 
 If everything good the package (located where your `PackageOutputPath` was defined) should have this layout:
 ```
-{...}/package/Mizux.Foo.nupkg:
+{...}/packages/Mizux.Foo.nupkg:
 \- Mizux.Foo.nuspec
 \- ref
    \- {framework}
@@ -183,7 +183,7 @@ First you can build it using:
 ```
 dotnet build src/FooApp
 ```
-note: Since FooApp `PackageReference` Foo and add `{...}/package` to the `RestoreSource`.
+note: Since FooApp `PackageReference` Foo and add `{...}/packages` to the `RestoreSource`.
 During the build of FooApp you can see that `Mizux.Foo` and
 `runtime.{rid}.Mizux.Foo` are automatically installed in the nuget cache.
 
@@ -223,12 +223,12 @@ dotnet pack src/runtime.{rid}.Foo
 ```
 note: replace `{rid}` by the Runtime Identifier associated to the current OS platform.
 
-Then on one machine used, you copy all other packages in the `{...}/package` so
+Then on one machine used, you copy all other packages in the `{...}/packages` so
 when building `Foo.csproj` we can have access to all package...
 
 ### Building Complete Mizux.Foo Package 
 This is the same step than in the previous scenario, since we "see" all runtime
-packages in `{...}/package`, the project will depends on each of them.
+packages in `{...}/packages`, the project will depends on each of them.
 
 Once copied all runtime package locally, simply run:
 ```bash
@@ -243,7 +243,7 @@ First you can build it using:
 ```
 dotnet build src/FooApp
 ```
-note: Since FooApp `PackageReference` Foo and add `{...}/package` to the `RestoreSource`.
+note: Since FooApp `PackageReference` Foo and add `{...}/packages` to the `RestoreSource`.
 During the build of FooApp you can see that `Mizux.Foo` and
 `runtime.{rid}.Mizux.Foo` are automatically installed in the nuget cache.
 

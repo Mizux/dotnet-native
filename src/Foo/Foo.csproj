@@ -14,7 +14,7 @@
     <PackageLicenseUrl>https://github.com/Mizux/dotnet/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/Mizux/dotnet</PackageProjectUrl>
     <PackageTags>native</PackageTags>
-    <PackageOutputPath>../../package</PackageOutputPath>
+    <PackageOutputPath>../../packages</PackageOutputPath>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 
     <!-- Build Properties -->
@@ -91,9 +91,9 @@
 <!-- Need to add some dependencies so Meta-Project will pull runtime Project(s) -->
   <Target Name="ValidateRuntimePack" BeforeTargets="GenerateNuspec">
     <ItemGroup>
-      <RuntimeLinux Include="../../package/runtime.linux-x64.Mizux.Foo.*.nupkg" />
-      <RuntimeOsx Include="../../package/runtime.osx-x64.Mizux.Foo.*.nupkg" />
-      <RuntimeWin Include="../../package/runtime.win-x64.Mizux.Foo.*.nupkg" />
+      <RuntimeLinux Include="../../packages/runtime.linux-x64.Mizux.Foo.*.nupkg" />
+      <RuntimeOsx Include="../../packages/runtime.osx-x64.Mizux.Foo.*.nupkg" />
+      <RuntimeWin Include="../../packages/runtime.win-x64.Mizux.Foo.*.nupkg" />
     </ItemGroup>
     <Message
       Importance="high"
@@ -125,22 +125,22 @@
   </Target>
 
   <PropertyGroup>
-    <RestoreSources>../../package;$(RestoreSources)</RestoreSources>
+    <RestoreSources>../../packages;$(RestoreSources)</RestoreSources>
   </PropertyGroup>
-  <ItemGroup Condition="Exists('../../package/runtime.linux-x64.Mizux.Foo.1.0.0.nupkg')">
+  <ItemGroup Condition="Exists('../../packages/runtime.linux-x64.Mizux.Foo.1.0.0.nupkg')">
     <PackageReference Include="runtime.linux-x64.Mizux.Foo" Version="1.0.0" />
   </ItemGroup>
-  <ItemGroup Condition="Exists('../../package/runtime.osx-x64.Mizux.Foo.1.0.0.nupkg')">
+  <ItemGroup Condition="Exists('../../packages/runtime.osx-x64.Mizux.Foo.1.0.0.nupkg')">
     <PackageReference Include="runtime.osx-x64.Mizux.Foo" Version="1.0.0" />
   </ItemGroup>
-  <ItemGroup Condition="Exists('../../package/runtime.win-x64.Mizux.Foo.1.0.0.nupkg')">
+  <ItemGroup Condition="Exists('../../packages/runtime.win-x64.Mizux.Foo.1.0.0.nupkg')">
     <PackageReference Include="runtime.win-x64.Mizux.Foo" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <RuntimeLinux Include="../../package/runtime.linux-x64.Mizux.Foo.*.nupkg" />
-    <RuntimeOsx Include="../../package/runtime.osx-x64.Mizux.Foo.*.nupkg" />
-    <RuntimeWin Include="../../package/runtime.win-x64.Mizux.Foo.*.nupkg" />
+    <RuntimeLinux Include="../../packages/runtime.linux-x64.Mizux.Foo.*.nupkg" />
+    <RuntimeOsx Include="../../packages/runtime.osx-x64.Mizux.Foo.*.nupkg" />
+    <RuntimeWin Include="../../packages/runtime.win-x64.Mizux.Foo.*.nupkg" />
     <Content
       Include="runtime.json"
       Condition="Exists('@(RuntimeLinux)') AND Exists('@(RuntimeOsx)') AND Exists('@(RuntimeWin)')">
