@@ -208,7 +208,7 @@ We would like to build a `Mizux.Foo.nupkg` package which depends on several `run
 
 The pipeline should be as follow:  
 note: This pipeline should be run on any architecture,
-provided you have generated the three architecture dependent `Foo.{rid}` nuget package.
+provided you have generated the three architecture dependent `runtime.{rid}.Mizux.Foo.nupkg` nuget packages.
 ![Full Pipeline](doc/full_pipeline.svg)
 ![Legend](doc/legend.svg)
 
