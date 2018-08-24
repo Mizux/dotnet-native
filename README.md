@@ -285,3 +285,12 @@ Image has been generated using [plantuml](http://plantuml.com/):
 plantuml -Tpng doc/{file}.dot
 ```
 So you can find the dot source files in [doc](doc).
+
+# License
+
+Apache 2. See the LICENSE file for details.
+
+# Disclaimer
+
+This is not an official Google product, it is just code that happens to be
+owned by Google.
