@@ -27,3 +27,7 @@ unzip -l packages/Mizux.Foo.*.nupkg
 ## try consuming it
 dotnet build src/FooApp
 dotnet run --project src/FooApp
+
+## Try unit test
+dotnet build test/Foo.Tests
+dotnet test test/Foo.Tests
