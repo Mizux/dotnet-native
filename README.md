@@ -36,23 +36,26 @@ i.e. We won't/can't rely on VS 2017 since we want a portable cross-platform [`do
 
 # Build Process
 To Create a native dependent package we will split it in two parts:
-- A bunch of `runtime.{rid}.Mizux.Foo.nupkg` packages for each [Runtime Identifier (RId)](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog) targeted.
+- A bunch of `runtime.{rid}.Mizux.Foo.nupkg` packages for each 
+[Runtime Identifier (RId)](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog) targeted.
 - A meta-package `Mizux.Foo.nupkg` depending on each runtime packages.
 
-note: [`Microsoft.NetCore.App` packages](https://www.nuget.org/packages?q=Microsoft.NETCore.App) follow this layout.
+note: [`Microsoft.NetCore.App` packages](https://www.nuget.org/packages?q=Microsoft.NETCore.App)
+follow this layout.
 
 We have two use case scenario:
-1. Locally, be able to build a Foo package which **only** target the local `OS Platform`,
-i.e. building for only one [Runtime Identifier (RID)](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog).  
+1. Locally, be able to build a Mizux.Foo package which **only** target the local `OS Platform`,
+i.e. building for only one 
+[Runtime Identifier (RID)](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog).  
 note: This is usefull when the C++ build is a complex process for Windows, Linux and MacOS.  
 i.e. You don't support cross-compilation for the native library.
 
-2. Be able to create a complete cross-platform (ed. platform as multiple rid) Foo package.  
-i.e. First you generate each native Nuget package (`runtime.{rid}.Mizux.Foo.nupkg`) on each native architecture,  
-then copy paste these artifacts on one native machine to generate the meta-package `Mizux.Foo`.
-The pipeline should be as follow:
+2. Be able to create a complete cross-platform (ed. platform as multiple rid) Mizux.Foo package.  
+i.e. First you generate each native Nuget package (`runtime.{rid}.Mizux.Foo.nupkg`) 
+on each native architecture, then copy paste these artifacts on one native machine
+to generate the meta-package `Mizux.Foo`.
 
-## Local Mizux.Foo Package 
+## Local Mizux.Foo Package
 Let's start with scenario 1: Create a *Local* `Mizux.Foo.nupkg` package targeting **one** [Runtime Identifier (RID)](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog).  
 We would like to build a `Mizux.Foo.nupkg` package which only depends on one `runtime.{rid}.Mizux.Foo.nupkg` in order to dev/test locally.  
 
@@ -61,7 +64,7 @@ note: The pipeline will be similar for `osx-x64` and `win-x64` architecture, don
 ![Local Pipeline](doc/local_pipeline.svg)
 ![Legend](doc/legend.svg)
 
-### Building local runtime Mizux.Foo Package 
+### Building local runtime Mizux.Foo Package
 disclaimer: for simplicity, in this git repository, we suppose the `g++` and `swig` process has been already performed.  
 Thus we have the C++ shared library `Native.so` and the swig generated C# wrapper `Native.cs` already available.  
 note: For a C++ CMake cross-platform project sample, take a look at [Mizux/cmake-cpp](https://github.com/Mizux/cmake-cpp).   
