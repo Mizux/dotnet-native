@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Mizux/dotnet.svg?branch=master)](https://travis-ci.org/Mizux/dotnet)
+[![Build Status](https://travis-ci.org/Mizux/dotnet-native.svg?branch=master)](https://travis-ci.org/Mizux/dotnet-native)
 [![Build status](https://ci.appveyor.com/api/projects/status/xbtj9qs2s3d5u2dj/branch/master?svg=true)](https://ci.appveyor.com/project/Mizux/dotnet/branch/master)
 
 # Introduction
