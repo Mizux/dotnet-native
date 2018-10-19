@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/Mizux/dotnet-native.svg?branch=master)](https://travis-ci.org/Mizux/dotnet-native)
-[![Build status](https://ci.appveyor.com/api/projects/status/xbtj9qs2s3d5u2dj/branch/master?svg=true)](https://ci.appveyor.com/project/Mizux/dotnet/branch/master)
+[![Build status](https://ci.appveyor.com/api/projects/status/q105jch2jxxb5t4f/branch/master?svg=true)](https://ci.appveyor.com/project/Mizux/dotnet-native/branch/master)
 
 # Introduction
 Try to build a .NetStandard2.0 native (for win-x64, linux-x64 and osx-x64) nuget package using [`dotnet/cli`](https://github.com/dotnet/cli) and the *new* .csproj format.  
