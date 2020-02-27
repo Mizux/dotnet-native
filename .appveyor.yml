@@ -26,13 +26,15 @@ before_build:
   - dotnet --info
 
 build_script:
-  - dotnet build src\runtime.win-x64.Foo
-  - dotnet pack src\runtime.win-x64.Foo
-  - dotnet build src\Foo
-  - dotnet pack src\Foo
+  - dotnet build runtime.win-x64.Mizux.Foo
+  - dotnet pack runtime.win-x64.Mizux.Foo
+  - dotnet build Mizux.Foo
+  - dotnet pack Mizux.Foo
   - FOR %%I IN (packages\*) DO unzip -l %%I
-  - dotnet build src\FooApp
+  - dotnet build Mizux.Foo.Tests
+  - dotnet build Mizux.FooApp
 
 test_script:
-  - dotnet run --project src\FooApp
+  - dotnet run --project Mizux.Foo.Tests
+  - dotnet run --project Mizux.FooApp
 
