@@ -1,16 +1,13 @@
-sudo: required
-language: generic
+language: cpp
 
 matrix:
   include:
 # Makefile builder
     - os: linux
-      dist: trusty
-      language: cpp
+      dist: xenial
       compiler: gcc
     - os: osx
       osx_image: xode9.4
-      language: cpp
       compiler: clang
 
 install:
