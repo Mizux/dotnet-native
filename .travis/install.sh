@@ -16,6 +16,6 @@ if [ "${TRAVIS_OS_NAME}" == linux ]; then
   installdotnetsdk
 elif [ "${TRAVIS_OS_NAME}" == osx ]; then
   brew update;
-  brew tap caskroom/cask;
+  brew install make;
   brew cask install dotnet-sdk;
 fi
