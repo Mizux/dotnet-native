@@ -8,18 +8,10 @@ fi
 
 dotnet --info
 
-if [ "${TRAVIS_OS_NAME}" == linux ];then
-  dotnet build src/runtime.linux-x64.Foo;
-  dotnet pack src/runtime.linux-x64.Foo;
-elif [ "${TRAVIS_OS_NAME}" == osx ];then
-  dotnet build src/runtime.osx-x64.Foo;
-  dotnet pack src/runtime.osx-x64.Foo;
-fi
-dotnet build src/Foo;
-dotnet pack src/Foo;
-for i in packages/*; do
-  unzip -l $i;
-done
+make build_${TRAVIS_OS_NAME}
+make pack_${TRAVIS_OS_NAME}
 
-dotnet build src/FooApp;
-dotnet run --project src/FooApp;
+make build
+make pack
+
+make test
