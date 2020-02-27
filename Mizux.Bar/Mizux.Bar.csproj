@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Mizux.Bar</AssemblyName>
+
+    <PackageId>Mizux.Bar</PackageId>
+    <PackageDescription>Simple Library</PackageDescription>
+    <PackageTags>sample</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Bar.cs" />
+  </ItemGroup>
+</Project>

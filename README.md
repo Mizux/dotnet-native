@@ -34,11 +34,12 @@ You'll need the ".Net Core SDK 2.1.302" to get the dotnet cli.
 i.e. We won't/can't rely on VS 2017 since we want a portable cross-platform [`dotnet/cli`](https://github.com/dotnet/cli) pipeline. 
 
 # Directory Layout
-* [`src/runtime.linux-x64.Foo`](src/runtime.linux-x64.Foo) Contains the hypothetical C++ linux-x64 shared library with its .NetStandard2.0 wrapper source code.
-* [`src/runtime.osx-x64.Foo`](src/runtime.osx-x64.Foo) Contains the hypothetical C++ osx-x64 shared library with its .NetStandard2.0 wrapper source code.
-* [`src/runtime.win-x64.Foo`](src/runtime.win-x64.Foo) Contains the hypothetical C++ win-x64 shared library with its .NetStandard2.0 wrapper source code.
-* [`src/Foo`](src/Foo) Is a meta .NetStandard2.0 library which should depends on all previous available packages.
-* [`src/FooApp`](src/FooApp) Is a .NetCoreApp2.1 application with a **`PackageReference`** to `Foo` project to test.
+* [`runtime.linux-x64.Mizux.Foo`](runtime.linux-x64.Mizux.Foo) Contains the hypothetical C++ linux-x64 shared library with its .NetStandard2.0 wrapper source code.
+* [`runtime.osx-x64.Mizux.Foo`](runtime.osx-x64.Mizux.Foo) Contains the hypothetical C++ osx-x64 shared library with its .NetStandard2.0 wrapper source code.
+* [`runtime.win-x64.Mizux.Foo`](runtime.win-x64.Mizux.Foo) Contains the hypothetical C++ win-x64 shared library with its .NetStandard2.0 wrapper source code.
+* [`Mizux.Foo`](Mizux.Foo) Is a meta .NetStandard2.0 library which should depends on all previous available packages.
+* [`Mizux.Foo.Tests`](Mizux.Foo.Tests) Is a .NetStandard2.0 unit test which should depends on **`Mizux.Foo`**.
+* [`Mizux.FooApp`](Mizux.FooApp) Is a .NetCoreApp2.1 application with a **`PackageReference`** to `Mizux.Foo` project to test.
 
 note: While Microsoft use `runtime-<rid>.Company.Project` for native libraries naming,
 it is very difficult to get ownership on it, so you should prefer to use`Company.Project.runtime-<rid>` instead since you can have ownership on `Company.*` prefix more easily.
@@ -121,7 +122,7 @@ to add the tag `native` to the
 
 Then you can generate the package using:
 ```bash
-dotnet pack src/runtime.{rid}.Foo
+dotnet pack runtime.{rid}.Mizux.Foo
 ```
 note: this will automatically trigger the `dotnet build`.
 
@@ -174,7 +175,7 @@ Here some dev-note concerning this `Foo.csproj`.
 
 Then you can generate the package using:
 ```bash
-dotnet pack src/.Foo
+dotnet pack Mizux.Foo
 ```
 
 If everything good the package (located where your `PackageOutputPath` was defined) should have this layout:
@@ -193,7 +194,7 @@ We can test everything is working by using the `FooApp` project.
 
 First you can build it using:
 ```
-dotnet build src/FooApp
+dotnet build Mizux.FooApp
 ```
 note: Since FooApp `PackageReference` Foo and add `{...}/packages` to the `RestoreSource`.
 During the build of FooApp you can see that `Mizux.Foo` and
@@ -201,7 +202,7 @@ During the build of FooApp you can see that `Mizux.Foo` and
 
 Then you can run it using:
 ```
-dotnet build src/FooApp
+dotnet build Mizux.FooApp
 ```
 
 You should see something like this
@@ -230,8 +231,8 @@ Like in the previous scenario, on each targeted OS Platform you can build the co
 
 Simply run on each platform
 ```bash
-dotnet build src/runtime.{rid}.Foo
-dotnet pack src/runtime.{rid}.Foo
+dotnet build runtime.{rid}.Mizux.Foo
+dotnet pack runtime.{rid}.Mizux.Foo
 ```
 note: replace `{rid}` by the Runtime Identifier associated to the current OS platform.
 
@@ -244,8 +245,8 @@ packages in `{...}/packages`, the project will depends on each of them.
 
 Once copied all runtime package locally, simply run:
 ```bash
-dotnet build src/Foo
-dotnet pack src/Foo
+dotnet build Mizux.Foo
+dotnet pack Mizux.Foo
 ```
 
 ### Testing Complete Mizux.Foo Package 
@@ -253,7 +254,7 @@ We can test everything is working by using the `FooApp` project.
 
 First you can build it using:
 ```
-dotnet build src/FooApp
+dotnet build Mizux.FooApp
 ```
 note: Since FooApp `PackageReference` Foo and add `{...}/packages` to the `RestoreSource`.
 During the build of FooApp you can see that `Mizux.Foo` and
@@ -261,7 +262,7 @@ During the build of FooApp you can see that `Mizux.Foo` and
 
 Then you can run it using:
 ```
-dotnet run --project src/FooApp
+dotnet run --project Mizux.FooApp
 ```
 
 You should see something like this

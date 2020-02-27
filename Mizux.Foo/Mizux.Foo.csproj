@@ -1,26 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>netstandard2.0</TargetFramework>
     <RuntimeIdentifiers>win-x64;osx-x64;linux-x64</RuntimeIdentifiers>
     <AssemblyName>Mizux.Foo</AssemblyName>
 
-    <!-- Nuget Properties -->
     <PackageId>Mizux.Foo</PackageId>
-    <Version>1.0.0</Version>
-    <Authors>Mizux</Authors>
-    <Description>Meta Package depending on each Native package</Description>
-    <Copyright>Copyright 2018 Google LLC</Copyright>
-    <PackageLicenseUrl>https://github.com/Mizux/dotnet/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/Mizux/dotnet</PackageProjectUrl>
-    <PackageTags>native</PackageTags>
-    <PackageOutputPath>../../packages</PackageOutputPath>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageDescription>Meta Package depending on each Native package</PackageDescription>
 
     <!-- Build Properties -->
     <!-- we want to create a Meta-Project only referencing runtime Project(s) -->
     <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <!--<NoBuild>true</NoBuild>-->
   </PropertyGroup>
@@ -28,9 +17,9 @@
   <!-- Need to copy one of the reference assembly generated -->
   <Target Name="ValidateRuntimeRef" BeforeTargets="Compile">
     <ItemGroup>
-      <RefLinux Include="../runtime.linux-x64.Foo/bin/$(Configuration)/$(TargetFramework)/linux-x64/ref/*.dll" />
-      <RefOsx Include="../runtime.osx-x64.Foo/bin/$(Configuration)/$(TargetFramework)/osx-x64/ref/*.dll" />
-      <RefWin Include="../runtime.win-x64.Foo/bin/x64/$(Configuration)/$(TargetFramework)/win-x64/ref/*.dll" />
+      <RefLinux Include="../runtime.linux-x64.Mizux.Foo/bin/$(Configuration)/$(TargetFramework)/linux-x64/ref/*.dll" />
+      <RefOsx Include="../runtime.osx-x64.Mizux.Foo/bin/$(Configuration)/$(TargetFramework)/osx-x64/ref/*.dll" />
+      <RefWin Include="../runtime.win-x64.Mizux.Foo/bin/x64/$(Configuration)/$(TargetFramework)/win-x64/ref/*.dll" />
     </ItemGroup>
     <Message
       Importance="high"
@@ -57,14 +46,14 @@
       Text="RefAssembly from runtime.win-x64.Mizux.Foo: not found"
       Condition="!Exists('@(RefWin)')" />
     <Error
-      Text="You must locally 'dotnet build' at least one runtime.{rid}.Foo Project."
+      Text="You must locally 'dotnet build' at least one runtime.{rid}.Mizux.Foo Project."
       Condition="!Exists('@(RefLinux)') AND !Exists('@(RefOsx)') AND !Exists('@(RefWin)')" />
   </Target>
 
   <ItemGroup>
-    <RefLinux Include="../runtime.linux-x64.Foo/bin/$(Configuration)/$(TargetFramework)/linux-x64/ref/*.dll" />
-    <RefOsx Include="../runtime.osx-x64.Foo/bin/$(Configuration)/$(TargetFramework)/osx-x64/ref/*.dll" />
-    <RefWin Include="../runtime.win-x64.Foo/bin/x64/$(Configuration)/$(TargetFramework)/win-x64/ref/*.dll" />
+    <RefLinux Include="../runtime.linux-x64.Mizux.Foo/bin/$(Configuration)/$(TargetFramework)/linux-x64/ref/*.dll" />
+    <RefOsx Include="../runtime.osx-x64.Mizux.Foo/bin/$(Configuration)/$(TargetFramework)/osx-x64/ref/*.dll" />
+    <RefWin Include="../runtime.win-x64.Mizux.Foo/bin/x64/$(Configuration)/$(TargetFramework)/win-x64/ref/*.dll" />
     <Content
       Include="@(RefLinux)"
       Condition="Exists('@(RefLinux)')">
@@ -91,9 +80,9 @@
 <!-- Need to add some dependencies so Meta-Project will pull runtime Project(s) -->
   <Target Name="ValidateRuntimePack" BeforeTargets="GenerateNuspec">
     <ItemGroup>
-      <RuntimeLinux Include="../../packages/runtime.linux-x64.Mizux.Foo.*.nupkg" />
-      <RuntimeOsx Include="../../packages/runtime.osx-x64.Mizux.Foo.*.nupkg" />
-      <RuntimeWin Include="../../packages/runtime.win-x64.Mizux.Foo.*.nupkg" />
+      <RuntimeLinux Include="../packages/runtime.linux-x64.Mizux.Foo.*.nupkg" />
+      <RuntimeOsx Include="../packages/runtime.osx-x64.Mizux.Foo.*.nupkg" />
+      <RuntimeWin Include="../packages/runtime.win-x64.Mizux.Foo.*.nupkg" />
     </ItemGroup>
     <Message
       Importance="high"
@@ -120,27 +109,27 @@
       Text="Package runtime.win-x64.Mizux.Foo: not found"
       Condition="!Exists('@(RuntimeWin)')" />
     <Error
-      Text="You must locally 'dotnet pack' at least one runtime.{rid}.Foo Project."
+      Text="You must locally 'dotnet pack' at least one runtime.{rid}.Mizux.Foo Project."
       Condition="!Exists('@(RuntimeLinux)') AND !Exists('@(RuntimeOsx)') AND !Exists('@(RuntimeWin)')" />
   </Target>
 
   <PropertyGroup>
-    <RestoreSources>../../packages;$(RestoreSources);https://api.nuget.org/v3/index.json</RestoreSources>
+    <RestoreSources>../packages;$(RestoreSources);https://api.nuget.org/v3/index.json</RestoreSources>
   </PropertyGroup>
-  <ItemGroup Condition="Exists('../../packages/runtime.linux-x64.Mizux.Foo.1.0.0.nupkg')">
+  <ItemGroup Condition="Exists('../packages/runtime.linux-x64.Mizux.Foo.1.0.0.nupkg')">
     <PackageReference Include="runtime.linux-x64.Mizux.Foo" Version="1.0.0" />
   </ItemGroup>
-  <ItemGroup Condition="Exists('../../packages/runtime.osx-x64.Mizux.Foo.1.0.0.nupkg')">
+  <ItemGroup Condition="Exists('../packages/runtime.osx-x64.Mizux.Foo.1.0.0.nupkg')">
     <PackageReference Include="runtime.osx-x64.Mizux.Foo" Version="1.0.0" />
   </ItemGroup>
-  <ItemGroup Condition="Exists('../../packages/runtime.win-x64.Mizux.Foo.1.0.0.nupkg')">
+  <ItemGroup Condition="Exists('../packages/runtime.win-x64.Mizux.Foo.1.0.0.nupkg')">
     <PackageReference Include="runtime.win-x64.Mizux.Foo" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <RuntimeLinux Include="../../packages/runtime.linux-x64.Mizux.Foo.*.nupkg" />
-    <RuntimeOsx Include="../../packages/runtime.osx-x64.Mizux.Foo.*.nupkg" />
-    <RuntimeWin Include="../../packages/runtime.win-x64.Mizux.Foo.*.nupkg" />
+    <RuntimeLinux Include="../packages/runtime.linux-x64.Mizux.Foo.*.nupkg" />
+    <RuntimeOsx Include="../packages/runtime.osx-x64.Mizux.Foo.*.nupkg" />
+    <RuntimeWin Include="../packages/runtime.win-x64.Mizux.Foo.*.nupkg" />
     <Content
       Include="runtime.json"
       Condition="Exists('@(RuntimeLinux)') AND Exists('@(RuntimeOsx)') AND Exists('@(RuntimeWin)')">

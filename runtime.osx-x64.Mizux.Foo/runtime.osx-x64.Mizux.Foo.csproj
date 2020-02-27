@@ -1,24 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>netstandard2.0</TargetFramework>
     <RuntimeIdentifier>osx-x64</RuntimeIdentifier>
     <AssemblyName>Mizux.Foo</AssemblyName>
 
     <PackageId>runtime.osx-x64.Mizux.Foo</PackageId>
-    <Version>1.0.0</Version>
-    <Authors>Mizux</Authors>
-    <Description>Simulate native wrapper of Foo/Native C++</Description>
-    <Copyright>Copyright 2018 Google LLC</Copyright>
-    <PackageLicenseUrl>https://github.com/Mizux/dotnet/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/Mizux/dotnet</PackageProjectUrl>
+    <PackageDescription>Simulate native wrapper of Foo/Native C++</PackageDescription>
     <PackageTags>native</PackageTags>
-    <PackageOutputPath>../../packages</PackageOutputPath>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
-    <BuildOutputTargetFolder>runtimes/$(RuntimeIdentifier)/lib</BuildOutputTargetFolder>
   </PropertyGroup>
 
   <ItemGroup>
