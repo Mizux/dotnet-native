@@ -13,5 +13,6 @@
 
   <ItemGroup>
     <PackageReference Include="Mizux.Foo" Version="1.0.0" />
+    <Compile Include="Program.cs" />
   </ItemGroup>
 </Project>
