@@ -60,26 +60,32 @@ RIDS = linux osx win
 # $< first prerequist
 # $@ target name
 
+build_targets = $(addprefix build_, $(RIDS))
+pack_targets = $(addprefix pack_, $(RIDS))
 # BUILD
-targets = $(addprefix build_, $(RIDS))
-.PHONY: build $(targets)
-build: Mizux.Foo/Mizux.Foo.csproj $(targets)
+.PHONY: build $(build_targets)
+build: Mizux.Foo/Mizux.Foo.csproj $(pack_targets)
 	dotnet build $<
 
 .SECONDEXPANSION:
-$(targets): build_%: runtime.$$*-x64.Mizux.Foo/runtime.$$*-x64.Mizux.Foo.csproj
+$(build_targets): build_%: runtime.$$*-x64.Mizux.Foo/runtime.$$*-x64.Mizux.Foo.csproj
 	dotnet build $<
 
 # PACK
-targets = $(addprefix pack_, $(RIDS))
-.PHONY: pack $(targets)
-pack: Mizux.Foo/Mizux.Foo.csproj build $(targets)
+.PHONY: pack $(pack_targets)
+pack: packages/Mizux.Foo.1.0.0.nupkg
+
+packages = $(addprefix packages/runtime., $(addsuffix -x64.Mizux.Foo.1.0.0.nupkg,$(RIDS)))
+
+packages/Mizux.Foo.1.0.0.nupkg: Mizux.Foo/Mizux.Foo.csproj $(packages)
 	dotnet pack $<
 	@unzip -l packages/Mizux.Foo.1.0.0.nupkg
 
+$(pack_targets): pack_%: packages/runtime.$$*-x64.Mizux.Foo.1.0.0.nupkg
+
 .SECONDEXPANSION:
-$(targets): pack_%: runtime.$$*-x64.Mizux.Foo/runtime.$$*-x64.Mizux.Foo.csproj build_%
-	dotnet pack $<
+packages/runtime.%-x64.Mizux.Foo.1.0.0.nupkg: runtime.$$*-x64.Mizux.Foo/runtime.$$*-x64.Mizux.Foo.csproj
+	dotnet pack runtime.$*-x64.Mizux.Foo/runtime.$*-x64.Mizux.Foo.csproj
 	unzip -l packages/runtime.$*-x64.Mizux.Foo.1.0.0.nupkg
 
 # TEST
@@ -96,8 +102,8 @@ app: Mizux.FooApp/Mizux.FooApp.csproj pack
 
 # CLEAN
 targets = $(addprefix clean_, $(RIDS))
-.PHONY: clean clean_app $(targets)
-clean: $(targets)
+.PHONY: clean clean_app clean_test $(targets)
+clean: $(targets) clean_app clean_test
 	-rm -rf Mizux.Foo/bin
 	-rm -rf Mizux.Foo/obj
 	-rm -rf packages/Mizux.Foo.1.0.0.nupkg
@@ -112,3 +118,7 @@ $(targets): clean_%:
 clean_app:
 	-rm -rf Mizux.FooApp/bin
 	-rm -rf Mizux.FooApp/obj
+
+clean_test:
+	-rm -rf Mizux.Foo.Tests/bin
+	-rm -rf Mizux.Foo.Tests/obj
