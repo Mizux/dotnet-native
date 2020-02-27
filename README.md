@@ -1,8 +1,14 @@
-[![Build Status](https://travis-ci.org/Mizux/dotnet-native.svg?branch=master)](https://travis-ci.org/Mizux/dotnet-native)
-[![Build status](https://ci.appveyor.com/api/projects/status/q105jch2jxxb5t4f/branch/master?svg=true)](https://ci.appveyor.com/project/Mizux/dotnet-native/branch/master)
+[![Build Status][travis_status]][travis_link]
+[![Build Status][appveyor_status]][appveyor_link]
+
+[travis_status]: https://travis-ci.com/Mizux/dotnet-native.svg?branch=master
+[travis_link]: https://travis-ci.com/Mizux/dotnet-native
+
+[appveyor_status]: https://ci.appveyor.com/api/projects/status/q105jch2jxxb5t4f/branch/master?svg=true
+[appveyor_link]: https://ci.appveyor.com/project/Mizux/dotnet-native/branch/master
 
 # Introduction
-Try to build a .NetStandard2.0 native (for win-x64, linux-x64 and osx-x64) nuget package using [`dotnet/cli`](https://github.com/dotnet/cli) and the *new* .csproj format.  
+This project aim to explain how you build a .NetStandard2.0 native (for win-x64, linux-x64 and osx-x64) nuget multiple package using [`dotnet/cli`](https://github.com/dotnet/cli) and the *new* .csproj format.  
 e.g. You have a cross platform C++ library and a .NetStandard2.0 wrapper on it thanks to SWIG.  
 Then you want to provide a cross-platform Nuget package to consume it in a .NetCoreApp2.1 project...
 
@@ -33,6 +39,9 @@ i.e. We won't/can't rely on VS 2017 since we want a portable cross-platform [`do
 * [`src/runtime.win-x64.Foo`](src/runtime.win-x64.Foo) Contains the hypothetical C++ win-x64 shared library with its .NetStandard2.0 wrapper source code.
 * [`src/Foo`](src/Foo) Is a meta .NetStandard2.0 library which should depends on all previous available packages.
 * [`src/FooApp`](src/FooApp) Is a .NetCoreApp2.1 application with a **`PackageReference`** to `Foo` project to test.
+
+note: While Microsoft use `runtime-<rid>.Company.Project` for native libraries naming,
+it is very difficult to get ownership on it, so you should prefer to use`Company.Project.runtime-<rid>` instead since you can have ownership on `Company.*` prefix more easily.
 
 # Build Process
 To Create a native dependent package we will split it in two parts:
