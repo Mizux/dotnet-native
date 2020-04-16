@@ -5,13 +5,11 @@ set -e
 function install-cmake() {
   # need CMake >= 3.14 (for using the newly swig built-in UseSWIG module)
   if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-    wget https://cmake.org/files/v3.16/cmake-3.16.2.tar.gz
-    tar xzf cmake-3.16.2.tar.gz && rm cmake-3.16.2.tar.gz
-    cd cmake-3.16.2 && ./bootstrap --prefix=/opt/cmake-3.16.2
-    make -j 2
-    sudo make install
-    cd .. && rm -rf cmake-3.16.2
-    export PATH=/opt/cmake-3.16.2/bin:$PATH
+    wget "https://cmake.org/files/v3.16/cmake-3.16.4-Linux-x86_64.sh"
+    chmod a+x cmake-3.16.4-Linux-x86_64.sh
+    ./cmake-3.16.4-Linux-x86_64.sh --prefix=/usr/local/ --skip-license
+    rm cmake-3.16.4-Linux-x86_64.sh
+    export PATH=/usr/local/bin:$PATH
     command -v cmake
     cmake --version
   elif [ "$TRAVIS_OS_NAME" == "osx" ]; then

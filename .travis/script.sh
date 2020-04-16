@@ -8,7 +8,7 @@ dotnet --info
 ##  CONFIGURE  ##
 #################
 if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-  export PATH=/opt/cmake-3.16.2/bin:$PATH
+  export PATH=/usr/local/bin:"${PATH}"
 fi
 if [ "${TRAVIS_OS_NAME}" == osx ];then
   # Installer changes path but won't be picked up in current terminal session
