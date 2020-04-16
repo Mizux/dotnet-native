@@ -2,16 +2,14 @@ version: '{build}'
 shallow_clone: true
 
 platform: x64
+configuration:
+  - Debug
+  - Release
 
 environment:
-  MSBUILD_FLAGS: /verbosity:minimal /maxcpucount
+  MSBUILD_FLAGS: /verbosity:normal /maxcpucount
   matrix:
-# Makefile
-  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-    VS: 2017
-
-  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-    VS: 2015
+  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
 
 matrix:
   fast_finish: false
@@ -19,22 +17,13 @@ matrix:
 before_build:
   - git config --global user.email "ci@appveyor.com"
   - git config --global user.name "CI"
-  - if "%VS%"=="2017" call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
-  - if "%VS%"=="2015" call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64
-  - if "%VS%"=="2015" call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
   - where dotnet
   - dotnet --info
+  - cmake --version
+  - cmake -S. -Bbuild -G "Visual Studio 16 2019" -DCMAKE_BUILD_TYPE=%configuration%
 
 build_script:
-  - dotnet build runtime.win-x64.Mizux.Foo
-  - dotnet pack runtime.win-x64.Mizux.Foo
-  - dotnet build Mizux.Foo
-  - dotnet pack Mizux.Foo
-  - FOR %%I IN (packages\*) DO unzip -l %%I
-  - dotnet build Mizux.Foo.Tests
-  - dotnet build Mizux.FooApp
+  - cmake --build build --config %configuration% --target ALL_BUILD -- %MSBUILD_FLAGS%
 
 test_script:
-  - dotnet run --project Mizux.Foo.Tests
-  - dotnet run --project Mizux.FooApp
-
+  - cmake --build build --config %configuration% --target RUN_TESTS -- %MSBUILD_FLAGS%

@@ -1,0 +1,25 @@
+.dockerignore
+
+# Project Files unneeded by docker
+.git
+.gitignore
+.github
+.appveyor.yml
+.travis.yml
+.travis
+
+ci/cache
+ci/docker
+ci/Makefile
+
+AUTHORS
+LICENSE
+README.md
+doc
+
+# Native cmake build
+build
+
+# Editor directories and files
+*.user
+*.swp

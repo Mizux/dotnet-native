@@ -1,0 +1,32 @@
+name: Docker
+
+on: [push, pull_request]
+
+jobs:
+  Distros:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        distro: [alpine, archlinux, centos, debian, fedora, opensuse, ubuntu]
+      fail-fast: false
+    env:
+      DISTRO: ${{ matrix.distro }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build env image
+      run: make --directory=ci ${DISTRO}_env
+    - name: Build devel project
+      run: make --directory=ci ${DISTRO}_devel
+    - name: Build project
+      run: make --directory=ci ${DISTRO}_build
+    - name: Test project
+      run: make --directory=ci ${DISTRO}_test
+
+    - name: Build env Install
+      run: make --directory=ci ${DISTRO}_install_env
+    - name: Build devel Install
+      run: make --directory=ci ${DISTRO}_install_devel
+    - name: Build Install
+      run: make --directory=ci ${DISTRO}_install_build
+    - name: Test Install
+      run: make --directory=ci ${DISTRO}_install_test
