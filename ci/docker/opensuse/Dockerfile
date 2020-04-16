@@ -45,7 +45,7 @@ WORKDIR /home/sample
 COPY --from=build /home/project/build/dotnet/packages/*.nupkg ./
 
 FROM install_env AS install_devel
-COPY ci/samples/dotnet .
+COPY ci/samples .
 
 FROM install_devel AS install_build
 RUN dotnet build
