@@ -1,3 +1,8 @@
+![Docker](https://github.com/Mizux/dotnet-native/workflows/Docker/badge.svg)
+![.Net Linux CI](https://github.com/Mizux/dotnet-native/workflows/.Net%20Linux%20CI/badge.svg)
+![.Net MacOS CI](https://github.com/Mizux/dotnet-native/workflows/.Net%20MacOS%20CI/badge.svg)
+![.Net Windows CI](https://github.com/Mizux/dotnet-native/workflows/.Net%20Windows%20CI/badge.svg)
+
 [![Build Status][travis_status]][travis_link]
 [![Build Status][appveyor_status]][appveyor_link]
 
