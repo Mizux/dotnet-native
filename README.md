@@ -291,6 +291,7 @@ Few links on the subject...
 Some issue related to this process
 - [Nuget needs to support dependencies specific to target runtime #1660](https://github.com/NuGet/Home/issues/1660)
 - [Improve documentation on creating native packages #238](https://github.com/NuGet/docs.microsoft.com-nuget/issues/238)
+- [Guide for packaging C# library using P/Invoke](https://github.com/NuGet/Home/issues/8623)
 
 # Misc
 Image has been generated using [plantuml](http://plantuml.com/):
