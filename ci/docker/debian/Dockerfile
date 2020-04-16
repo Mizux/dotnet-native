@@ -15,7 +15,6 @@ RUN wget "https://cmake.org/files/v3.16/cmake-3.16.4-Linux-x86_64.sh" \
 && ./cmake-3.16.4-Linux-x86_64.sh --prefix=/usr/local/ --skip-license \
 && rm cmake-3.16.4-Linux-x86_64.sh
 # Install swig
-FROM base AS swig
 RUN apt-get update -qq \
 && apt-get install -yq swig \
 && apt-get clean \

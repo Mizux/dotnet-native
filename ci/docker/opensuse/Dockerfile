@@ -9,7 +9,6 @@ RUN zypper update -y \
 && zypper clean -a
 ENV CC=gcc CXX=g++
 # Install swig
-FROM base AS swig
 RUN zypper update -y \
 && zypper install -y swig \
 && zypper clean -a

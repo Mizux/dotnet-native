@@ -10,7 +10,6 @@ RUN dnf -y update \
 && dnf -y install gcc-c++ cmake \
 && dnf clean all
 # Install swig
-FROM base AS swig
 RUN dnf -y update \
 && dnf -y install swig \
 && dnf clean all
