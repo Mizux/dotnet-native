@@ -1,7 +1,7 @@
 using System;
 using Xunit;
 
-using Mizux.DotnetNative.Foo;
+using Mizux.Foo.Foo;
 
 namespace Mizux.Sample.Tests {
   public class FooTest {

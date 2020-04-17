@@ -1,6 +1,3 @@
-# Use latest UseSWIG module
-cmake_minimum_required(VERSION 3.14)
-
 # Will need swig
 set(CMAKE_SWIG_FLAGS)
 find_package(SWIG REQUIRED)
@@ -19,22 +16,22 @@ else()
 endif()
 
 # Create the native library
-add_library(mizux-dotnetnative-native SHARED "")
-set_target_properties(mizux-dotnetnative-native PROPERTIES
+add_library(mizux-foo-native SHARED "")
+set_target_properties(mizux-foo-native PROPERTIES
   PREFIX ""
   POSITION_INDEPENDENT_CODE ON)
 # note: macOS is APPLE and also UNIX !
 if(APPLE)
-  set_target_properties(mizux-dotnetnative-native PROPERTIES INSTALL_RPATH "@loader_path")
+  set_target_properties(mizux-foo-native PROPERTIES INSTALL_RPATH "@loader_path")
 elseif(UNIX)
-  set_target_properties(mizux-dotnetnative-native PROPERTIES INSTALL_RPATH "$ORIGIN")
+  set_target_properties(mizux-foo-native PROPERTIES INSTALL_RPATH "$ORIGIN")
 endif()
 
 # Swig wrap all libraries
-set(DOTNET Mizux.DotnetNative)
+set(DOTNET Mizux.Foo)
 foreach(SUBPROJECT IN ITEMS Foo)
   add_subdirectory(${SUBPROJECT}/dotnet)
-  target_link_libraries(mizux-dotnetnative-native PRIVATE dotnet_${SUBPROJECT})
+  target_link_libraries(mizux-foo-native PRIVATE dotnet_${SUBPROJECT})
 endforeach()
 
 ############################
@@ -62,7 +59,7 @@ file(GENERATE OUTPUT dotnet/$<CONFIG>/replace_runtime.cmake
   STRING(REPLACE \"@DOTNET@\" \"${DOTNET}\" input \"\${input}\")
   STRING(REPLACE \"@DOTNET_NATIVE@\" \"${DOTNET_NATIVE}\" input \"\${input}\")
   STRING(REPLACE \"@Foo@\" \"$<TARGET_FILE:Foo>\" input \"\${input}\")
-  STRING(REPLACE \"@native@\" \"$<TARGET_FILE:mizux-dotnetnative-native>\" input \"\${input}\")
+  STRING(REPLACE \"@native@\" \"$<TARGET_FILE:mizux-foo-native>\" input \"\${input}\")
   FILE(WRITE ${DOTNET_NATIVE}/${DOTNET_NATIVE}.csproj \"\${input}\")"
   )
 
@@ -75,7 +72,7 @@ add_custom_command(
 
 add_custom_target(dotnet_native
   DEPENDS
-  mizux-dotnetnative-native
+  mizux-foo-native
   dotnet/${DOTNET_NATIVE}/${DOTNET_NATIVE}.csproj
   COMMAND ${CMAKE_COMMAND} -E make_directory packages
   COMMAND ${DOTNET_EXECUTABLE} build -c Release /p:Platform=x64 ${DOTNET_NATIVE}/${DOTNET_NATIVE}.csproj
