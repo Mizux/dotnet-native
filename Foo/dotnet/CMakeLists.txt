@@ -1,6 +1,6 @@
 set_property(SOURCE foo.i PROPERTY CPLUSPLUS ON)
 set_property(SOURCE foo.i PROPERTY COMPILE_OPTIONS
-  -namespace ${DOTNET}.Foo
+  -namespace ${DOTNET}
   -dllimport mizux-foo-native)
 swig_add_library(dotnet_Foo
 	TYPE OBJECT
