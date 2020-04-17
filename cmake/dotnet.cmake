@@ -34,12 +34,12 @@ foreach(SUBPROJECT IN ITEMS Foo)
   target_link_libraries(mizux-foo-native PRIVATE dotnet_${SUBPROJECT})
 endforeach()
 
-############################
-##  .Net Runtime Package  ##
-############################
 file(COPY dotnet/logo.png DESTINATION dotnet)
 file(COPY dotnet/Directory.Build.props DESTINATION dotnet)
 
+###############################
+##  Mizux.Foo.runtime.<RID>  ##
+###############################
 if(APPLE)
   set(RUNTIME_IDENTIFIER osx-x64)
 elseif(UNIX)
@@ -70,7 +70,7 @@ add_custom_command(
   WORKING_DIRECTORY dotnet
   )
 
-add_custom_target(dotnet_native
+add_custom_target(dotnet_native_package
   DEPENDS
   mizux-foo-native
   dotnet/${DOTNET_NATIVE}/${DOTNET_NATIVE}.csproj
@@ -80,7 +80,9 @@ add_custom_target(dotnet_native
   WORKING_DIRECTORY dotnet
   )
 
-# Pure .Net Package
+#################
+##  Mizux.Foo  ##
+#################
 file(GENERATE OUTPUT dotnet/$<CONFIG>/replace.cmake
   CONTENT
   "FILE(READ ${PROJECT_SOURCE_DIR}/dotnet/${DOTNET}.csproj.in input)
@@ -99,9 +101,91 @@ add_custom_command(
 
 add_custom_target(dotnet_package ALL
   DEPENDS
-  dotnet_native
-  dotnet/${DOTNET}/${DOTNET}.csproj
+    dotnet_native_package
+    dotnet/${DOTNET}/${DOTNET}.csproj
   COMMAND ${DOTNET_EXECUTABLE} build -c Release /p:Platform=x64 ${DOTNET}/${DOTNET}.csproj
   COMMAND ${DOTNET_EXECUTABLE} pack -c Release ${DOTNET}/${DOTNET}.csproj
   WORKING_DIRECTORY dotnet
   )
+
+######################
+##  Mizux.FooTests  ##
+######################
+add_custom_command(
+  OUTPUT dotnet/${DOTNET}Tests/FooTests.cs
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${DOTNET}Tests
+  COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/dotnet/FooTests.cs ${DOTNET}Tests/FooTests.cs
+  WORKING_DIRECTORY dotnet
+  )
+
+file(GENERATE OUTPUT dotnet/$<CONFIG>/replace_FooTests.cmake
+  CONTENT
+  "FILE(READ ${PROJECT_SOURCE_DIR}/dotnet/${DOTNET}Tests.csproj.in input)
+  STRING(REPLACE \"@PROJECT_VERSION@\" \"${PROJECT_VERSION}\" input \"\${input}\")
+  STRING(REPLACE \"@DOTNET@\" \"${DOTNET}\" input \"\${input}\")
+  STRING(REPLACE \"@DOTNET_PACKAGES_DIR@\" \"${PROJECT_BINARY_DIR}/dotnet/packages\" input \"\${input}\")
+  FILE(WRITE ${DOTNET}Tests/${DOTNET}Tests.csproj \"\${input}\")"
+  )
+
+add_custom_command(
+  OUTPUT dotnet/${DOTNET}Tests/${DOTNET}Tests.csproj
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${DOTNET}Tests
+  COMMAND ${CMAKE_COMMAND} -P ./$<CONFIG>/replace_FooTests.cmake
+  WORKING_DIRECTORY dotnet
+  )
+
+add_custom_target(FooTests ALL
+  DEPENDS
+    dotnet_package
+    dotnet/${DOTNET}Tests/FooTests.cs
+    dotnet/${DOTNET}Tests/${DOTNET}Tests.csproj
+  COMMAND ${DOTNET_EXECUTABLE} build -c Release /p:Platform=x64 ${DOTNET}Tests/${DOTNET}Tests.csproj
+  WORKING_DIRECTORY dotnet
+  )
+
+if(BUILD_TESTING)
+  add_test(NAME FooTestsUT
+    COMMAND ${DOTNET_EXECUTABLE} test -c Release ${DOTNET}Tests/${DOTNET}Tests.csproj
+    WORKING_DIRECTORY dotnet)
+endif()
+
+####################
+##  Mizux.FooApp  ##
+####################
+add_custom_command(
+  OUTPUT dotnet/${DOTNET}App/FooApp.cs
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${DOTNET}App
+  COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/dotnet/FooApp.cs ${DOTNET}App/FooApp.cs
+  WORKING_DIRECTORY dotnet
+  )
+
+file(GENERATE OUTPUT dotnet/$<CONFIG>/replace_FooApp.cmake
+  CONTENT
+  "FILE(READ ${PROJECT_SOURCE_DIR}/dotnet/${DOTNET}App.csproj.in input)
+  STRING(REPLACE \"@PROJECT_VERSION@\" \"${PROJECT_VERSION}\" input \"\${input}\")
+  STRING(REPLACE \"@DOTNET@\" \"${DOTNET}\" input \"\${input}\")
+  STRING(REPLACE \"@DOTNET_PACKAGES_DIR@\" \"${PROJECT_BINARY_DIR}/dotnet/packages\" input \"\${input}\")
+  FILE(WRITE ${DOTNET}App/${DOTNET}App.csproj \"\${input}\")"
+  )
+
+add_custom_command(
+  OUTPUT dotnet/${DOTNET}App/${DOTNET}App.csproj
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${DOTNET}App
+  COMMAND ${CMAKE_COMMAND} -P ./$<CONFIG>/replace_FooApp.cmake
+  WORKING_DIRECTORY dotnet
+  )
+
+add_custom_target(FooApp ALL
+  DEPENDS
+    dotnet_package
+    dotnet/${DOTNET}App/FooApp.cs
+    dotnet/${DOTNET}App/${DOTNET}App.csproj
+  COMMAND ${DOTNET_EXECUTABLE} build -c Release /p:Platform=x64 ${DOTNET}App/${DOTNET}App.csproj
+  WORKING_DIRECTORY dotnet
+  )
+
+if(BUILD_TESTING)
+  add_test(NAME FooAppUT
+    COMMAND ${DOTNET_EXECUTABLE} run -c Release --project ${DOTNET}App/${DOTNET}App.csproj
+    WORKING_DIRECTORY dotnet)
+endif()
