@@ -1,10 +1,19 @@
-![Docker](https://github.com/Mizux/dotnet-native/workflows/Docker/badge.svg)
-![.Net Linux CI](https://github.com/Mizux/dotnet-native/workflows/.Net%20Linux%20CI/badge.svg)
-![.Net MacOS CI](https://github.com/Mizux/dotnet-native/workflows/.Net%20MacOS%20CI/badge.svg)
-![.Net Windows CI](https://github.com/Mizux/dotnet-native/workflows/.Net%20Windows%20CI/badge.svg)
+[![Build Status][docker_status]][docker_link]
+[![Status][dotnet_linux_svg]][dotnet_linux_link]
+[![Status][dotnet_osx_svg]][dotnet_osx_link]
+[![Status][dotnet_win_svg]][dotnet_win_link]
 
 [![Build Status][travis_status]][travis_link]
 [![Build Status][appveyor_status]][appveyor_link]
+
+[docker_status]: https://github.com/Mizux/dotnet-native/workflows/Docker/badge.svg
+[docker_link]: https://github.com/Mizux/dotnet-native/actions?query=workflow%3A"Docker"
+[dotnet_linux_svg]: https://github.com/Mizux/dotnet-native/workflows/.Net%20Linux%20CI/badge.svg
+[dotnet_linux_link]: https://github.com/Mizux/dotnet-native/actions?query=workflow%3A".Net+Linux+CI"
+[dotnet_osx_svg]: https://github.com/Mizux/dotnet-native/workflows/.Net%20MacOS%20CI/badge.svg
+[dotnet_osx_link]: https://github.com/Mizux/dotnet-native/actions?query=workflow%3A".Net+MacOS+CI"
+[dotnet_win_svg]: https://github.com/Mizux/dotnet-native/workflows/.Net%20Windows%20CI/badge.svg
+[dotnet_win_link]: https://github.com/Mizux/dotnet-native/actions?query=workflow%3A".Net+Windows+CI"
 
 [travis_status]: https://travis-ci.com/Mizux/dotnet-native.svg?branch=master
 [travis_link]: https://travis-ci.com/Mizux/dotnet-native
