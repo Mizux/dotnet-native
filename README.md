@@ -59,18 +59,26 @@ The project layout is as follow:
 * [dotnet](dotnet) Root directory for .Net template files
   * [`Mizux.Foo.runtime.csproj.in`](dotnet/Mizux.Foo.runtime.csproj.in) csproj template for the .Net "native" (i.e. RID dependent) package.
   * [`Mizux.Foo.csproj.in`](dotnet/Mizux.Foo.csproj.in) csproj template for the .Net package.
-
-note: While Microsoft use `runtime-<rid>.Company.Project` for native package naming,
-it is very difficult to get ownership on it, so you should prefer to use`Company.Project.runtime-<rid>` instead since you can have ownership on `Company.*` prefix more easily.
+  * [`Mizux.FooTests.csproj.in`](dotnet/Mizux.FooTests.csproj.in) csproj template for the Mizux.FooTests project.
+  * [`FooTests.cs`](FooTests.cs) Code of the Mizux.FooTests project.
+  * [`Mizux.FooApp.csproj.in`](dotnet/Mizux.FooApp.csproj.in) csproj template for the Mizux.FooApp app.
+  * [`FooApp.cs`](FooApp.cs) Code of the Mizux.FooApp app.
 
 # Build Process
 To Create a native dependent package we will split it in two parts:
 - A bunch of `Mizux.Foo.runtime.{rid}.nupkg` packages for each 
-[Runtime Identifier (RId)](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog) targeted.
-- A meta-package `Mizux.Foo.nupkg` depending on each runtime packages.
+[Runtime Identifier (RId)](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog) targeted containing the native libraries.
+- A generic package `Mizux.Foo.nupkg` depending on each runtime packages and
+containing the managed .Net code.
+Actually, You don't need a specific variant of .Net Standard wrapper, simply omit the library extension and .Net magic will pick
+the correct native library.  
+ref: https://www.mono-project.com/docs/advanced/pinvoke/#library-names
 
 note: [`Microsoft.NetCore.App` packages](https://www.nuget.org/packages?q=Microsoft.NETCore.App)
 follow this layout.
+
+note: While Microsoft use `runtime-<rid>.Company.Project` for native package naming,
+it is very difficult to get ownership on it, so you should prefer to use`Company.Project.runtime-<rid>` instead since you can have ownership on `Company.*` prefix more easily.
 
 We have two use case scenario:
 1. Locally, be able to build a Mizux.Foo package which **only** target the local `OS Platform`,
@@ -85,7 +93,7 @@ on each native architecture, then copy paste these artifacts on one native machi
 to generate the meta-package `Mizux.Foo`.
 
 ## Local Mizux.Foo Package
-Let's start with scenario 1: Create a *Local* `Mizux.Foo.nupkg` package targeting **one** [Runtime Identifier (RID)](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog).  
+Let's start with scenario 1: Create a *Local only* `Mizux.Foo.nupkg` package targeting **one** [Runtime Identifier (RID)](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog).  
 We would like to build a `Mizux.Foo.nupkg` package which only depends on one `Mizux.Foo.runtime.{rid}.nupkg` in order to dev/test locally.  
 
 The pipeline for `linux-x64` should be as follow:  
@@ -94,35 +102,28 @@ note: The pipeline will be similar for `osx-x64` and `win-x64` architecture, don
 ![Legend](doc/legend.svg)
 
 ### Building local runtime Mizux.Foo Package
-disclaimer: for simplicity, in this git repository, we suppose the `g++` and `swig` process has been already performed.  
-Thus we have the C++ shared library `Native.so` and the swig generated C# wrapper `Native.cs` already available.  
+disclaimer: In this git repository, we use `CMake` and `SWIG`.  
+Thus we have the C++ shared library `libFoo.so` and the SWIG generated .Net wrapper `Foo.cs`.  
 note: For a C++ CMake cross-platform project sample, take a look at [Mizux/cmake-cpp](https://github.com/Mizux/cmake-cpp).   
 note: For a C++/Swig CMake cross-platform project sample, take a look at [Mizux/cmake-swig](https://github.com/Mizux/cmake-swig). 
 
 So first let's create the local `Mizux.Foo.runtime.{rid}.nupkg` nuget package.
 
 Here some dev-note concerning this `Mizux.Foo.runtime.{rid}.csproj`.
-- `AssemblyName` must be `Mizux.Foo.dll` i.e. all {rid} projects **must** generate an assembly with the **same** name (i.e. no {rid} in the name)
-  ```xml
-  <RuntimeIdentifier>{rid}</RuntimeIdentifier>
-  <AssemblyName>Mizux.Foo</AssemblyName>
-  <PackageId>runtime.{rid}.Mizux.Foo</PackageId>
-  ```
 - Once you specify a `RuntimeIdentifier` then `dotnet build` or `dotnet build -r {rid}` 
 will behave identically (save you from typing it).
-  - note: not the case if you use `RuntimeIdentifiers` (notice the 's')
+  - note: it is **NOT** the case if you use `RuntimeIdentifiers` (notice the 's')
 - It is [recommended](https://docs.microsoft.com/en-us/nuget/create-packages/native-packages)
 to add the tag `native` to the 
 [nuget package tags](https://docs.microsoft.com/en-us/dotnet/core/tools/csproj#packagetags)
   ```xml
   <PackageTags>native</PackageTags>
   ```
-- Specify the output target folder for having the assembly output in `runtimes/{rid}/lib/{framework}` in the nupkg
+- This package is a runtime package so we don't want to ship an empty assembly file:
   ```xml
-  <BuildOutputTargetFolder>runtimes/$(RuntimeIdentifier)/lib</BuildOutputTargetFolder>
+  <IncludeBuildOutput>false</IncludeBuildOutput>
   ```
-  note: Every files with an extension different from `.dll` will be filter out by nuget.
-- Add the native shared library to the nuget package in the repository `runtimes/{rid}/native`. e.g. for linux-x64:
+- Add the native (i.e. C++) libraries to the nuget package in the repository `runtimes/{rid}/native`. e.g. for linux-x64:
   ```xml
   <Content Include="*.so">
     <PackagePath>runtimes/linux-x64/native/%(Filename)%(Extension)</PackagePath>
@@ -130,13 +131,9 @@ to add the tag `native` to the
     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
   </Content>
   ```
-- Generate the runtime package to a defined directory (i.e. so later in meta Foo package we will be able to locate it)
+- Generate the runtime package to a defined directory (i.e. so later in Mizux.Foo package we will be able to locate it)
   ```xml
   <PackageOutputPath>{...}/packages</PackageOutputPath>
-  ```
-- Generate the Reference Assembly (but don't include it to this runtime nupkg !, see below for explanation) using:
-  ```xml
-  <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
   ```
 
 Then you can generate the package using:
@@ -163,31 +160,23 @@ tips: since nuget package are zip archive you can use `unzip -l <package>.nupkg`
 So now, let's create the local `Mizux.Foo.nupkg` nuget package which will depend on our previous runtime package.
 
 Here some dev-note concerning this `Foo.csproj`.
-- This package is a meta-package so we don't want to ship an empty assembly file:
-  ```xml
-  <IncludeBuildOutput>false</IncludeBuildOutput>
-  ```
 - Add the previous package directory:
   ```xml
   <RestoreSources>{...}/packages;$(RestoreSources)</RestoreSources>
   ```
 - Add dependency (i.e. `PackageReference`) on each runtime package(s) availabe:
   ```xml
-  <ItemGroup Condition="Exists('{...}/packages/Mizux.Foo.runtime.linux-x64.1.0.0.nupkg')">
-    <PackageReference Include="Mizux.Foo.runtime.linux-x64" Version="1.0.0" />
+  <ItemGroup>
+    <RuntimeLinux Include="{...}/packages/Mizux.Foo.runtime.linux-x64.*.nupkg"/>
+    <RuntimeOsx   Include="{...}/packages/Mizux.Foo.runtime.osx-x64.*.nupkg"/>
+    <RuntimeWin   Include="{...}/packages/Mizux.Foo.runtime.win-x64.*.nupkg"/>
+    <PackageReference Include="Mizux.Foo.runtime.linux-x64" Version="1.0" Condition="Exists('@(RuntimeLinux)')"/>
+    <PackageReference Include="Mizux.Foo.runtime.osx-x64"   Version="1.0" Condition="Exists('@(RuntimeOsx)')"  />
+    <PackageReference Include="Mizux.Foo.runtime.win-x64"   Version="1.0" Condition="Exists('@(RuntimeWin)')"  />
   </ItemGroup>
   ```
   Thanks to the `RestoreSource` we can work locally we our just builded package
   without the need to upload it on [nuget.org](https://www.nuget.org/).
-- To expose the .Net Surface API the `Foo.csproj` must contains a least one 
-[Reference Assembly](https://docs.microsoft.com/en-us/nuget/reference/nuspec#explicit-assembly-references) of the previously rumtime package.
-  ```xml
-  <Content Include="../Mizux.Foo.runtime.{rid}/bin/$(Configuration)/$(TargetFramework)/{rid}/ref/*.dll">
-    <PackagePath>ref/$(TargetFramework)/%(Filename)%(Extension)</PackagePath>
-    <Pack>true</Pack>
-    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-  </Content>
-  ```
 
 Then you can generate the package using:
 ```bash
@@ -201,15 +190,12 @@ If everything good the package (located where your `PackageOutputPath` was defin
 \- lib
    \- {framework}
       \- Mizux.Foo.dll
-\- ref
-   \- {framework}
-      \- Mizux.Foo.dll
 ... 
 ```
 note: `{framework}` could be `netstandard2.0` or/and `netstandard2.1`
 
 ### Testing local Mizux.Foo Package 
-We can test everything is working by using the `FooApp` project.
+We can test everything is working by using the `Mizux.FooApp` or `Mizux.FooTests` project.
 
 First you can build it using:
 ```
@@ -221,42 +207,44 @@ During the build of FooApp you can see that `Mizux.Foo` and
 
 Then you can run it using:
 ```
-dotnet build Mizux.FooApp
+dotnet run --project .../Mizux.FooApp/Mizux.FooApp.csproj
 ```
+note: Contrary to `dotnet build` and `dotnet pack` you must use `--project`
+before the `.csproj` path (let's call it "dotnet cli command consistency") 
 
 You should see something like this
 ```bash
 [1] Enter FooApp
-[2] Enter Foo
-[3] Enter Foo.{rid}
-[3] Exit Foo.{rid}
-[2] Exit Foo
+[2] Enter Foo::hello(int)
+[3] Enter fooHello(int)
+[3] Exit fooHello(int)
+[2] Exit Foo::hello(int)
 [1] Exit FooApp
 ```
 
 ## Complete Mizux.Foo Package
 Let's start with scenario 2: Create a *Complete* `Mizux.Foo.nupkg` package targeting multiple [Runtime Identifier (RID)](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog).  
-We would like to build a `Mizux.Foo.nupkg` package which depends on several `runtime.{rid}.Mizux.Foo.nupkg`.  
+We would like to build a `Mizux.Foo.nupkg` package which depends on several `Mizux.Foo.runtime.{rid}.nupkg`.  
 
 The pipeline should be as follow:  
 note: This pipeline should be run on any architecture,
-provided you have generated the three architecture dependent `runtime.{rid}.Mizux.Foo.nupkg` nuget packages.
+provided you have generated the three architecture dependent `Mizux.Foo.runtime.{rid}.nupkg` nuget packages.
 ![Full Pipeline](doc/full_pipeline.svg)
 ![Legend](doc/legend.svg)
 
 ### Building All runtime Mizux.Foo Package 
 Like in the previous scenario, on each targeted OS Platform you can build the coresponding
-`runtime.{rid}.Mizux.Foo.nupkg` package.
+`Mizux.Foo.runtime.{rid}.nupkg` package.
 
 Simply run on each platform
 ```bash
-dotnet build runtime.{rid}.Mizux.Foo
-dotnet pack runtime.{rid}.Mizux.Foo
+cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release
+cmake --build build --config Release
 ```
 note: replace `{rid}` by the Runtime Identifier associated to the current OS platform.
 
 Then on one machine used, you copy all other packages in the `{...}/packages` so
-when building `Foo.csproj` we can have access to all package...
+when building `Mizux.Foo.csproj` we can have access to all package...
 
 ### Building Complete Mizux.Foo Package 
 This is the same step than in the previous scenario, since we "see" all runtime
@@ -269,28 +257,28 @@ dotnet pack Mizux.Foo
 ```
 
 ### Testing Complete Mizux.Foo Package 
-We can test everything is working by using the `FooApp` project.
+We can test everything is working by using the `Mizux.FooApp` or `Mizux.FooTests` project.
 
 First you can build it using:
 ```
-dotnet build Mizux.FooApp
+dotnet build Mizux.FooApp/Mizux.FooApp.csproj
 ```
-note: Since FooApp `PackageReference` Foo and add `{...}/packages` to the `RestoreSource`.
-During the build of FooApp you can see that `Mizux.Foo` and
-`runtime.{rid}.Mizux.Foo` are automatically installed in the nuget cache.
+note: Since Mizux.FooApp `PackageReference` Mizux.Foo and add `{...}/packages` to the `RestoreSource`.
+During the build of Mizux.FooApp you can see that `Mizux.Foo` and
+`Mizux.Foo.runtime.{rid}` are automatically installed in the nuget cache.
 
 Then you can run it using:
 ```
-dotnet run --project Mizux.FooApp
+dotnet run --project .../Mizux.FooApp/Mizux.FooApp.csproj
 ```
 
 You should see something like this
 ```bash
 [1] Enter FooApp
-[2] Enter Foo
-[3] Enter Foo.{rid}
-[3] Exit Foo.{rid}
-[2] Exit Foo
+[2] Enter Foo::hello(int)
+[3] Enter fooHello(int)
+[3] Exit fooHello(int)
+[2] Exit Foo::hello(int)
 [1] Exit FooApp
 ```
 

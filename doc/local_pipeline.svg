@@ -41,7 +41,7 @@
 <text text-anchor="middle" x="442" y="-675.3" font-family="Times,serif" font-size="14.00">fooCSHARP_wrap.cxx</text>
 </g>
 <!-- SWIG&#45;&gt;WRAPPER_CPP -->
-<g id="edge14" class="edge">
+<g id="edge13" class="edge">
 <title>SWIG&#45;&gt;WRAPPER_CPP</title>
 <path fill="none" stroke="black" stroke-width="2" d="M579.85,-679C568.1,-679 553.58,-679 538.41,-679"/>
 <polygon fill="black" stroke="black" stroke-width="2" points="538.37,-675.5 528.37,-679 538.37,-682.5 538.37,-675.5"/>
@@ -56,7 +56,7 @@
 <text text-anchor="middle" x="447" y="-301.3" font-family="Times,serif" font-size="14.00">Foo.cs</text>
 </g>
 <!-- SWIG&#45;&gt;FOO_CS -->
-<g id="edge13" class="edge">
+<g id="edge14" class="edge">
 <title>SWIG&#45;&gt;FOO_CS</title>
 <path fill="none" stroke="black" stroke-width="2" d="M614.44,-660.95C634.76,-611.48 685.69,-465.59 623,-374 592.98,-330.14 530.32,-314.56 488.44,-309.03"/>
 <polygon fill="black" stroke="black" stroke-width="2" points="488.62,-305.53 478.28,-307.83 487.8,-312.48 488.62,-305.53"/>
@@ -177,14 +177,14 @@
 <text text-anchor="middle" x="365" y="-454.8" font-family="Times,serif" font-size="14.00">Content</text>
 </g>
 <!-- WRAPPER_LIB&#45;&gt;RUNTIME_NUPKG -->
-<g id="edge19" class="edge">
+<g id="edge18" class="edge">
 <title>WRAPPER_LIB&#45;&gt;RUNTIME_NUPKG</title>
 <path fill="none" stroke="black" stroke-dasharray="5,2" d="M453.19,-483.78C466.03,-473.49 480.04,-459.41 487,-443 498.97,-414.77 506.25,-397.88 487,-374 465.21,-346.97 390.2,-330.13 319.08,-319.97"/>
 <polygon fill="black" stroke="black" points="319.46,-316.49 309.07,-318.58 318.5,-323.42 319.46,-316.49"/>
 <text text-anchor="middle" x="515" y="-389.3" font-family="Times,serif" font-size="14.00">pack</text>
 </g>
 <!-- WRAPPER_LIB&#45;&gt;FOO_CS -->
-<g id="edge18" class="edge">
+<g id="edge19" class="edge">
 <title>WRAPPER_LIB&#45;&gt;FOO_CS</title>
 <path fill="none" stroke="black" stroke-dasharray="5,2" d="M503.87,-483.91C523.59,-475.14 542,-462.16 552,-443 566.19,-415.81 563.74,-402.33 552,-374 540.77,-346.9 512.16,-329.47 487.64,-319.04"/>
 <polygon fill="black" stroke="black" points="488.72,-315.71 478.14,-315.26 486.13,-322.21 488.72,-315.71"/>
@@ -210,16 +210,16 @@
 <!-- FOO_CSPROJ -->
 <g id="node12" class="node">
 <title>FOO_CSPROJ</title>
-<polygon fill="darkviolet" stroke="black" points="381,-236 297,-236 297,-200 387,-200 387,-230 381,-236"/>
-<polyline fill="none" stroke="black" points="381,-236 381,-230 "/>
-<polyline fill="none" stroke="black" points="387,-230 381,-230 "/>
-<text text-anchor="middle" x="342" y="-214.3" font-family="Times,serif" font-size="14.00">Foo.csproj</text>
+<polygon fill="darkviolet" stroke="black" points="405,-236 273,-236 273,-200 411,-200 411,-230 405,-236"/>
+<polyline fill="none" stroke="black" points="405,-236 405,-230 "/>
+<polyline fill="none" stroke="black" points="411,-230 405,-230 "/>
+<text text-anchor="middle" x="342" y="-214.3" font-family="Times,serif" font-size="14.00">Mizux.Foo.csproj</text>
 </g>
 <!-- RUNTIME_NUPKG&#45;&gt;FOO_CSPROJ -->
 <g id="edge11" class="edge">
 <title>RUNTIME_NUPKG&#45;&gt;FOO_CSPROJ</title>
-<path fill="none" stroke="black" stroke-dasharray="5,2" d="M198.2,-286.99C213.49,-276.68 233.89,-263.69 253,-254 263.87,-248.48 275.83,-243.25 287.36,-238.6"/>
-<polygon fill="black" stroke="black" points="288.89,-241.75 296.91,-234.83 286.32,-235.24 288.89,-241.75"/>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M198.2,-286.99C213.49,-276.68 233.89,-263.69 253,-254 262.86,-249 273.62,-244.23 284.13,-239.91"/>
+<polygon fill="black" stroke="black" points="285.71,-243.05 293.69,-236.08 283.11,-236.55 285.71,-243.05"/>
 <text text-anchor="middle" x="318.5" y="-257.8" font-family="Times,serif" font-size="14.00">PackageReference</text>
 </g>
 <!-- FOO_NUPKG -->

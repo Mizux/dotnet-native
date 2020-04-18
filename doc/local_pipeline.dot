@@ -8,6 +8,8 @@ digraph CMake {
     SWIG [label="foo.i", fillcolor=white];
 
   subgraph clusterCPP {
+    color=royalblue;
+    label = "C++";
     node [shape=note, style="rounded,filled", color=black, fillcolor=royalblue];
     PKG [label="C++ dev packages\ne.g. cmake, g++", shape=box3d];
     CPP [label="Foo.hpp/Foo.cpp"];
@@ -17,19 +19,18 @@ digraph CMake {
     WRAPPER_OBJ [label="fooCSHARP_wrap.cxx.o"];
     WRAPPER_LIB [label="mizux_foo_native.so\nruntimes/linux-x64/native/", shape=component];
 
-    CPP -> WRAPPER_CPP [label="include", style=dashed]
+    CPP -> WRAPPER_CPP [label="include", style=dashed];
     CPP -> LIB [label="g++, ld", style=bold];
     WRAPPER_CPP -> WRAPPER_OBJ [label="g++", style=bold];
     WRAPPER_OBJ -> WRAPPER_LIB [label="ld", style=bold];
 
     //PKG -> LIB [label="cmake", style=dashed];
     //PKG -> WRAPPER_OBJ [label="cmake", style=dashed];
-
-    color=royalblue;
-    label = "C++";
   }
 
   subgraph clusterCS {
+    color=darkviolet;
+    label = ".Net";
     node [shape=note, style="rounded,filled", color=black, fillcolor=darkviolet];
     DOTNET_PKG [label=".Net SDK packages\ne.g. dotnet-cli", shape=box3d, fillcolor=darkviolet];
     RUNTIME_CSPROJ [label="Mizux.Foo.runtime.linux-x64.csproj"];
@@ -38,7 +39,7 @@ digraph CMake {
     RUNTIME_CSPROJ -> RUNTIME_NUPKG [label="dotnet pack", style=bold];
 
     FOO_CS [label="Foo.cs"];
-    FOO_CSPROJ [label="Foo.csproj"];
+    FOO_CSPROJ [label="Mizux.Foo.csproj"];
     FOO_DLL [label="Mizux.Foo.dll\nlib/netstandard2.0/", shape=component];
     FOO_NUPKG [label="Mizux.Foo.nupkg", shape=folder];
 
@@ -52,21 +53,18 @@ digraph CMake {
 
     //DOTNET_PKG -> RUNTIME_CSPROJ [label="cmake", style=dashed];
     //DOTNET_PKG -> FOO_CSPROJ [label="cmake", style=dashed];
-
-    color=darkviolet;
-    label = ".Net";
   }
 
   CPP -> SWIG [label="include", style=dashed];
-  SWIG -> FOO_CS [label="swig", style=bold];
   SWIG -> WRAPPER_CPP [label="swig", style=bold];
+  SWIG -> FOO_CS [label="swig", style=bold];
 
   LIB -> RUNTIME_CSPROJ [label="Content", style=dashed];
   LIB -> RUNTIME_NUPKG [label="pack", style=dashed];
   WRAPPER_LIB -> RUNTIME_CSPROJ [label="Content", style=dashed];
-  WRAPPER_LIB -> FOO_CS [label="PInvoke", style=dashed];
   WRAPPER_LIB -> RUNTIME_NUPKG [label="pack", style=dashed];
+  WRAPPER_LIB -> FOO_CS [label="PInvoke", style=dashed];
   }
 }
 @enddot
-# vim: set tw=0 ts=2 sw=2 expandtab:
+// vim: set tw=0 ts=2 sw=2 expandtab:
