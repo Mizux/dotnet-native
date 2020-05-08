@@ -14,6 +14,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif(NOT CMAKE_BUILD_TYPE)
 
 # Layout build dir like install dir
+include(GNUInstallDirs)
 if(UNIX)
   option(BUILD_SHARED_LIBS "Build shared libraries(.so or .dyld)." ON)
   set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)

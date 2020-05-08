@@ -24,7 +24,6 @@ if(BUILD_TESTING)
 endif()
 
 # Install
-include(GNUInstallDirs)
 install(TARGETS Foo
   EXPORT ${PROJECT_NAME}Targets
   PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/foo
