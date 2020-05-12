@@ -23,6 +23,13 @@ set_target_properties(mizux-foo-native PROPERTIES
 # note: macOS is APPLE and also UNIX !
 if(APPLE)
   set_target_properties(mizux-foo-native PROPERTIES INSTALL_RPATH "@loader_path")
+  # Xcode fails to build if library doesn't contains at least one source file.
+  if(XCODE)
+    file(GENERATE
+      OUTPUT ${PROJECT_BINARY_DIR}/mizux-foo-native/version.cpp
+      CONTENT "namespace {char* version = \"${PROJECT_VERSION}\";}")
+    target_sources(mizux-foo-native PRIVATE ${PROJECT_BINARY_DIR}/mizux-foo-native/version.cpp)
+  endif()
 elseif(UNIX)
   set_target_properties(mizux-foo-native PROPERTIES INSTALL_RPATH "$ORIGIN")
 endif()
