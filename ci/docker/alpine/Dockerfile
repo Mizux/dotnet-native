@@ -28,10 +28,10 @@ COPY . .
 FROM devel AS build
 RUN cmake -S. -Bbuild
 RUN cmake --build build --target all -v
-RUN cmake --build build --target install
+RUN cmake --build build --target install -v
 
 FROM build AS test
-RUN cmake --build build --target test
+RUN cmake --build build --target test -v
 
 FROM env AS install_env
 WORKDIR /home/sample

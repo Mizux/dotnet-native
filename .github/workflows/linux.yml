@@ -1,4 +1,4 @@
-name: .Net Linux CI
+name: Linux
 
 on: [push, pull_request]
 
@@ -11,7 +11,16 @@ jobs:
     - name: Check cmake
       run: cmake --version
     - name: Swig install
-      run: sudo apt install -y swig
+      run: |
+        wget "https://downloads.sourceforge.net/project/swig/swig/swig-4.0.1/swig-4.0.1.tar.gz";
+        tar xvf swig-4.0.1.tar.gz;
+        rm swig-4.0.1.tar.gz;
+        cd swig-4.0.1;
+        ./configure --prefix=/usr;
+        make -j8;
+        sudo make install;
+        cd ..;
+        rm -rf swig-4.0.1;
     - name: Check swig
       run: swig -version
     - name: Check dotnet
