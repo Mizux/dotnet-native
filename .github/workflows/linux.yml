@@ -28,8 +28,8 @@ jobs:
     - name: Configure
       run: cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release
     - name: Build
-      run: cmake --build build --config Release --target all -v
+      run: cmake --build build --target all -v
     - name: Test
-      run: cmake --build build --config Release --target test -v
+      run: cmake --build build --target test -v
     - name: Install
-      run: cmake --build build --config Release --target install -v -- DESTDIR=install
+      run: cmake --build build --target install -v -- DESTDIR=install
