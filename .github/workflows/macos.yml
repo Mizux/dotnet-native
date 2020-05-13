@@ -21,7 +21,7 @@ jobs:
     - name: Build
       run: cmake --build build --config Release --target ALL_BUILD -v
     - name: Test
-      run: CTEST_OUTPUT_ON_FAILURE=1 COMPlus_GCRetainVM=1 cmake --build build --config Release --target RUN_TESTS -v
+      run: CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --config Release --target RUN_TESTS -v
     - name: Install
       run: cmake --build build --config Release --target install -v
   make:
