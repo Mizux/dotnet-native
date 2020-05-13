@@ -81,7 +81,7 @@ add_custom_target(dotnet_native_package
   mizux-foo-native
   dotnet/${DOTNET_NATIVE}/${DOTNET_NATIVE}.csproj
   COMMAND ${CMAKE_COMMAND} -E make_directory packages
-  COMMAND ${DOTNET_EXECUTABLE} build -c Release /p:Platform=x64 ${DOTNET_NATIVE}/${DOTNET_NATIVE}.csproj
+  COMMAND ${DOTNET_EXECUTABLE} build -c Release ${DOTNET_NATIVE}/${DOTNET_NATIVE}.csproj
   COMMAND ${DOTNET_EXECUTABLE} pack -c Release ${DOTNET_NATIVE}/${DOTNET_NATIVE}.csproj
   WORKING_DIRECTORY dotnet)
 
@@ -103,7 +103,7 @@ add_custom_target(dotnet_package ALL
   DEPENDS
     dotnet_native_package
     dotnet/${DOTNET}/${DOTNET}.csproj
-  COMMAND ${DOTNET_EXECUTABLE} build -c Release /p:Platform=x64 ${DOTNET}/${DOTNET}.csproj
+  COMMAND ${DOTNET_EXECUTABLE} build -c Release ${DOTNET}/${DOTNET}.csproj
   COMMAND ${DOTNET_EXECUTABLE} pack -c Release ${DOTNET}/${DOTNET}.csproj
   WORKING_DIRECTORY dotnet)
 
@@ -132,7 +132,7 @@ add_custom_target(FooTests ALL
     dotnet_package
     dotnet/${DOTNET}Tests/FooTests.cs
     dotnet/${DOTNET}Tests/${DOTNET}Tests.csproj
-  COMMAND ${DOTNET_EXECUTABLE} build -c Release /p:Platform=x64 ${DOTNET}Tests/${DOTNET}Tests.csproj
+  COMMAND ${DOTNET_EXECUTABLE} build -c Release ${DOTNET}Tests/${DOTNET}Tests.csproj
   WORKING_DIRECTORY dotnet)
 
 if(BUILD_TESTING)
@@ -166,7 +166,7 @@ add_custom_target(FooApp ALL
     dotnet_package
     dotnet/${DOTNET}App/FooApp.cs
     dotnet/${DOTNET}App/${DOTNET}App.csproj
-  COMMAND ${DOTNET_EXECUTABLE} build -c Release /p:Platform=x64 ${DOTNET}App/${DOTNET}App.csproj
+  COMMAND ${DOTNET_EXECUTABLE} build -c Release ${DOTNET}App/${DOTNET}App.csproj
   WORKING_DIRECTORY dotnet)
 
 if(BUILD_TESTING)
