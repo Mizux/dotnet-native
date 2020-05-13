@@ -2,6 +2,8 @@
 cmake_minimum_required(VERSION 3.14)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
+option(CMAKE_EXPORT_COMPILE_COMMANDS "Export compile command" TRUE)
+
 project(Foo VERSION 1.0 LANGUAGES CXX)
 message(STATUS "project: ${PROJECT_NAME}")
 message(STATUS "version: ${PROJECT_VERSION}")
