@@ -96,13 +96,13 @@ configure_file(
 add_custom_command(
   OUTPUT dotnet/${DOTNET}/${DOTNET}.csproj
   COMMAND ${CMAKE_COMMAND} -E make_directory ${DOTNET}
-	COMMAND ${CMAKE_COMMAND} -E copy ./${DOTNET}.csproj.in ${DOTNET}/${DOTNET}.csproj
+  COMMAND ${CMAKE_COMMAND} -E copy ./${DOTNET}.csproj.in ${DOTNET}/${DOTNET}.csproj
   WORKING_DIRECTORY dotnet)
 
 add_custom_target(dotnet_package ALL
   DEPENDS
-    dotnet_native_package
-    dotnet/${DOTNET}/${DOTNET}.csproj
+  dotnet_native_package
+  dotnet/${DOTNET}/${DOTNET}.csproj
   COMMAND ${DOTNET_EXECUTABLE} build -c Release ${DOTNET}/${DOTNET}.csproj
   COMMAND ${DOTNET_EXECUTABLE} pack -c Release ${DOTNET}/${DOTNET}.csproj
   WORKING_DIRECTORY dotnet)
@@ -124,14 +124,14 @@ configure_file(
 add_custom_command(
   OUTPUT dotnet/${DOTNET}Tests/${DOTNET}Tests.csproj
   COMMAND ${CMAKE_COMMAND} -E make_directory ${DOTNET}Tests
-	COMMAND ${CMAKE_COMMAND} -E copy ./${DOTNET}Tests.csproj.in ${DOTNET}Tests/${DOTNET}Tests.csproj
+  COMMAND ${CMAKE_COMMAND} -E copy ./${DOTNET}Tests.csproj.in ${DOTNET}Tests/${DOTNET}Tests.csproj
   WORKING_DIRECTORY dotnet)
 
 add_custom_target(FooTests ALL
   DEPENDS
-    dotnet_package
-    dotnet/${DOTNET}Tests/FooTests.cs
-    dotnet/${DOTNET}Tests/${DOTNET}Tests.csproj
+  dotnet_package
+  dotnet/${DOTNET}Tests/FooTests.cs
+  dotnet/${DOTNET}Tests/${DOTNET}Tests.csproj
   COMMAND ${DOTNET_EXECUTABLE} build -c Release ${DOTNET}Tests/${DOTNET}Tests.csproj
   WORKING_DIRECTORY dotnet)
 
@@ -151,21 +151,21 @@ add_custom_command(
   WORKING_DIRECTORY dotnet)
 
 configure_file(
-	${PROJECT_SOURCE_DIR}/dotnet/${DOTNET}App.csproj.in
-	${PROJECT_BINARY_DIR}/dotnet/${DOTNET}App.csproj.in
+  ${PROJECT_SOURCE_DIR}/dotnet/${DOTNET}App.csproj.in
+  ${PROJECT_BINARY_DIR}/dotnet/${DOTNET}App.csproj.in
   @ONLY)
 
 add_custom_command(
   OUTPUT dotnet/${DOTNET}App/${DOTNET}App.csproj
   COMMAND ${CMAKE_COMMAND} -E make_directory ${DOTNET}App
-	COMMAND ${CMAKE_COMMAND} -E copy ./${DOTNET}App.csproj.in ${DOTNET}App/${DOTNET}App.csproj
+  COMMAND ${CMAKE_COMMAND} -E copy ./${DOTNET}App.csproj.in ${DOTNET}App/${DOTNET}App.csproj
   WORKING_DIRECTORY dotnet)
 
 add_custom_target(FooApp ALL
   DEPENDS
-    dotnet_package
-    dotnet/${DOTNET}App/FooApp.cs
-    dotnet/${DOTNET}App/${DOTNET}App.csproj
+  dotnet_package
+  dotnet/${DOTNET}App/FooApp.cs
+  dotnet/${DOTNET}App/${DOTNET}App.csproj
   COMMAND ${DOTNET_EXECUTABLE} build -c Release ${DOTNET}App/${DOTNET}App.csproj
   WORKING_DIRECTORY dotnet)
 

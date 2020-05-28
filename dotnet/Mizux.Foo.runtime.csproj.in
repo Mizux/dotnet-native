@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <!-- Native library must be in native directory... -->
-		<Content Include="$<TARGET_FILE:Foo>">
+    <Content Include="$<TARGET_FILE:Foo>">
       <PackagePath>runtimes/@RUNTIME_IDENTIFIER@/native/%(Filename)%(Extension)</PackagePath>
       <Pack>true</Pack>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
