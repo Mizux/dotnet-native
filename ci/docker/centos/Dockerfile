@@ -30,6 +30,7 @@ RUN yum -y update \
 && make install \
 && cd .. \
 && rm -rf swig-4.0.2
+
 # .NET install
 # see: https://docs.microsoft.com/en-us/dotnet/core/install/linux-package-manager-centos8
 RUN dnf -y update \
@@ -38,7 +39,6 @@ RUN dnf -y update \
 && rm -rf /var/cache/dnf
 # Trigger first run experience by running arbitrary cmd
 RUN dotnet --info
-CMD [ "/usr/bin/bash" ]
 
 FROM env AS devel
 WORKDIR /home/project

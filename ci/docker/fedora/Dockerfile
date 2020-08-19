@@ -9,10 +9,12 @@ RUN dnf -y update \
 && dnf -y groupinstall "Development Tools" \
 && dnf -y install gcc-c++ cmake \
 && dnf clean all
+
 # Install swig
 RUN dnf -y update \
 && dnf -y install swig \
 && dnf clean all
+
 # .NET install
 # see: https://docs.microsoft.com/en-us/dotnet/core/install/linux-package-manager-fedora31
 RUN rpm --import https://packages.microsoft.com/keys/microsoft.asc \
@@ -22,7 +24,6 @@ RUN rpm --import https://packages.microsoft.com/keys/microsoft.asc \
 && dnf clean all
 # Trigger first run experience by running arbitrary cmd
 RUN dotnet --info
-CMD [ "/usr/bin/bash" ]
 
 FROM env AS devel
 WORKDIR /home/project

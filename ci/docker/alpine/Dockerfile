@@ -5,8 +5,10 @@ LABEL maintainer="mizux.dev@gmail.com"
 # Install system build dependencies
 ENV PATH=/usr/local/bin:$PATH
 RUN apk add --no-cache git build-base linux-headers cmake
+
 # Install swig
 RUN apk add --no-cache swig
+
 # .NET install
 RUN apk add --no-cache wget icu-libs libintl
 RUN dotnet_sdk_version=3.1.101 \
@@ -19,7 +21,6 @@ RUN dotnet_sdk_version=3.1.101 \
 && rm dotnet.tar.gz
 # Trigger first run experience by running arbitrary cmd
 RUN dotnet --info
-CMD [ "/bin/sh" ]
 
 FROM env AS devel
 WORKDIR /home/project

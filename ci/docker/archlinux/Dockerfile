@@ -5,13 +5,14 @@ LABEL maintainer="mizux.dev@gmail.com"
 # Install system build dependencies
 ENV PATH=/usr/local/bin:$PATH
 RUN pacman -Syu --noconfirm git base-devel cmake
+
 # Install swig
 RUN pacman -Syu --noconfirm swig
+
 # .NET install
 RUN pacman -Syu --noconfirm dotnet-sdk
 # Trigger first run experience by running arbitrary cmd
 RUN dotnet --info
-CMD [ "/bin/bash" ]
 
 FROM env AS devel
 WORKDIR /home/project

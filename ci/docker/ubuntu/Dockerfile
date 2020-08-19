@@ -20,6 +20,7 @@ RUN apt-get update -qq \
 && apt-get install -yq swig \
 && apt-get clean \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
 # .NET install
 # see: https://docs.microsoft.com/en-us/dotnet/core/install/linux-package-manager-ubuntu-2004
 RUN apt-get update -qq \
@@ -32,7 +33,6 @@ RUN apt-get update -qq \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # Trigger first run experience by running arbitrary cmd
 RUN dotnet --info
-CMD [ "/usr/bin/bash" ]
 
 FROM env AS devel
 WORKDIR /home/project
