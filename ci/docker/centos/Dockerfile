@@ -15,19 +15,21 @@ RUN wget "https://cmake.org/files/v3.18/cmake-3.18.1-Linux-x86_64.sh" \
 && chmod a+x cmake-3.18.1-Linux-x86_64.sh \
 && ./cmake-3.18.1-Linux-x86_64.sh --prefix=/usr/local/ --skip-license \
 && rm cmake-3.18.1-Linux-x86_64.sh
+
+# Install SWIG 4.0.2
 RUN yum -y update \
 && yum -y install pcre-devel \
 && yum clean all \
 && rm -rf /var/cache/yum \
-&& wget "https://downloads.sourceforge.net/project/swig/swig/swig-4.0.1/swig-4.0.1.tar.gz" \
-&& tar xvf swig-4.0.1.tar.gz \
-&& rm swig-4.0.1.tar.gz \
-&& cd swig-4.0.1 \
+&& wget "https://downloads.sourceforge.net/project/swig/swig/swig-4.0.2/swig-4.0.2.tar.gz" \
+&& tar xvf swig-4.0.2.tar.gz \
+&& rm swig-4.0.2.tar.gz \
+&& cd swig-4.0.2 \
 && ./configure --prefix=/usr \
 && make -j 4 \
 && make install \
 && cd .. \
-&& rm -rf swig-4.0.1
+&& rm -rf swig-4.0.2
 # .NET install
 # see https://docs.microsoft.com/en-us/dotnet/core/install/linux-package-manager-centos8
 RUN rpm -Uvh "https://packages.microsoft.com/config/centos/8/packages-microsoft-prod.rpm" \
