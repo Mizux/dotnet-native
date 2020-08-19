@@ -31,12 +31,11 @@ RUN yum -y update \
 && cd .. \
 && rm -rf swig-4.0.2
 # .NET install
-# see https://docs.microsoft.com/en-us/dotnet/core/install/linux-package-manager-centos8
-RUN rpm -Uvh "https://packages.microsoft.com/config/centos/8/packages-microsoft-prod.rpm" \
-&& yum -y update \
-&& yum -y install dotnet-sdk-3.1 \
-&& yum clean all \
-&& rm -rf /var/cache/yum
+# see: https://docs.microsoft.com/en-us/dotnet/core/install/linux-package-manager-centos8
+RUN dnf -y update \
+&& dnf -y install dotnet-sdk-3.1 \
+&& dnf clean all \
+&& rm -rf /var/cache/dnf
 # Trigger first run experience by running arbitrary cmd
 RUN dotnet --info
 CMD [ "/usr/bin/bash" ]
