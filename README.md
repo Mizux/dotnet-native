@@ -23,7 +23,7 @@
 
 # Introduction
 This project aim to explain how you build a .NetStandard2.0 native (for win-x64, linux-x64 and osx-x64) nuget multiple package using [`.NET Core CLI`](https://docs.microsoft.com/en-us/dotnet/core/tools/) and the [*new* .csproj format](https://docs.microsoft.com/en-us/dotnet/core/tools/csproj).  
-e.g. You have a cross platform C++ library and a .NetStandard2.0 wrapper on it thanks to SWIG.  
+e.g. You have a cross platform C++ library (using a CMake based build) and a .NetStandard2.0 wrapper on it thanks to SWIG.  
 Then you want to provide a cross-platform Nuget package to consume it in a .NetCoreApp2.1 project...
 
 ## Table of Content
