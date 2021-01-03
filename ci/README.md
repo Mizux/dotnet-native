@@ -4,7 +4,7 @@ To test the build on various distro, I'm using docker containers and a Makefile 
 pros:
 * You are independent of third party CI runner config (e.g. github actions runners or Travis-CI VM images).
 * You can run it locally on your linux system.
-* Most CI provide runner with docker and Makefile installed (e.g. tarvis-ci [minimal images](https://docs.travis-ci.com/user/languages/minimal-and-generic/).
+* Most CI provide runner with docker and Makefile installed (e.g. Travis-CI [minimal images](https://docs.travis-ci.com/user/languages/minimal-and-generic/).
 
 cons:
 * Only GNU/Linux distro supported.
