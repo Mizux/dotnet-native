@@ -16,10 +16,8 @@ RUN dnf -y update \
 && dnf clean all
 
 # .NET install
-# see: https://docs.microsoft.com/en-us/dotnet/core/install/linux-package-manager-fedora31
-RUN rpm --import https://packages.microsoft.com/keys/microsoft.asc \
-&& wget -q -O /etc/yum.repos.d/microsoft-prod.repo https://packages.microsoft.com/config/fedora/31/prod.repo \
-&& dnf -y update \
+# see: https://docs.microsoft.com/en-us/dotnet/core/install/linux-fedora#fedora-33-
+RUN dnf -y update \
 && dnf -y install dotnet-sdk-3.1 \
 && dnf clean all
 # Trigger first run experience by running arbitrary cmd
