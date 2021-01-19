@@ -6,20 +6,20 @@
 [![Build Status][travis_status]][travis_link]
 [![Build Status][appveyor_status]][appveyor_link]
 
-[docker_status]: https://github.com/Mizux/dotnet-native/workflows/Docker/badge.svg?branch=master
+[docker_status]: https://github.com/Mizux/dotnet-native/workflows/Docker/badge.svg?branch=main
 [docker_link]: https://github.com/Mizux/dotnet-native/actions?query=workflow%3A"Docker"
-[linux_svg]: https://github.com/Mizux/dotnet-native/workflows/Linux/badge.svg?branch=master
+[linux_svg]: https://github.com/Mizux/dotnet-native/workflows/Linux/badge.svg?branch=main
 [linux_link]: https://github.com/Mizux/dotnet-native/actions?query=workflow%3A"Linux"
-[osx_svg]: https://github.com/Mizux/dotnet-native/workflows/MacOS/badge.svg?branch=master
+[osx_svg]: https://github.com/Mizux/dotnet-native/workflows/MacOS/badge.svg?branch=main
 [osx_link]: https://github.com/Mizux/dotnet-native/actions?query=workflow%3A"MacOS"
-[win_svg]: https://github.com/Mizux/dotnet-native/workflows/Windows/badge.svg?branch=master
+[win_svg]: https://github.com/Mizux/dotnet-native/workflows/Windows/badge.svg?branch=main
 [win_link]: https://github.com/Mizux/dotnet-native/actions?query=workflow%3A"Windows"
 
-[travis_status]: https://travis-ci.com/Mizux/dotnet-native.svg?branch=master
+[travis_status]: https://travis-ci.com/Mizux/dotnet-native.svg?branch=main
 [travis_link]: https://travis-ci.com/Mizux/dotnet-native
 
 [appveyor_status]: https://ci.appveyor.com/api/projects/status/q105jch2jxxb5t4f/branch/master?svg=true
-[appveyor_link]: https://ci.appveyor.com/project/Mizux/dotnet-native/branch/master
+[appveyor_link]: https://ci.appveyor.com/project/Mizux/dotnet-native/branch/main
 
 # Introduction
 This project aim to explain how you build a .NetStandard2.0 native (for win-x64, linux-x64 and osx-x64) nuget multiple package using [`.NET Core CLI`](https://docs.microsoft.com/en-us/dotnet/core/tools/) and the [*new* .csproj format](https://docs.microsoft.com/en-us/dotnet/core/tools/csproj).  
