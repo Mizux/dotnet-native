@@ -5,14 +5,14 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <!-- see https://github.com/dotnet/docs/issues/12237 -->
     <RollForward>LatestMajor</RollForward>
-    <AssemblyName>Mizux.Sample</AssemblyName>
+    <AssemblyName>Mizux.DotnetNative.Sample</AssemblyName>
 
     <!-- Nuget Properties -->
-    <Description>Simple App consuming Mizux.Foo package</Description>
+    <Description>Simple App consuming Mizux.DotnetNative package</Description>
 
     <!-- Pack Option -->
-    <Title>Mizux.Sample</Title>
-    <PackageId>Mizux.FooApp</PackageId>
+    <Title>Mizux.DotnetNative.Sample</Title>
+    <PackageId>Mizux.DotnetNative.Sample</PackageId>
     <PackageTags>sample</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -35,6 +35,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Mizux.Foo" Version="*" />
+    <PackageReference Include="Mizux.DotnetNative" Version="*" />
   </ItemGroup>
 </Project>
