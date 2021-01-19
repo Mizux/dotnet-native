@@ -1,19 +1,19 @@
 [![Build Status][docker_status]][docker_link]
-[![Status][dotnet_linux_svg]][dotnet_linux_link]
-[![Status][dotnet_osx_svg]][dotnet_osx_link]
-[![Status][dotnet_win_svg]][dotnet_win_link]
+[![Status][linux_svg]][linux_link]
+[![Status][osx_svg]][osx_link]
+[![Status][win_svg]][win_link]
 
 [![Build Status][travis_status]][travis_link]
 [![Build Status][appveyor_status]][appveyor_link]
 
 [docker_status]: https://github.com/Mizux/dotnet-native/workflows/Docker/badge.svg?branch=master
 [docker_link]: https://github.com/Mizux/dotnet-native/actions?query=workflow%3A"Docker"
-[dotnet_linux_svg]: https://github.com/Mizux/dotnet-native/workflows/Linux/badge.svg?branch=master
-[dotnet_linux_link]: https://github.com/Mizux/dotnet-native/actions?query=workflow%3A"Linux"
-[dotnet_osx_svg]: https://github.com/Mizux/dotnet-native/workflows/MacOS/badge.svg?branch=master
-[dotnet_osx_link]: https://github.com/Mizux/dotnet-native/actions?query=workflow%3A"MacOS"
-[dotnet_win_svg]: https://github.com/Mizux/dotnet-native/workflows/Windows/badge.svg?branch=master
-[dotnet_win_link]: https://github.com/Mizux/dotnet-native/actions?query=workflow%3A"Windows"
+[linux_svg]: https://github.com/Mizux/dotnet-native/workflows/Linux/badge.svg?branch=master
+[linux_link]: https://github.com/Mizux/dotnet-native/actions?query=workflow%3A"Linux"
+[osx_svg]: https://github.com/Mizux/dotnet-native/workflows/MacOS/badge.svg?branch=master
+[osx_link]: https://github.com/Mizux/dotnet-native/actions?query=workflow%3A"MacOS"
+[win_svg]: https://github.com/Mizux/dotnet-native/workflows/Windows/badge.svg?branch=master
+[win_link]: https://github.com/Mizux/dotnet-native/actions?query=workflow%3A"Windows"
 
 [travis_status]: https://travis-ci.com/Mizux/dotnet-native.svg?branch=master
 [travis_link]: https://travis-ci.com/Mizux/dotnet-native
@@ -312,7 +312,7 @@ Some issue related to this process
 # Misc
 Image has been generated using [plantuml](http://plantuml.com/):
 ```bash
-plantuml -Tpng doc/{file}.dot
+plantuml -Tsvg doc/{file}.dot
 ```
 So you can find the dot source files in [doc](doc).
 

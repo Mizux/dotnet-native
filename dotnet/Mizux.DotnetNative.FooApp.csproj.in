@@ -6,11 +6,18 @@
     <!-- see https://github.com/dotnet/docs/issues/12237 -->
     <RollForward>LatestMajor</RollForward>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
-    <AssemblyName>Mizux.FooTests</AssemblyName>
+    <AssemblyName>@DOTNET_PROJECT@.FooApp</AssemblyName>
     <Version>@PROJECT_VERSION@</Version>
 
+    <!-- Nuget Properties -->
+    <Description>Simple App consuming @DOTNET_PROJECT@ package</Description>
+
     <!-- Pack Option -->
-    <IsPackable>false</IsPackable>
+    <Title>@DOTNET_PROJECT@.FooApp v@PROJECT_VERSION@</Title>
+    <PackageId>@DOTNET_PROJECT@.FooApp</PackageId>
+    <PackageTags>sample</PackageTags>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
     <!-- Signing -->
     <SignAssembly>false</SignAssembly>
@@ -20,14 +27,8 @@
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugType>full</DebugType>
-    <Optimize>true</Optimize>
-    <GenerateTailCalls>true</GenerateTailCalls>
-  </PropertyGroup>
-
   <ItemGroup>
-    <Compile Include="FooTests.cs" />
+    <Compile Include="FooApp.cs" />
   </ItemGroup>
 
   <!-- Dependencies -->
@@ -36,9 +37,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.0" />
-    <PackageReference Include="xunit" Version="2.3.1" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
-    <PackageReference Include="Mizux.Foo" Version="@PROJECT_VERSION@" />
+    <PackageReference Include="@DOTNET_PROJECT@" Version="@PROJECT_VERSION@" />
   </ItemGroup>
 </Project>

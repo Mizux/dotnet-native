@@ -3,7 +3,7 @@
     <OutputType>Library</OutputType>
     <TargetFrameworks>netstandard2.1;netstandard2.0</TargetFrameworks>
     <RuntimeIdentifier>@RUNTIME_IDENTIFIER@</RuntimeIdentifier>
-    <AssemblyName>mizux-foo-native</AssemblyName>
+    <AssemblyName>mizux-dotnetnative-native</AssemblyName>
     <Version>@PROJECT_VERSION@</Version>
 
     <!-- Nuget Properties -->
@@ -12,7 +12,7 @@
 
     <!-- Pack Option -->
     <Title>@DOTNET@ @RUNTIME_IDENTIFIER@ v@PROJECT_VERSION@</Title>
-    <PackageId>@DOTNET_NATIVE@</PackageId>
+    <PackageId>@DOTNET_NATIVE_PROJECT@</PackageId>
 
     <!-- Signing -->
     <SignAssembly>false</SignAssembly>
@@ -27,7 +27,7 @@
       <Pack>true</Pack>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="$<TARGET_FILE:mizux-foo-native>">
+    <Content Include="$<TARGET_FILE:mizux-dotnetnative-native>">
       <PackagePath>runtimes/@RUNTIME_IDENTIFIER@/native/%(Filename)%(Extension)</PackagePath>
       <Pack>true</Pack>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

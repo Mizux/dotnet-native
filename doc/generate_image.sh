@@ -1,10 +1,13 @@
-#/usr/bin/env bash
+#!/usr/bin/env bash
+set -euxo pipefail
 
-set -ex
+# Check plantuml is in PATH
+command -v plantuml
 
-rm *.png
+#rm -f "*.png"
+rm -f "*.svg"
 for i in *.dot; do
-  plantuml -Tpng $i;
-  plantuml -Tsvg $i;
+  #plantuml -Tpng "$i";
+  plantuml -Tsvg "$i";
 done
 

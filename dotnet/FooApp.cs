@@ -1,14 +1,13 @@
 using System;
+using Mizux.DotnetNative;
 
-using Mizux.Foo;
-
-namespace FooApp {
+namespace Mizux.DotnetNative.FooApp {
   class Program {
     static void Main(string[] args) {
       int level = 1;
-      Console.WriteLine($"[{level}] Enter FooApp");
-      Foo.Hello(level+1);
-      Console.WriteLine($"[{level}] Exit FooApp");
+      Console.WriteLine($"[{level}] Enter DotnetNativeApp");
+      Foo.StaticFunction(level+1);
+      Console.WriteLine($"[{level}] Exit DotnetNativeApp");
     }
   }
 }

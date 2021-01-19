@@ -1,9 +1,8 @@
 using System;
 using Xunit;
+using Mizux.DotnetNative;
 
-using Mizux.Foo;
-
-namespace Mizux.Foo.Tests {
+namespace Mizux.DotnetNative.Tests {
   public class FooTest {
     [Theory]
     [InlineData(false)]
@@ -40,4 +39,4 @@ namespace Mizux.Foo.Tests {
       Assert.Equal(b, obj.GetInt64());
     }
   }
-} // namespace Mizux.Foo.Tests
+}

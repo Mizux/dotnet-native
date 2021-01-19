@@ -4,7 +4,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 option(CMAKE_EXPORT_COMPILE_COMMANDS "Export compile command" TRUE)
 
-project(Foo VERSION 1.0 LANGUAGES CXX)
+project(DotnetNative VERSION 1.0 LANGUAGES CXX)
+set(PROJECT_NAMESPACE dn)
 message(STATUS "project: ${PROJECT_NAME}")
 message(STATUS "version: ${PROJECT_VERSION}")
 
