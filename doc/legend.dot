@@ -24,7 +24,7 @@ digraph Legend {
     DLL [label="Foo.dll", shape=component, fillcolor=darkviolet];
     DLL_LGD [label=": Assembly output (i.e. binary)", color=none];
     DLL -> DLL_LGD [arrowhead=none, style=invisible];
-    NUPKG [label="Mizux.Foo.nupkg", shape=folder, fillcolor=darkviolet];
+    NUPKG [label="Mizux.DotnetNative.nupkg", shape=folder, fillcolor=darkviolet];
     NUPKG_LGD [label=": Nuget package file (i.e. archive)", color=none];
     NUPKG -> NUPKG_LGD [arrowhead=none, style=invisible];
 

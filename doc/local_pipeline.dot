@@ -17,7 +17,7 @@ digraph CMake {
 
     WRAPPER_CPP [label="fooCSHARP_wrap.cxx"];
     WRAPPER_OBJ [label="fooCSHARP_wrap.cxx.o"];
-    WRAPPER_LIB [label="mizux_foo_native.so\nruntimes/linux-x64/native/", shape=component];
+    WRAPPER_LIB [label="mizux_dotnetnative_native.so\nruntimes/linux-x64/native/", shape=component];
 
     CPP -> WRAPPER_CPP [label="include", style=dashed];
     CPP -> LIB [label="g++, ld", style=bold];
@@ -33,37 +33,37 @@ digraph CMake {
     label = ".Net";
     node [shape=note, style="rounded,filled", color=black, fillcolor=darkviolet];
     DOTNET_PKG [label=".Net SDK packages\ne.g. dotnet-cli", shape=box3d, fillcolor=darkviolet];
-    RUNTIME_CSPROJ [label="Mizux.Foo.runtime.linux-x64.csproj"];
-    RUNTIME_NUPKG [label="Mizux.Foo.runtime.linux-x64.nupkg", shape=folder];
+    RUNTIME_CSPROJ [label="Mizux.DotnetNative.runtime.linux-x64.csproj"];
+    RUNTIME_NUPKG [label="Mizux.DotnetNative.runtime.linux-x64.nupkg", shape=folder];
 
     RUNTIME_CSPROJ -> RUNTIME_NUPKG [label="dotnet pack", style=bold];
 
-    FOO_CS [label="Foo.cs"];
-    FOO_CSPROJ [label="Mizux.Foo.csproj"];
-    FOO_DLL [label="Mizux.Foo.dll\nlib/netstandard2.0/", shape=component];
-    FOO_NUPKG [label="Mizux.Foo.nupkg", shape=folder];
+    DOTNET_CS [label="Foo.cs"];
+    DOTNET_CSPROJ [label="Mizux.DotnetNative.csproj"];
+    DOTNET_DLL [label="Mizux.DotnetNative.dll\nlib/netstandard2.1/", shape=component];
+    DOTNET_NUPKG [label="Mizux.DotnetNative.nupkg", shape=folder];
 
-    FOO_CS -> FOO_CSPROJ [label="Compile", style=dashed];
-    FOO_CSPROJ -> FOO_DLL [label="dotnet build", style=bold];
-    FOO_DLL -> FOO_NUPKG [label="pack", style=dashed];
-    FOO_CSPROJ -> FOO_NUPKG [label="dotnet pack", style=bold];
+    DOTNET_CS -> DOTNET_CSPROJ [label="Compile", style=dashed];
+    DOTNET_CSPROJ -> DOTNET_DLL [label="dotnet build", style=bold];
+    DOTNET_DLL -> DOTNET_NUPKG [label="pack", style=dashed];
+    DOTNET_CSPROJ -> DOTNET_NUPKG [label="dotnet pack", style=bold];
 
-    RUNTIME_NUPKG -> FOO_NUPKG [label="dependencies", style=dashed];
-    RUNTIME_NUPKG -> FOO_CSPROJ [label="PackageReference", style=dashed];
+    RUNTIME_NUPKG -> DOTNET_NUPKG [label="dependencies", style=dashed];
+    RUNTIME_NUPKG -> DOTNET_CSPROJ [label="PackageReference", style=dashed];
 
-    //DOTNET_PKG -> RUNTIME_CSPROJ [label="cmake", style=dashed];
-    //DOTNET_PKG -> FOO_CSPROJ [label="cmake", style=dashed];
+    //DOTNET_NUPKG -> RUNTIME_CSPROJ [label="cmake", style=dashed];
+    //DOTNET_NUPKG -> DOTNET_CSPROJ [label="cmake", style=dashed];
   }
 
   CPP -> SWIG [label="include", style=dashed];
   SWIG -> WRAPPER_CPP [label="swig", style=bold];
-  SWIG -> FOO_CS [label="swig", style=bold];
+  SWIG -> DOTNET_CS [label="swig", style=bold];
 
   LIB -> RUNTIME_CSPROJ [label="Content", style=dashed];
   LIB -> RUNTIME_NUPKG [label="pack", style=dashed];
   WRAPPER_LIB -> RUNTIME_CSPROJ [label="Content", style=dashed];
   WRAPPER_LIB -> RUNTIME_NUPKG [label="pack", style=dashed];
-  WRAPPER_LIB -> FOO_CS [label="PInvoke", style=dashed];
+  WRAPPER_LIB -> DOTNET_CS [label="PInvoke", style=dashed];
   }
 }
 @enddot
