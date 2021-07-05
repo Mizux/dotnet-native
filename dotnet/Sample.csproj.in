@@ -3,18 +3,21 @@
     <OutputType>Exe</OutputType>
     <LangVersion>7.3</LangVersion>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <!-- see https://github.com/dotnet/docs/issues/12237 -->
     <RollForward>LatestMajor</RollForward>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
-    <AssemblyName>@DOTNET_PROJECT@.FooApp</AssemblyName>
+    <AssemblyName>@DOTNET_PROJECT@.@SAMPLE_NAME@</AssemblyName>
     <Version>@PROJECT_VERSION@</Version>
 
     <!-- Nuget Properties -->
     <Description>Simple App consuming @DOTNET_PROJECT@ package</Description>
 
     <!-- Pack Option -->
-    <Title>@DOTNET_PROJECT@.FooApp v@PROJECT_VERSION@</Title>
-    <PackageId>@DOTNET_PROJECT@.FooApp</PackageId>
+    <IsPackable>true</IsPackable>
+    <Title>@DOTNET_PROJECT@.@SAMPLE_NAME@ v@PROJECT_VERSION@</Title>
+    <PackageId>@DOTNET_PROJECT@.@SAMPLE_NAME@</PackageId>
     <PackageTags>sample</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -23,13 +26,13 @@
     <SignAssembly>false</SignAssembly>
     <PublicSign>false</PublicSign>
     <DelaySign>false</DelaySign>
-
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="FooApp.cs" />
-  </ItemGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <GenerateTailCalls>true</GenerateTailCalls>
+  </PropertyGroup>
 
   <!-- Dependencies -->
   <PropertyGroup>
@@ -37,6 +40,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="@DOTNET_PROJECT@" Version="@PROJECT_VERSION@" />
+    <Compile Include="@FILE_NAME@" />
+    <PackageReference Include="@DOTNET_PROJECT@" Version="@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.*" />
   </ItemGroup>
 </Project>

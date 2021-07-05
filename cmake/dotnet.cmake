@@ -3,12 +3,16 @@ set(CMAKE_SWIG_FLAGS)
 find_package(SWIG REQUIRED)
 include(UseSWIG)
 
+#if(${SWIG_VERSION} VERSION_GREATER_EQUAL 4)
+#  list(APPEND CMAKE_SWIG_FLAGS "-doxygen")
+#endif()
+
 if(UNIX AND NOT APPLE)
   list(APPEND CMAKE_SWIG_FLAGS "-DSWIGWORDSIZE64")
 endif()
 
-# Find dotnet
-find_program(DOTNET_EXECUTABLE dotnet)
+# Find dotnet cli
+find_program(DOTNET_EXECUTABLE NAMES dotnet)
 if(NOT DOTNET_EXECUTABLE)
   message(FATAL_ERROR "Check for dotnet Program: not found")
 else()
@@ -36,7 +40,7 @@ endif()
 
 # Needed by dotnet/CMakeLists.txt
 set(DOTNET_PACKAGE Mizux.DotnetNative)
-set(DOTNET_PACKAGES_DIR ${PROJECT_BINARY_DIR}/dotnet/packages)
+set(DOTNET_PACKAGES_DIR "${PROJECT_BINARY_DIR}/dotnet/packages")
 if(APPLE)
   set(RUNTIME_IDENTIFIER osx-x64)
 elseif(UNIX)
@@ -56,12 +60,16 @@ foreach(SUBPROJECT IN ITEMS Foo)
 endforeach()
 
 file(COPY dotnet/logo.png DESTINATION dotnet)
-file(COPY dotnet/Directory.Build.props DESTINATION dotnet)
+set(DOTNET_LOGO_DIR "${PROJECT_BINARY_DIR}/dotnet")
+configure_file(dotnet/Directory.Build.props.in dotnet/Directory.Build.props)
 
-##################################
-##  .Net Native Nugget Package  ##
-##################################
+############################
+##  .Net Runtime Package  ##
+############################
+message(STATUS ".Net runtime project: ${DOTNET_NATIVE_PROJECT}")
 set(DOTNET_NATIVE_PATH ${PROJECT_BINARY_DIR}/dotnet/${DOTNET_NATIVE_PROJECT})
+message(STATUS ".Net runtime project build path: ${DOTNET_NATIVE_PATH}")
+
 # *.csproj.in contains:
 # CMake variable(s) (@PROJECT_NAME@) that configure_file() can manage and
 # generator expression ($<TARGET_FILE:...>) that file(GENERATE) can manage.
@@ -77,20 +85,27 @@ add_custom_command(
   OUTPUT ${DOTNET_NATIVE_PATH}/${DOTNET_NATIVE_PROJECT}.csproj
   DEPENDS ${DOTNET_NATIVE_PATH}/$<CONFIG>/${DOTNET_NATIVE_PROJECT}.csproj.in
   COMMAND ${CMAKE_COMMAND} -E copy ./$<CONFIG>/${DOTNET_NATIVE_PROJECT}.csproj.in ${DOTNET_NATIVE_PROJECT}.csproj
-  WORKING_DIRECTORY ${DOTNET_NATIVE_PATH})
+  WORKING_DIRECTORY ${DOTNET_NATIVE_PATH}
+)
 
 add_custom_target(dotnet_native_package
   DEPENDS ${DOTNET_NATIVE_PATH}/${DOTNET_NATIVE_PROJECT}.csproj
   COMMAND ${CMAKE_COMMAND} -E make_directory packages
-  COMMAND ${DOTNET_EXECUTABLE} build -c Release ${DOTNET_NATIVE_PROJECT}/${DOTNET_NATIVE_PROJECT}.csproj
+  COMMAND ${DOTNET_EXECUTABLE} build -c Release /p:Platform=x64 ${DOTNET_NATIVE_PROJECT}/${DOTNET_NATIVE_PROJECT}.csproj
   COMMAND ${DOTNET_EXECUTABLE} pack -c Release ${DOTNET_NATIVE_PROJECT}/${DOTNET_NATIVE_PROJECT}.csproj
-  WORKING_DIRECTORY dotnet)
+  BYPRODUCTS
+    dotnet/${DOTNET_NATIVE_PROJECT}/bin
+    dotnet/${DOTNET_NATIVE_PROJECT}/obj
+  WORKING_DIRECTORY dotnet
+)
 add_dependencies(dotnet_native_package mizux-dotnetnative-native)
 
-###########################
-##  .Net Nugget Package  ##
-###########################
+####################
+##  .Net Package  ##
+####################
+message(STATUS ".Net project: ${DOTNET_PROJECT}")
 set(DOTNET_PATH ${PROJECT_BINARY_DIR}/dotnet/${DOTNET_PROJECT})
+message(STATUS ".Net project build path: ${DOTNET_PATH}")
 
 configure_file(
   ${PROJECT_SOURCE_DIR}/dotnet/${DOTNET_PROJECT}.csproj.in
@@ -101,86 +116,107 @@ add_custom_command(
   OUTPUT ${DOTNET_PATH}/${DOTNET_PROJECT}.csproj
   DEPENDS ${DOTNET_PATH}/${DOTNET_PROJECT}.csproj.in
   COMMAND ${CMAKE_COMMAND} -E copy ${DOTNET_PROJECT}.csproj.in ${DOTNET_PROJECT}.csproj
-  WORKING_DIRECTORY ${DOTNET_PATH})
+  WORKING_DIRECTORY ${DOTNET_PATH}
+)
 
 add_custom_target(dotnet_package ALL
   DEPENDS ${DOTNET_PATH}/${DOTNET_PROJECT}.csproj
-  COMMAND ${DOTNET_EXECUTABLE} build -c Release ${DOTNET_PROJECT}/${DOTNET_PROJECT}.csproj
+  COMMAND ${DOTNET_EXECUTABLE} build -c Release /p:Platform=x64 ${DOTNET_PROJECT}/${DOTNET_PROJECT}.csproj
   COMMAND ${DOTNET_EXECUTABLE} pack -c Release ${DOTNET_PROJECT}/${DOTNET_PROJECT}.csproj
-  WORKING_DIRECTORY dotnet)
+  BYPRODUCTS
+    dotnet/${DOTNET_PROJECT}/bin
+    dotnet/${DOTNET_PROJECT}/obj
+    dotnet/packages
+  WORKING_DIRECTORY dotnet
+)
 add_dependencies(dotnet_package dotnet_native_package)
 
 #################
 ##  .Net Test  ##
 #################
-if(BUILD_TESTING)
-  set(DOTNET_TEST_PROJECT ${DOTNET_PROJECT}.Tests)
-  set(DOTNET_TEST_PATH ${PROJECT_BINARY_DIR}/dotnet/${DOTNET_TEST_PROJECT})
+# add_dotnet_test()
+# CMake function to generate and build dotnet test.
+# Parameters:
+#  the dotnet filename
+# e.g.:
+# add_dotnet_test(FooTests.cs)
+function(add_dotnet_test FILE_NAME)
+  message(STATUS "Configuring test ${FILE_NAME} ...")
+  get_filename_component(TEST_NAME ${FILE_NAME} NAME_WE)
 
-  add_custom_command(
-    OUTPUT ${DOTNET_TEST_PATH}/FooTests.cs
-    DEPENDS ${PROJECT_SOURCE_DIR}/dotnet/FooTests.cs
-    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/dotnet/FooTests.cs FooTests.cs
-    WORKING_DIRECTORY ${DOTNET_TEST_PATH})
+  set(DOTNET_TEST_PATH ${PROJECT_BINARY_DIR}/dotnet/${TEST_NAME})
+  message(STATUS "build path: ${DOTNET_TEST_PATH}")
+  file(MAKE_DIRECTORY ${DOTNET_TEST_PATH})
 
+  file(COPY ${FILE_NAME} DESTINATION ${DOTNET_TEST_PATH})
+
+  set(DOTNET_PACKAGES_DIR "${PROJECT_BINARY_DIR}/dotnet/packages")
   configure_file(
-    ${PROJECT_SOURCE_DIR}/dotnet/${DOTNET_TEST_PROJECT}.csproj.in
-    ${DOTNET_TEST_PATH}/${DOTNET_TEST_PROJECT}.csproj.in
+    ${PROJECT_SOURCE_DIR}/dotnet/Test.csproj.in
+    ${DOTNET_TEST_PATH}/${TEST_NAME}.csproj
     @ONLY)
 
-  add_custom_command(
-    OUTPUT ${DOTNET_TEST_PATH}/${DOTNET_TEST_PROJECT}.csproj
-    DEPENDS ${DOTNET_TEST_PATH}/${DOTNET_TEST_PROJECT}.csproj.in
-    COMMAND ${CMAKE_COMMAND} -E copy ${DOTNET_TEST_PROJECT}.csproj.in ${DOTNET_TEST_PROJECT}.csproj
+  add_custom_target(dotnet_test_${TEST_NAME} ALL
+    DEPENDS ${DOTNET_TEST_PATH}/${TEST_NAME}.csproj
+    COMMAND ${DOTNET_EXECUTABLE} build -c Release
+    BYPRODUCTS
+      ${DOTNET_TEST_PATH}/bin
+      ${DOTNET_TEST_PATH}/obj
     WORKING_DIRECTORY ${DOTNET_TEST_PATH})
+  add_dependencies(dotnet_test_${TEST_NAME} dotnet_package)
 
-  add_custom_target(FooTests ALL
-    DEPENDS
-      ${DOTNET_TEST_PATH}/FooTests.cs
-      ${DOTNET_TEST_PATH}/${DOTNET_TEST_PROJECT}.csproj
-    COMMAND ${DOTNET_EXECUTABLE} build -c Release ${DOTNET_TEST_PROJECT}/${DOTNET_TEST_PROJECT}.csproj
-    WORKING_DIRECTORY dotnet)
-  add_dependencies(FooTests dotnet_package)
+  if(BUILD_TESTING)
+    add_test(
+      NAME dotnet_${TEST_NAME}
+      COMMAND ${DOTNET_EXECUTABLE} test --no-build -c Release
+      WORKING_DIRECTORY ${DOTNET_TEST_PATH})
+  endif()
 
-  add_test(
-    NAME dotnet_FooTests
-    COMMAND ${DOTNET_EXECUTABLE} test -c Release ${DOTNET_TEST_PROJECT}.csproj
-    WORKING_DIRECTORY ${DOTNET_TEST_PATH})
-endif()
+  message(STATUS "Configuring test ${FILE_NAME} done")
+endfunction()
 
-####################
-##  Mizux.FooApp  ##
-####################
-set(DOTNET_APP_PROJECT ${DOTNET_PROJECT}.FooApp)
-set(DOTNET_APP_PATH ${PROJECT_BINARY_DIR}/dotnet/${DOTNET_APP_PROJECT})
+###################
+##  .Net Sample  ##
+###################
+# add_dotnet_sample()
+# CMake function to generate and build dotnet sample.
+# Parameters:
+#  the dotnet filename
+# e.g.:
+# add_dotnet_sample(FooApp.cs)
+function(add_dotnet_sample FILE_NAME)
+  message(STATUS "Configuring sample ${FILE_NAME} ...")
+  get_filename_component(SAMPLE_NAME ${FILE_NAME} NAME_WE)
 
-add_custom_command(
-  OUTPUT ${DOTNET_APP_PATH}/FooApp.cs
-  DEPENDS ${PROJECT_SOURCE_DIR}/dotnet/FooApp.cs
-  COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/dotnet/FooApp.cs FooApp.cs
-  WORKING_DIRECTORY ${DOTNET_APP_PATH})
+  set(DOTNET_SAMPLE_PATH ${PROJECT_BINARY_DIR}/dotnet/${SAMPLE_NAME})
+  message(STATUS "build path: ${DOTNET_SAMPLE_PATH}")
+  file(MAKE_DIRECTORY ${DOTNET_SAMPLE_PATH})
 
-configure_file(
-  ${PROJECT_SOURCE_DIR}/dotnet/${DOTNET_APP_PROJECT}.csproj.in
-  ${DOTNET_APP_PATH}/${DOTNET_APP_PROJECT}.csproj.in
-  @ONLY)
+  file(COPY ${FILE_NAME} DESTINATION ${DOTNET_SAMPLE_PATH})
 
-add_custom_command(
-  OUTPUT ${DOTNET_APP_PATH}/${DOTNET_APP_PROJECT}.csproj
-  DEPENDS ${DOTNET_APP_PATH}/${DOTNET_APP_PROJECT}.csproj.in
-  COMMAND ${CMAKE_COMMAND} -E copy ${DOTNET_APP_PROJECT}.csproj.in ${DOTNET_APP_PROJECT}.csproj
-  WORKING_DIRECTORY ${DOTNET_APP_PATH})
+  set(DOTNET_PACKAGES_DIR "${PROJECT_BINARY_DIR}/dotnet/packages")
+  configure_file(
+    ${PROJECT_SOURCE_DIR}/dotnet/Sample.csproj.in
+    ${DOTNET_SAMPLE_PATH}/${SAMPLE_NAME}.csproj
+    @ONLY)
 
-add_custom_target(FooApp ALL
-  DEPENDS
-    ${DOTNET_APP_PATH}/FooApp.cs
-    ${DOTNET_APP_PATH}/${DOTNET_APP_PROJECT}.csproj
-  COMMAND ${DOTNET_EXECUTABLE} build -c Release ${DOTNET_APP_PROJECT}/${DOTNET_APP_PROJECT}.csproj
-  WORKING_DIRECTORY dotnet)
-add_dependencies(FooApp dotnet_package)
+  add_custom_target(dotnet_sample_${SAMPLE_NAME} ALL
+    DEPENDS ${DOTNET_SAMPLE_PATH}/${SAMPLE_NAME}.csproj
+    COMMAND ${DOTNET_EXECUTABLE} build -c Release
+    COMMAND ${DOTNET_EXECUTABLE} pack -c Release
+    BYPRODUCTS
+      ${DOTNET_SAMPLE_PATH}/bin
+      ${DOTNET_SAMPLE_PATH}/obj
+    WORKING_DIRECTORY ${DOTNET_SAMPLE_PATH})
+  add_dependencies(dotnet_sample_${SAMPLE_NAME} dotnet_package)
 
-if(BUILD_TESTING)
-  add_test(NAME dotnet_FooApp
-    COMMAND ${DOTNET_EXECUTABLE} run -c Release --project ${DOTNET_APP_PROJECT}.csproj
-    WORKING_DIRECTORY ${DOTNET_APP_PATH})
-endif()
+  if(BUILD_TESTING)
+    add_test(
+      NAME dotnet_${SAMPLE_NAME}
+      COMMAND ${DOTNET_EXECUTABLE} run --no-build -c Release
+      WORKING_DIRECTORY ${DOTNET_SAMPLE_PATH})
+  endif()
+
+  message(STATUS "Configuring sample ${FILE_NAME} done")
+endfunction()
+

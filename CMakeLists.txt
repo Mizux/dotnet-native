@@ -66,3 +66,6 @@ if(WIN32)
 endif()
 
 include(dotnet)
+
+add_subdirectory(tests)
+add_subdirectory(samples)
