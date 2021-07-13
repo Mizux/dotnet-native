@@ -38,6 +38,8 @@ elseif(UNIX)
   set_target_properties(mizux-dotnetnative-native PROPERTIES INSTALL_RPATH "$ORIGIN")
 endif()
 
+list(APPEND CMAKE_SWIG_FLAGS ${FLAGS} "-I${PROJECT_SOURCE_DIR}")
+
 # Needed by dotnet/CMakeLists.txt
 set(DOTNET_PACKAGE Mizux.DotnetNative)
 set(DOTNET_PACKAGES_DIR "${PROJECT_BINARY_DIR}/dotnet/packages")
@@ -91,7 +93,7 @@ add_custom_command(
 add_custom_target(dotnet_native_package
   DEPENDS ${DOTNET_NATIVE_PATH}/${DOTNET_NATIVE_PROJECT}.csproj
   COMMAND ${CMAKE_COMMAND} -E make_directory packages
-  COMMAND ${DOTNET_EXECUTABLE} build -c Release /p:Platform=x64 ${DOTNET_NATIVE_PROJECT}/${DOTNET_NATIVE_PROJECT}.csproj
+  COMMAND ${DOTNET_EXECUTABLE} build -c Release ${DOTNET_NATIVE_PROJECT}/${DOTNET_NATIVE_PROJECT}.csproj
   COMMAND ${DOTNET_EXECUTABLE} pack -c Release ${DOTNET_NATIVE_PROJECT}/${DOTNET_NATIVE_PROJECT}.csproj
   BYPRODUCTS
     dotnet/${DOTNET_NATIVE_PROJECT}/bin
@@ -121,7 +123,7 @@ add_custom_command(
 
 add_custom_target(dotnet_package ALL
   DEPENDS ${DOTNET_PATH}/${DOTNET_PROJECT}.csproj
-  COMMAND ${DOTNET_EXECUTABLE} build -c Release /p:Platform=x64 ${DOTNET_PROJECT}/${DOTNET_PROJECT}.csproj
+  COMMAND ${DOTNET_EXECUTABLE} build -c Release ${DOTNET_PROJECT}/${DOTNET_PROJECT}.csproj
   COMMAND ${DOTNET_EXECUTABLE} pack -c Release ${DOTNET_PROJECT}/${DOTNET_PROJECT}.csproj
   BYPRODUCTS
     dotnet/${DOTNET_PROJECT}/bin
