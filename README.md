@@ -56,7 +56,7 @@ The project layout is as follow:
 * [dotnet](dotnet) Root directory for .Net template files
   * [`Mizux.DotnetNative.runtime.csproj.in`](dotnet/Mizux.DotnetNative.runtime.csproj.in) csproj template for the .Net "native" (i.e. RID dependent) package.
   * [`Mizux.DotnetNative.csproj.in`](dotnet/Mizux.DotnetNative.csproj.in) csproj template for the .Net package.
-  * [`Tests.csproj.in`](dotnet/Tests.csproj.in) csproj template for .Net test project.
+  * [`Test.csproj.in`](dotnet/Test.csproj.in) csproj template for .Net test project.
   * [`Sample.csproj.in`](dotnet/Sample.csproj.in) csproj template for .Net sample project.
 
 * [Foo](Foo) Root directory for `Foo` library.
