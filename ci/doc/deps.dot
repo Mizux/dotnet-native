@@ -7,6 +7,7 @@ digraph DockerDeps {
   PKG [label="Build packages\ne.g. cmake, g++", shape=box3d];
   DOTNETPKG [label=".Net packages\ne.g. dotnet-cli", shape=box3d, fillcolor=forestgreen];
   SRC [label="git repo", shape=folder];
+  SAMPLE [label="sample", shape=folder];
 
   subgraph clusterDockerfile {
     ENV_IMG [label="dotnet-native:<distro>_env\nenv"];
@@ -20,9 +21,12 @@ digraph DockerDeps {
 
     ENV_IMG -> DEVEL_IMG;
     DEVEL_IMG -> BUILD_IMG;
-    BUILD_IMG -> INSTALL_DEVEL_IMG [label="copy install", style="dashed"];
-    ENV_IMG -> INSTALL_DEVEL_IMG;
+    BUILD_IMG -> TEST_IMG;
+    ENV_IMG -> INSTALL_ENV_IMG;
+    BUILD_IMG -> INSTALL_ENV_IMG [label="copy install", style="dashed"];
+    INSTALL_ENV_IMG -> INSTALL_DEVEL_IMG;
     INSTALL_DEVEL_IMG -> INSTALL_BUILD_IMG;
+    INSTALL_BUILD_IMG -> INSTALL_TEST_IMG;
 
     color=royalblue;
     label = "docker/<distro>/Dockerfile";
@@ -31,6 +35,7 @@ digraph DockerDeps {
   PKG -> ENV_IMG [label="install", style="dashed"];
   DOTNETPKG -> ENV_IMG [label="install", style="dashed"];
   SRC -> DEVEL_IMG [label="copy", style="dashed"];
+  SAMPLE -> INSTALL_DEVEL_IMG [label="copy", style="dashed"];
 
   subgraph clusterCache {
     node [shape=note, style="rounded,filled", color=black, fillcolor=royalblue];
