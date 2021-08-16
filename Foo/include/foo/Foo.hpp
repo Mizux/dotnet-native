@@ -73,7 +73,6 @@ int pairJaggedArrayRefInput(const std::vector<std::vector<std::pair<int, int>>>&
 /*! @brief Free function in foo namespace.
  * @param level Scope level.*/
 void freeFunction(int level);
-
 /*! @brief Free function in foo namespace.
  * @param level Scope level.*/
 void freeFunction(int64_t level);
