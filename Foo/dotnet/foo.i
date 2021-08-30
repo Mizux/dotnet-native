@@ -1,5 +1,6 @@
 %module csFoo
 
+%include "stdint.i"
 %include "std_vector.i"
 %include "std_string.i"
 %include "std_pair.i"
@@ -17,7 +18,7 @@
 #include <foo/Foo.hpp>
 %}
 
-%ignore "";
+%ignore ""; // ignore all
 %define %unignore %rename("%s") %enddef
 
 %unignore foo;
