@@ -10,14 +10,26 @@ RUN apk add --no-cache git build-base linux-headers cmake
 RUN apk add --no-cache swig
 
 # .NET install
-RUN apk add --no-cache wget icu-libs libintl
-RUN dotnet_sdk_version=3.1.405 \
-&& wget -qO dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/$dotnet_sdk_version/dotnet-sdk-$dotnet_sdk_version-linux-musl-x64.tar.gz \
-&& dotnet_sha512='e0fdcd08cf3cddeb4e24f57ccc1398e58b20c1c797bc2f9492124467defc6046a9690dbebc9d22e0f4b1627205519c7338de872451f37dc3b794865e1d0bd9bc' \
-&& echo "$dotnet_sha512  dotnet.tar.gz" | sha512sum -c - \
+RUN apk add --no-cache wget icu-libs libintl \
 && mkdir -p /usr/share/dotnet \
+&& ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
+
+# see: https://dotnet.microsoft.com/download/dotnet-core/3.1
+RUN dotnet_sdk_version=3.1.413 \
+&& wget -qO dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/$dotnet_sdk_version/dotnet-sdk-$dotnet_sdk_version-linux-musl-x64.tar.gz \
+&& dotnet_sha512='46ffb31754b295cdb7dc615d5f905aa5842e3ada0e3f975217dfecbaa94e7b0190e86136fe9693d354b6ef88faa83e1c48496ffb1d644bd7ff437aeb48b9229c' \
+&& echo "$dotnet_sha512  dotnet.tar.gz" | sha512sum -c - \
 && tar -C /usr/share/dotnet -oxzf dotnet.tar.gz \
-&& ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet \
+&& rm dotnet.tar.gz
+# Trigger first run experience by running arbitrary cmd
+RUN dotnet --info
+
+# see: https://dotnet.microsoft.com/download/dotnet-core/5.0
+RUN dotnet_sdk_version=5.0.401 \
+&& wget -qO dotnet.tar.gz https://download.visualstudio.microsoft.com/download/pr/a80a3834-c8a1-4012-b7d9-a3a5a1e4ba30/29e11d1acb7595d79ce48a5f1fb33c82/dotnet-sdk-$dotnet_sdk_version-linux-musl-x64.tar.gz \
+&& dotnet_sha512='a2077f4d1c9da9c69453b771cd239bad27f62379402cc5e1c74a1f2a960fd55efc85cc15eafbac11f17ea975895ce107fab4bbfc49880a0a14791e8ac13ca2de' \
+&& echo "$dotnet_sha512  dotnet.tar.gz" | sha512sum -c - \
+&& tar -C /usr/share/dotnet -oxzf dotnet.tar.gz \
 && rm dotnet.tar.gz
 # Trigger first run experience by running arbitrary cmd
 RUN dotnet --info
@@ -34,7 +46,7 @@ RUN cmake --build build --target all -v
 RUN cmake --build build --target install -v
 
 FROM build AS test
-RUN cmake --build build --target test -v
+RUN CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test -v
 
 FROM env AS install_env
 WORKDIR /home/sample
