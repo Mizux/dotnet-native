@@ -10,7 +10,7 @@ RUN apt-get update -q \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Install CMake 3.19.2
-RUN wget "https://cmake.org/files/v3.19/cmake-3.19.2-Linux-x86_64.sh" \
+RUN wget -q "https://cmake.org/files/v3.19/cmake-3.19.2-Linux-x86_64.sh" \
 && chmod a+x cmake-3.19.2-Linux-x86_64.sh \
 && ./cmake-3.19.2-Linux-x86_64.sh --prefix=/usr/local/ --skip-license \
 && rm cmake-3.19.2-Linux-x86_64.sh
@@ -22,13 +22,13 @@ RUN apt-get update -qq \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # .NET install
-# see: https://docs.microsoft.com/en-us/dotnet/core/install/linux-package-manager-ubuntu-2010
+# see: https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu
 RUN apt-get update -qq \
 && apt-get install -yq wget apt-transport-https \
-&& wget -q https://packages.microsoft.com/config/ubuntu/20.10/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
+&& wget -q https://packages.microsoft.com/config/ubuntu/21.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
 && dpkg -i packages-microsoft-prod.deb \
 && apt-get update -qq \
-&& DEBIAN_FRONTEND=noninteractive apt-get install -yq dotnet-sdk-3.1 \
+&& DEBIAN_FRONTEND=noninteractive apt-get install -yq dotnet-sdk-3.1 dotnet-sdk-5.0\
 && apt-get clean \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # Trigger first run experience by running arbitrary cmd

@@ -10,6 +10,7 @@ RUN apk add --no-cache git build-base linux-headers cmake
 RUN apk add --no-cache swig
 
 # .NET install
+# see: https://docs.microsoft.com/en-us/dotnet/core/install/linux-alpine
 RUN apk add --no-cache wget icu-libs libintl \
 && mkdir -p /usr/share/dotnet \
 && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet

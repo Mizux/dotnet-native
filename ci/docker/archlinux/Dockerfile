@@ -10,7 +10,7 @@ RUN pacman -Syu --noconfirm git base-devel cmake
 RUN pacman -Syu --noconfirm swig
 
 # .NET install
-RUN pacman -Syu --noconfirm dotnet-sdk
+RUN pacman -Syu --noconfirm dotnet-sdk-3.1 dotnet-sdk-5.0
 # Trigger first run experience by running arbitrary cmd
 RUN dotnet --info
 

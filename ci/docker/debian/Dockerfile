@@ -10,7 +10,7 @@ RUN apt-get update -qq \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Install CMake 3.19.2
-RUN wget "https://cmake.org/files/v3.19/cmake-3.19.2-Linux-x86_64.sh" \
+RUN wget -q "https://cmake.org/files/v3.19/cmake-3.19.2-Linux-x86_64.sh" \
 && chmod a+x cmake-3.19.2-Linux-x86_64.sh \
 && ./cmake-3.19.2-Linux-x86_64.sh --prefix=/usr/local/ --skip-license \
 && rm cmake-3.19.2-Linux-x86_64.sh
@@ -22,15 +22,14 @@ RUN apt-get update -qq \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # .NET install
-# see: https://docs.microsoft.com/en-us/dotnet/core/install/linux-package-manager-debian10
+# see: https://docs.microsoft.com/en-us/dotnet/core/install/linux-debian
 RUN apt-get update -qq \
 && apt-get install -yq wget gpg apt-transport-https \
-&& wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.asc.gpg \
-&& mv microsoft.asc.gpg /etc/apt/trusted.gpg.d/ \
-&& wget -q https://packages.microsoft.com/config/debian/10/prod.list \
-&& mv prod.list /etc/apt/sources.list.d/microsoft-prod.list \
+&& wget -q "https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb" -O packages-microsoft-prod.deb \
+&& dpkg -i packages-microsoft-prod.deb \
+&& rm packages-microsoft-prod.deb \
 && apt-get update -qq \
-&& apt-get install -yq dotnet-sdk-3.1 \
+&& apt-get install -yq dotnet-sdk-3.1 dotnet-sdk-5.0 \
 && apt-get clean \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # Trigger first run experience by running arbitrary cmd
