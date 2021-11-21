@@ -1,4 +1,5 @@
-name: Docker
+# ref: https://github.com/docker-library/official-images
+name: amd64 Docker
 
 on:
   push:
@@ -15,9 +16,13 @@ jobs:
         distro: [alpine, archlinux, centos, debian, fedora, opensuse, ubuntu]
       fail-fast: false
     env:
-      DISTRO: ${{ matrix.distro }}
+      DISTRO: amd64_${{ matrix.distro }}
     steps:
     - uses: actions/checkout@v2
+    - name: Check docker
+      run: |
+        docker info
+        docker buildx ls
     - name: Build env image
       run: make --directory=ci ${DISTRO}_env
     - name: Build devel project
@@ -27,11 +32,11 @@ jobs:
     - name: Test project
       run: make --directory=ci ${DISTRO}_test
 
-    - name: Build env Install
+    - name: Build install env image
       run: make --directory=ci ${DISTRO}_install_env
-    - name: Build devel Install
+    - name: Build install devel project
       run: make --directory=ci ${DISTRO}_install_devel
-    - name: Build Install
+    - name: Build install project
       run: make --directory=ci ${DISTRO}_install_build
-    - name: Test Install
+    - name: Test install project
       run: make --directory=ci ${DISTRO}_install_test
