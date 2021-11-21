@@ -1,9 +1,17 @@
-*.swp
-*.user
-
 build/
+build*/
+export/
 cache/
 
+.vagrant/
+
+# IDE
 .vs/
+.cache/
+# Kdevelop
+.kdev4/
+*.kdev4
+# vim
 compile_commands.json
-.clangd
+*.swp
+*.user
