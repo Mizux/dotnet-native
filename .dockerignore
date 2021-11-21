@@ -4,21 +4,24 @@
 .git
 .gitignore
 .github
-.appveyor.yml
-.travis.yml
-.travis
+.clang-format
 
-ci/cache
-ci/docker
 ci/Makefile
+ci/docker
+ci/docs
+ci/cache
+ci/export
 
 AUTHORS
+CONTRIBUTING.md
+CONTRIBUTORS
 LICENSE
 README.md
 doc
 
 # Native cmake build
-build
+build/
+build*/
 
 # Editor directories and files
 *.user
