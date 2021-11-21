@@ -1,10 +1,10 @@
-#include "foo/Foo.hpp"
+#include "bar/Bar.hpp"
 
 #include <iostream>
 #include <string>
 #include <utility>
 
-namespace foo {
+namespace bar {
 std::vector<std::string> stringVectorOutput(int level) {
   std::cout << "[" << level << "] Enter " << __func__ << "()" << std::endl;
   std::vector<std::string> result(level, std::to_string(level));
@@ -155,37 +155,36 @@ void freeFunction(int64_t level) {
   std::cout << "[" << level << "] Exit " << __func__ << "(int64_t)" << std::endl;
 }
 
-void Foo::staticFunction(int level) {
+void Bar::staticFunction(int level) {
   std::cout << "[" << level << "] Enter " << __func__ << "(int)" << std::endl;
   freeFunction(level + 1);
   std::cout << "[" << level << "] Exit " << __func__ << "(int)" << std::endl;
 }
 
-void Foo::staticFunction(int64_t level) {
+void Bar::staticFunction(int64_t level) {
   std::cout << "[" << level << "] Enter " << __func__ << "(int64_t)" << std::endl;
   freeFunction(level + 1);
   std::cout << "[" << level << "] Exit " << __func__ << "(int64_t)" << std::endl;
 }
 
-int Foo::getInt() const {
+int Bar::getInt() const {
   return _intValue;
 }
 
-void Foo::setInt(int input) {
+void Bar::setInt(int input) {
   _intValue = input;
 }
 
-int64_t Foo::getInt64() const {
+int64_t Bar::getInt64() const {
   return _int64Value;
 }
 
-void Foo::setInt64(int64_t input) {
+void Bar::setInt64(int64_t input) {
   _int64Value = input;
 }
 
-std::string Foo::operator()() const {
-  return std::string{"\"Foo\":{\"int\":"} + std::to_string(_intValue) +
+std::string Bar::operator()() const {
+  return std::string{"\"Bar\":{\"int\":"} + std::to_string(_intValue) +
          ",\"int64\":" + std::to_string(_int64Value) + "}";
 }
-
-} // namespace foo
+} // namespace bar

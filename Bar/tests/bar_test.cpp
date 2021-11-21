@@ -1,17 +1,18 @@
-#include <catch2/catch_all.hpp>
-#include <foo/Foo.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include <iostream>
 #include <numeric>
 #include <string>
 
-namespace foo {
+#include <bar/Bar.hpp>
 
-TEST_CASE("Foo free function", "[Foo]") {
+namespace bar {
+
+TEST_CASE("Bar free function", "[Bar]") {
   SECTION("Int Function") { REQUIRE_NOTHROW(freeFunction(42)); }
   SECTION("Int64_t Function") { REQUIRE_NOTHROW(freeFunction(int64_t{42})); }
 }
 
-TEST_CASE("String Vector usage", "[Foo]") {
+TEST_CASE("String Vector usage", "[Bar]") {
   SECTION("Vector of String Output") {
     std::vector<std::string> result;
     REQUIRE_NOTHROW(result = stringVectorOutput(8));
@@ -34,7 +35,7 @@ TEST_CASE("String Vector usage", "[Foo]") {
   }
 }
 
-TEST_CASE("String Jagged Array usage", "[Foo]") {
+TEST_CASE("String Jagged Array usage", "[Bar]") {
   SECTION("Jagged Array of String Output") {
     std::vector<std::vector<std::string>> result;
     REQUIRE_NOTHROW(result = stringJaggedArrayOutput(8));
@@ -63,7 +64,7 @@ TEST_CASE("String Jagged Array usage", "[Foo]") {
   }
 }
 
-TEST_CASE("Pair Vector usage", "[Foo]") {
+TEST_CASE("Pair Vector usage", "[Bar]") {
   SECTION("Vector of Pair Output") {
     std::vector<std::string> result;
     REQUIRE_NOTHROW(result = stringVectorOutput(8));
@@ -86,7 +87,7 @@ TEST_CASE("Pair Vector usage", "[Foo]") {
   }
 }
 
-TEST_CASE("Pair Jagged Array usage", "[Foo]") {
+TEST_CASE("Pair Jagged Array usage", "[Bar]") {
   SECTION("Jagged Array of Pair Output") {
     std::vector<std::vector<std::pair<int, int>>> result;
     REQUIRE_NOTHROW(result = pairJaggedArrayOutput(8));
@@ -115,40 +116,40 @@ TEST_CASE("Pair Jagged Array usage", "[Foo]") {
   }
 }
 
-TEST_CASE("Foo static method", "[Foo]") {
-  SECTION("Int Method") { REQUIRE_NOTHROW(Foo::staticFunction(42)); }
-  SECTION("Int64_t Method") { REQUIRE_NOTHROW(Foo::staticFunction(int64_t{42})); }
+TEST_CASE("Bar static method", "[Bar]") {
+  SECTION("Int Method") { REQUIRE_NOTHROW(Bar::staticFunction(42)); }
+  SECTION("Int64_t Method") { REQUIRE_NOTHROW(Bar::staticFunction(int64_t{42})); }
 }
 
-TEST_CASE("Foo::Ctor", "[Foo]") {
+TEST_CASE("Bar::Ctor", "[Bar]") {
   SECTION("Default constructor") {
-    Foo* b = new Foo();
+    Bar* b = new Bar();
     REQUIRE(b != nullptr);
   }
 }
 
-SCENARIO("Foo Int", "[Foo]") {
-  GIVEN("A Foo instance") {
-    Foo foo;
+SCENARIO("Bar Int", "[Bar]") {
+  GIVEN("A Bar instance") {
+    Bar bar;
     WHEN("Setting a value") {
-      REQUIRE_NOTHROW(foo.setInt(42));
-      THEN("The value is updated") { REQUIRE(foo.getInt() == 42); }
+      REQUIRE_NOTHROW(bar.setInt(42));
+      THEN("The value is updated") { REQUIRE(bar.getInt() == 42); }
     }
   }
 }
 
-SCENARIO("Foo Int64", "[Foo]") {
-  GIVEN("A Foo instance") {
-    Foo foo;
+SCENARIO("Bar Int64", "[Bar]") {
+  GIVEN("A Bar instance") {
+    Bar bar;
     WHEN("Setting a value") {
-      REQUIRE_NOTHROW(foo.setInt64(31));
-      THEN("The value is updated") { REQUIRE(foo.getInt64() == 31); }
+      REQUIRE_NOTHROW(bar.setInt64(31));
+      THEN("The value is updated") { REQUIRE(bar.getInt64() == 31); }
     }
   }
 }
 
-TEST_CASE("Foo::operator()", "[Foo]") {
-  SECTION("Debug print") { INFO("Foo: " << Foo()()); }
+TEST_CASE("Bar::operator()", "[Bar]") {
+  SECTION("Debug print") { INFO("Bar: " << Bar()()); }
 }
 
-} // namespace foo
+} // namespace bar
