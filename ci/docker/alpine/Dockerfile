@@ -9,7 +9,7 @@ RUN apk add --no-cache git build-base linux-headers cmake
 # Install swig
 RUN apk add --no-cache swig
 
-# .NET install
+# Install .NET SDK
 # see: https://docs.microsoft.com/en-us/dotnet/core/install/linux-alpine
 RUN apk add --no-cache wget icu-libs libintl \
 && mkdir -p /usr/share/dotnet \
@@ -42,15 +42,16 @@ COPY . .
 
 FROM devel AS build
 RUN cmake -version
-RUN cmake -S. -Bbuild
+RUN cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release
 RUN cmake --build build --target all -v
 RUN cmake --build build --target install -v
 
 FROM build AS test
 RUN CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test -v
 
+# Test install rules
 FROM env AS install_env
-WORKDIR /home/sample
+WORKDIR /home/samples
 COPY --from=build /home/project/build/dotnet/packages/*.nupkg ./
 
 FROM install_env AS install_devel
