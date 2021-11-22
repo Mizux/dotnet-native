@@ -40,7 +40,7 @@ Dockerfile is splitted in several stages.
 ### Run arm64v8 image on amd64 machine
 You can build and run `arm64v8` (i.e. `aarch64`) docker container on a `amd64` host (`x86_64`) by enabling qemu support:
 ```sh
-docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+docker run --pull always --rm --privileged multiarch/qemu-user-static --reset -p yes
 ```
 ref: https://github.com/multiarch/qemu-user-static#getting-started
 
