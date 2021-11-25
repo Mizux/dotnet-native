@@ -202,7 +202,7 @@ function(add_dotnet_example FILE_NAME)
 
   set(DOTNET_PACKAGES_DIR "${PROJECT_BINARY_DIR}/dotnet/packages")
   configure_file(
-    ${PROJECT_SOURCE_DIR}/dotnet/Sample.csproj.in
+    ${PROJECT_SOURCE_DIR}/dotnet/Example.csproj.in
     ${DOTNET_EXAMPLE_PATH}/${EXAMPLE_NAME}.csproj
     @ONLY)
 

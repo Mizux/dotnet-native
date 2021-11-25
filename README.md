@@ -87,7 +87,7 @@ The project layout is as follow:
   * [`Mizux.DotnetNative.runtime.csproj.in`](dotnet/Mizux.DotnetNative.runtime.csproj.in) csproj template for the .Net "native" (i.e. RID dependent) package.
   * [`Mizux.DotnetNative.csproj.in`](dotnet/Mizux.DotnetNative.csproj.in) csproj template for the .Net package.
   * [`Test.csproj.in`](dotnet/Test.csproj.in) csproj template for .Net test project.
-  * [`Sample.csproj.in`](dotnet/Sample.csproj.in) csproj template for .Net sample project.
+  * [`Example.csproj.in`](dotnet/Example.csproj.in) csproj template for .Net example project.
 
 * [tests](tests) Root directory for tests
   * [CMakeLists.txt](tests/CMakeLists.txt) for `DotnetNative.Test` .Net.
