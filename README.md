@@ -1,56 +1,48 @@
-[![Build Status][docker_status]][docker_link]
-[![Status][linux_svg]][linux_link]
-[![Status][osx_svg]][osx_link]
-[![Status][win_svg]][win_link]
+Github-CI:
+[![Build Status][github_linux_status]][github_linux_link]
+[![Build Status][github_macos_status]][github_macos_link]
+[![Build Status][github_windows_status]][github_windows_link]
+[![Build Status][github_amd64_docker_status]][github_amd64_docker_link]
 
-[![Build Status][travis_status]][travis_link]
-[![Build Status][appveyor_status]][appveyor_link]
-
-[docker_status]: https://github.com/Mizux/dotnet-native/workflows/Docker/badge.svg?branch=main
-[docker_link]: https://github.com/Mizux/dotnet-native/actions?query=workflow%3A"Docker"
-[linux_svg]: https://github.com/Mizux/dotnet-native/workflows/Linux/badge.svg?branch=main
-[linux_link]: https://github.com/Mizux/dotnet-native/actions?query=workflow%3A"Linux"
-[osx_svg]: https://github.com/Mizux/dotnet-native/workflows/MacOS/badge.svg?branch=main
-[osx_link]: https://github.com/Mizux/dotnet-native/actions?query=workflow%3A"MacOS"
-[win_svg]: https://github.com/Mizux/dotnet-native/workflows/Windows/badge.svg?branch=main
-[win_link]: https://github.com/Mizux/dotnet-native/actions?query=workflow%3A"Windows"
-
-[travis_status]: https://travis-ci.com/Mizux/dotnet-native.svg?branch=main
-[travis_link]: https://travis-ci.com/Mizux/dotnet-native
-
-[appveyor_status]: https://ci.appveyor.com/api/projects/status/q105jch2jxxb5t4f/branch/master?svg=true
-[appveyor_link]: https://ci.appveyor.com/project/Mizux/dotnet-native/branch/main
+[github_linux_status]: https://github.com/Mizux/dotnet-native/actions/workflows/amd64_linux.yml/badge.svg
+[github_linux_link]: https://github.com/Mizux/dotnet-native/actions/workflows/amd64_linux.yml
+[github_macos_status]: https://github.com/Mizux/dotnet-native/actions/workflows/amd64_macos.yml/badge.svg
+[github_macos_link]: https://github.com/Mizux/dotnet-native/actions/workflows/amd64_macos.yml
+[github_windows_status]: https://github.com/Mizux/dotnet-native/actions/workflows/amd64_windows.yml/badge.svg
+[github_windows_link]: https://github.com/Mizux/dotnet-native/actions/workflows/amd64_windows.yml
+[github_amd64_docker_status]: https://github.com/Mizux/dotnet-native/actions/workflows/amd64_docker.yml/badge.svg
+[github_amd64_docker_link]: https://github.com/Mizux/dotnet-native/actions/workflows/amd64_docker.yml
 
 # Introduction
+<nav for="project"> |
+<a href="#requirement">Requirement</a> |
+<a href="#codemap">Codemap</a> |
+<a href="#dependencies">Dependencies</a> |
+<a href="#build-process">Build</a> |
+<a href="ci/README.md">CI</a> |
+<a href="#appendices">Appendices</a> |
+<a href="#license">License</a> |
+</nav>
 
-This project aim to explain how you build a .NetStandard2.0 native (for win-x64, linux-x64 and osx-x64) nuget multiple package using [`.NET Core CLI`](https://docs.microsoft.com/en-us/dotnet/core/tools/) and the [*new* .csproj format](https://docs.microsoft.com/en-us/dotnet/core/tools/csproj).  
+This is an example of how to create a Modern [CMake](https://cmake.org/) C++/.Net Project.
+
+This project aim to explain how you build a .NetStandard2.0 native (win-x64,
+linux-x64 and osx-x64) nuget multiple package using
+[`.NET Core CLI`](https://docs.microsoft.com/en-us/dotnet/core/tools/) and the
+[*new* .csproj format](https://docs.microsoft.com/en-us/dotnet/core/tools/csproj).<br>
 e.g. You have a cross platform C++ library (using a CMake based build) and a .NetStandard2.0 wrapper on it thanks to SWIG.  
 Then you want to provide a cross-platform Nuget package to consume it in a .NetCoreApp2.1 project...
 
-## Table of Content
-
-* [Requirement](#requirement)
-* [Directory Layout](#directory-layout)
-* [Build Process](#build-process)
-  * [Local Mizux.DotnetNative Package](#local-mizuxfoo-package)
-    * [Building a runtime Mizux.DotnetNative Package](#building-local-runtime-mizuxfoo-package)
-    * [Building a Local Mizux.DotnetNative Package](#building-local-mizuxfoo-package)
-    * [Testing the Local Mizux.DotnetNative Package](#testing-local-mizuxfoo-package)
-  * [Complete Mizux.DotnetNative Package](#complete-mizuxfoo-package)
-    * [Building all runtime Mizux.DotnetNative Package](#building-all-runtime-mizuxfoo-package)
-    * [Building a Complete Mizux.DotnetNative Package](#building-complete-mizuxfoo-package)
-    * [Testing the Complete Mizux.DotnetNative Package](#testing-complete-mizuxfoo-package)
-* [Appendices](#appendices)
-  * [Resources](#resources)
-  * [Issues](#issues)
-* [Misc](#misc)
-
 ## Requirement
 
-You'll need the ".Net Core SDK >= 2.1.302" to get the dotnet cli.
-i.e. We won't/can't rely on VS 2019 since we want a portable cross-platform [`dotnet/cli`](https://github.com/dotnet/cli) pipeline. 
+You'll need:
 
-## Directory Layout
+* "CMake >= 3.18".
+* ".Net Core SDK >= 3.1" to get the dotnet cli.
+
+note: We won't/can't rely on VS 2019 since we want a portable cross-platform [`dotnet/cli`](https://github.com/dotnet/cli) pipeline. 
+
+## Codemap
 
 The project layout is as follow:
 
@@ -58,16 +50,38 @@ The project layout is as follow:
 * [cmake](cmake) Subsidiary CMake files.
   * [dotnet.cmake](cmake/dotnet.cmake) All internall .Net CMake stuff.
 
+* [ci](ci) Root directory for continuous integration.
+
 * [Foo](Foo) Root directory for `Foo` library.
   * [CMakeLists.txt](Foo/CMakeLists.txt) for `Foo`.
   * [include](Foo/include) public folder.
     * [foo](Foo/include/foo)
       * [Foo.hpp](Foo/include/foo/Foo.hpp)
+  * [src](Foo/src) private folder.
+    * [src/Foo.cpp](Foo/src/Foo.cpp)
   * [dotnet](Foo/dotnet)
     * [CMakeLists.txt](Foo/dotnet/CMakeLists.txt) for `Foo` .Net.
     * [foo.i](Foo/dotnet/foo.i) SWIG .Net wrapper.
-  * [src](Foo/src) private folder.
-    * [src/Foo.cpp](Foo/src/Foo.cpp)
+* [Bar](Bar) Root directory for `Bar` library.
+  * [CMakeLists.txt](Bar/CMakeLists.txt) for `Bar`.
+  * [include](Bar/include) public folder.
+    * [bar](Bar/include/bar)
+      * [Bar.hpp](Bar/include/bar/Bar.hpp)
+  * [src](Bar/src) private folder.
+    * [src/Bar.cpp](Bar/src/Bar.cpp)
+  * [dotnet](Bar/dotnet)
+    * [CMakeLists.txt](Bar/dotnet/CMakeLists.txt) for `Bar` .Net.
+    * [bar.i](Bar/dotnet/bar.i) SWIG .Net wrapper.
+* [FooBar](FooBar) Root directory for `FooBar` library.
+  * [CMakeLists.txt](FooBar/CMakeLists.txt) for `FooBar`.
+  * [include](FooBar/include) public folder.
+    * [foobar](FooBar/include/foobar)
+      * [FooBar.hpp](FooBar/include/foobar/FooBar.hpp)
+  * [src](FooBar/src) private folder.
+    * [src/FooBar.cpp](FooBar/src/FooBar.cpp)
+  * [dotnet](FooBar/dotnet)
+    * [CMakeLists.txt](FooBar/dotnet/CMakeLists.txt) for `FooBar` .Net.
+    * [foobar.i](Bar/dotnet/foobar.i) SWIG .Net wrapper.
 
 * [dotnet](dotnet) Root directory for .Net template files
   * [`Mizux.DotnetNative.runtime.csproj.in`](dotnet/Mizux.DotnetNative.runtime.csproj.in) csproj template for the .Net "native" (i.e. RID dependent) package.
@@ -79,11 +93,18 @@ The project layout is as follow:
   * [CMakeLists.txt](tests/CMakeLists.txt) for `DotnetNative.Test` .Net.
   * [`FooTests.cs`](tests/FooTests.cs) Code of the Mizux.DotnetNative.FooTests project.
 
-* [samples](samples) Root directory for samples
-  * [CMakeLists.txt](samples/CMakeLists.txt) for `DotnetNative.FooApp` .Net.
-  * [`FooApp.cs`](samples/FooApp.cs) Code of the `DotnetNative.FooApp` app.
+* [examples](examples) Root directory for examples
+  * [CMakeLists.txt](examples/CMakeLists.txt) for `DotnetNative.FooApp` .Net.
+  * [`FooApp.cs`](examples/FooApp.cs) Code of the `DotnetNative.FooApp` app.
 
-* [ci](ci) Root directory for continuous integration.
+## Dependencies
+To complexify a little, the CMake project is composed of three libraries (Foo, Bar and FooBar)
+with the following dependencies:  
+```sh
+Foo:
+Bar:
+FooBar: PUBLIC Foo PRIVATE Bar
+```
 
 ## Build Process
 
@@ -319,7 +340,15 @@ $ dotnet run --project build/dotnet/FooApp/FooApp.csproj
 Few links on the subject...
 
 ### Resources
+Project layout:
+* The Pitchfork Layout Revision 1 (cxx-pflR1)
 
+CMake:
+* https://llvm.org/docs/CMakePrimer.html
+* https://cliutils.gitlab.io/modern-cmake/
+* https://cgold.readthedocs.io/en/latest/
+
+.Net:
 * [.NET Core RID Catalog](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog)
 * [Creating native packages](https://docs.microsoft.com/en-us/nuget/create-packages/native-packages)
 * [Blog on Nuget Rid Graph](https://natemcmaster.com/blog/2016/05/19/nuget3-rid-graph/)
@@ -335,13 +364,12 @@ Some issue related to this process
 * [Improve documentation on creating native packages #238](https://github.com/NuGet/docs.microsoft.com-nuget/issues/238)
 * [Guide for packaging C# library using P/Invoke](https://github.com/NuGet/Home/issues/8623)
 
-## Misc
-
+### Misc
 Image has been generated using [plantuml](http://plantuml.com/):
 ```bash
-plantuml -Tsvg doc/{file}.dot
+plantuml -Tsvg docs/{file}.dot
 ```
-So you can find the dot source files in [doc](doc).
+So you can find the dot source files in [docs](docs).
 
 ## License
 
