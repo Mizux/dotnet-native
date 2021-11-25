@@ -143,8 +143,10 @@ add_dependencies(dotnet_package dotnet_native_package)
 # e.g.:
 # add_dotnet_test(FooTests.cs)
 function(add_dotnet_test FILE_NAME)
-  message(STATUS "Configuring test ${FILE_NAME} ...")
+  message(STATUS "Configuring test ${FILE_NAME}: ...")
   get_filename_component(TEST_NAME ${FILE_NAME} NAME_WE)
+  get_filename_component(COMPONENT_DIR ${FILE_NAME} DIRECTORY)
+  get_filename_component(COMPONENT_NAME ${COMPONENT_DIR} NAME)
 
   set(DOTNET_TEST_PATH ${PROJECT_BINARY_DIR}/dotnet/${TEST_NAME})
   message(STATUS "build path: ${DOTNET_TEST_PATH}")
@@ -158,67 +160,69 @@ function(add_dotnet_test FILE_NAME)
     ${DOTNET_TEST_PATH}/${TEST_NAME}.csproj
     @ONLY)
 
-  add_custom_target(dotnet_test_${TEST_NAME} ALL
+  add_custom_target(dotnet_${COMPONENT_NAME}_${TEST_NAME} ALL
     DEPENDS ${DOTNET_TEST_PATH}/${TEST_NAME}.csproj
     COMMAND ${DOTNET_EXECUTABLE} build -c Release
     BYPRODUCTS
       ${DOTNET_TEST_PATH}/bin
       ${DOTNET_TEST_PATH}/obj
     WORKING_DIRECTORY ${DOTNET_TEST_PATH})
-  add_dependencies(dotnet_test_${TEST_NAME} dotnet_package)
+  add_dependencies(dotnet_${COMPONENT_NAME}_${TEST_NAME} dotnet_package)
 
   if(BUILD_TESTING)
     add_test(
-      NAME dotnet_${TEST_NAME}
+      NAME dotnet_${COMPONENT_NAME}_${TEST_NAME}
       COMMAND ${DOTNET_EXECUTABLE} test --no-build -c Release
       WORKING_DIRECTORY ${DOTNET_TEST_PATH})
   endif()
 
-  message(STATUS "Configuring test ${FILE_NAME} done")
+  message(STATUS "Configuring test ${FILE_NAME}: ...DONE")
 endfunction()
 
-###################
-##  .Net Sample  ##
-###################
-# add_dotnet_sample()
-# CMake function to generate and build dotnet sample.
+####################
+##  .Net Example  ##
+####################
+# add_dotnet_example()
+# CMake function to generate and build dotnet example.
 # Parameters:
 #  the dotnet filename
 # e.g.:
-# add_dotnet_sample(FooApp.cs)
-function(add_dotnet_sample FILE_NAME)
-  message(STATUS "Configuring sample ${FILE_NAME} ...")
-  get_filename_component(SAMPLE_NAME ${FILE_NAME} NAME_WE)
+# add_dotnet_example(FooApp.cs)
+function(add_dotnet_example FILE_NAME)
+  message(STATUS "Configuring example ${FILE_NAME}: ...")
+  get_filename_component(EXAMPLE_NAME ${FILE_NAME} NAME_WE)
+  get_filename_component(COMPONENT_DIR ${FILE_NAME} DIRECTORY)
+  get_filename_component(COMPONENT_NAME ${COMPONENT_DIR} NAME)
 
-  set(DOTNET_SAMPLE_PATH ${PROJECT_BINARY_DIR}/dotnet/${SAMPLE_NAME})
-  message(STATUS "build path: ${DOTNET_SAMPLE_PATH}")
-  file(MAKE_DIRECTORY ${DOTNET_SAMPLE_PATH})
+  set(DOTNET_EXAMPLE_PATH ${PROJECT_BINARY_DIR}/dotnet/${EXAMPLE_NAME})
+  message(STATUS "build path: ${DOTNET_EXAMPLE_PATH}")
+  file(MAKE_DIRECTORY ${DOTNET_EXAMPLE_PATH})
 
-  file(COPY ${FILE_NAME} DESTINATION ${DOTNET_SAMPLE_PATH})
+  file(COPY ${FILE_NAME} DESTINATION ${DOTNET_EXAMPLE_PATH})
 
   set(DOTNET_PACKAGES_DIR "${PROJECT_BINARY_DIR}/dotnet/packages")
   configure_file(
     ${PROJECT_SOURCE_DIR}/dotnet/Sample.csproj.in
-    ${DOTNET_SAMPLE_PATH}/${SAMPLE_NAME}.csproj
+    ${DOTNET_EXAMPLE_PATH}/${EXAMPLE_NAME}.csproj
     @ONLY)
 
-  add_custom_target(dotnet_sample_${SAMPLE_NAME} ALL
-    DEPENDS ${DOTNET_SAMPLE_PATH}/${SAMPLE_NAME}.csproj
+  add_custom_target(dotnet_sample_${EXAMPLE_NAME} ALL
+    DEPENDS ${DOTNET_EXAMPLE_PATH}/${EXAMPLE_NAME}.csproj
     COMMAND ${DOTNET_EXECUTABLE} build -c Release
     COMMAND ${DOTNET_EXECUTABLE} pack -c Release
     BYPRODUCTS
-      ${DOTNET_SAMPLE_PATH}/bin
-      ${DOTNET_SAMPLE_PATH}/obj
-    WORKING_DIRECTORY ${DOTNET_SAMPLE_PATH})
-  add_dependencies(dotnet_sample_${SAMPLE_NAME} dotnet_package)
+      ${DOTNET_EXAMPLE_PATH}/bin
+      ${DOTNET_EXAMPLE_PATH}/obj
+    WORKING_DIRECTORY ${DOTNET_EXAMPLE_PATH})
+  add_dependencies(dotnet_sample_${EXAMPLE_NAME} dotnet_package)
 
   if(BUILD_TESTING)
     add_test(
-      NAME dotnet_${SAMPLE_NAME}
+      NAME dotnet_${COMPONENT_NAME}_${EXAMPLE_NAME}
       COMMAND ${DOTNET_EXECUTABLE} run --no-build -c Release
-      WORKING_DIRECTORY ${DOTNET_SAMPLE_PATH})
+      WORKING_DIRECTORY ${DOTNET_EXAMPLE_PATH})
   endif()
 
-  message(STATUS "Configuring sample ${FILE_NAME} done")
+  message(STATUS "Configuring example ${FILE_NAME}: ...DONE")
 endfunction()
 
