@@ -1,6 +1,6 @@
 using System;
 using Xunit;
-using Mizux.DotnetNative;
+using Mizux.DotnetNative.Foo;
 
 namespace Mizux.DotnetNative.Tests {
   public class FooTest {
@@ -9,7 +9,7 @@ namespace Mizux.DotnetNative.Tests {
     [InlineData(true)]
     public void IntegerTest(bool callGC) {
       // Instantiate Foo
-      Foo obj = new Foo();
+      Foo.Foo obj = new Foo.Foo();
 
       if (callGC) {
         GC.Collect();
@@ -24,7 +24,7 @@ namespace Mizux.DotnetNative.Tests {
     [InlineData(true)]
     public void Integer64Test(bool callGC) {
       // Instantiate Foo
-      Foo obj = new Foo();
+      Foo.Foo obj = new Foo.Foo();
 
       if (callGC) {
         GC.Collect();
