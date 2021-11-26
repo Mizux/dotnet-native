@@ -56,14 +56,14 @@ set(DOTNET_NATIVE_PROJECT ${DOTNET_PACKAGE}.runtime.${RUNTIME_IDENTIFIER})
 set(DOTNET_PROJECT ${DOTNET_PACKAGE})
 
 # Swig wrap all libraries
-foreach(SUBPROJECT IN ITEMS Foo)
+foreach(SUBPROJECT IN ITEMS Foo Bar FooBar)
   add_subdirectory(${SUBPROJECT}/dotnet)
   target_link_libraries(mizux-dotnetnative-native PRIVATE dotnet_${SUBPROJECT})
 endforeach()
 
-file(COPY dotnet/logo.png DESTINATION dotnet)
+file(COPY ${PROJECT_SOURCE_DIR}/dotnet/logo.png DESTINATION dotnet)
 set(DOTNET_LOGO_DIR "${PROJECT_BINARY_DIR}/dotnet")
-configure_file(dotnet/Directory.Build.props.in dotnet/Directory.Build.props)
+configure_file(${PROJECT_SOURCE_DIR}/dotnet/Directory.Build.props.in dotnet/Directory.Build.props)
 
 ############################
 ##  .Net Runtime Package  ##
