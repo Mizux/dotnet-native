@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFrameworks>netstandard2.1;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
     <RuntimeIdentifier>@RUNTIME_IDENTIFIER@</RuntimeIdentifier>
     <AssemblyName>mizux-dotnetnative-native</AssemblyName>
     <Version>@PROJECT_VERSION@</Version>
@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <!-- Native library must be in native directory... -->
-    <Content Include="$<TARGET_FILE:Foo>">
+    <Content Include="$<TARGET_FILE:Bar>;$<TARGET_FILE:Foo>;$<TARGET_FILE:FooBar>">
       <PackagePath>runtimes/@RUNTIME_IDENTIFIER@/native/%(Filename)%(Extension)</PackagePath>
       <Pack>true</Pack>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
