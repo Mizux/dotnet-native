@@ -101,7 +101,7 @@ add_custom_command(
   COMMAND ${CMAKE_COMMAND} -E touch ${DOTNET_NATIVE_PROJECT_DIR}/timestamp
   DEPENDS
    ${DOTNET_NATIVE_PROJECT_DIR}/${DOTNET_NATIVE_PROJECT}.csproj
-   mizux-cmakeswig-native
+   mizux-dotnetnative-native
   BYPRODUCTS
     ${DOTNET_NATIVE_PROJECT_DIR}/bin
     ${DOTNET_NATIVE_PROJECT_DIR}/obj
