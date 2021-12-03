@@ -19,27 +19,6 @@ else()
   message(STATUS "Found dotnet Program: ${DOTNET_EXECUTABLE}")
 endif()
 
-# Create the native library
-add_library(mizux-dotnetnative-native SHARED "")
-set_target_properties(mizux-dotnetnative-native PROPERTIES
-  PREFIX ""
-  POSITION_INDEPENDENT_CODE ON)
-# note: macOS is APPLE and also UNIX !
-if(APPLE)
-  set_target_properties(mizux-dotnetnative-native PROPERTIES INSTALL_RPATH "@loader_path")
-  # Xcode fails to build if library doesn't contains at least one source file.
-  if(XCODE)
-    file(GENERATE
-      OUTPUT ${PROJECT_BINARY_DIR}/mizux-dotnetnative-native/version.cpp
-      CONTENT "namespace {char* version = \"${PROJECT_VERSION}\";}")
-    target_sources(mizux-dotnetnative-native PRIVATE ${PROJECT_BINARY_DIR}/mizux-dotnetnative-native/version.cpp)
-  endif()
-elseif(UNIX)
-  set_target_properties(mizux-dotnetnative-native PROPERTIES INSTALL_RPATH "$ORIGIN")
-endif()
-
-list(APPEND CMAKE_SWIG_FLAGS ${FLAGS} "-I${PROJECT_SOURCE_DIR}")
-
 # Needed by dotnet/CMakeLists.txt
 set(DOTNET_PACKAGE Mizux.DotnetNative)
 set(DOTNET_PACKAGES_DIR "${PROJECT_BINARY_DIR}/dotnet/packages")
@@ -62,6 +41,27 @@ message(STATUS ".Net project: ${DOTNET_PROJECT}")
 set(DOTNET_PROJECT_DIR ${PROJECT_BINARY_DIR}/dotnet/${DOTNET_PROJECT})
 message(STATUS ".Net project build path: ${DOTNET_PROJECT_DIR}")
 
+# Create the native library
+add_library(mizux-dotnetnative-native SHARED "")
+set_target_properties(mizux-dotnetnative-native PROPERTIES
+  PREFIX ""
+  POSITION_INDEPENDENT_CODE ON)
+# note: macOS is APPLE and also UNIX !
+if(APPLE)
+  set_target_properties(mizux-dotnetnative-native PROPERTIES INSTALL_RPATH "@loader_path")
+  # Xcode fails to build if library doesn't contains at least one source file.
+  if(XCODE)
+    file(GENERATE
+      OUTPUT ${PROJECT_BINARY_DIR}/mizux-dotnetnative-native/version.cpp
+      CONTENT "namespace {char* version = \"${PROJECT_VERSION}\";}")
+    target_sources(mizux-dotnetnative-native PRIVATE ${PROJECT_BINARY_DIR}/mizux-dotnetnative-native/version.cpp)
+  endif()
+elseif(UNIX)
+  set_target_properties(mizux-dotnetnative-native PROPERTIES INSTALL_RPATH "$ORIGIN")
+endif()
+
+list(APPEND CMAKE_SWIG_FLAGS ${FLAGS} "-I${PROJECT_SOURCE_DIR}")
+
 # Swig wrap all libraries
 foreach(SUBPROJECT IN ITEMS Foo Bar FooBar)
   add_subdirectory(${SUBPROJECT}/dotnet)
@@ -72,6 +72,7 @@ file(COPY ${PROJECT_SOURCE_DIR}/dotnet/logo.png DESTINATION dotnet)
 set(DOTNET_LOGO_DIR "${PROJECT_BINARY_DIR}/dotnet")
 configure_file(${PROJECT_SOURCE_DIR}/dotnet/Directory.Build.props.in dotnet/Directory.Build.props)
 
+file(MAKE_DIRECTORY ${DOTNET_PACKAGES_DIR})
 ############################
 ##  .Net Runtime Package  ##
 ############################
@@ -93,17 +94,25 @@ add_custom_command(
   WORKING_DIRECTORY ${DOTNET_NATIVE_PROJECT_DIR}
 )
 
-add_custom_target(dotnet_native_package
-  DEPENDS ${DOTNET_NATIVE_PROJECT_DIR}/${DOTNET_NATIVE_PROJECT}.csproj
-  COMMAND ${CMAKE_COMMAND} -E make_directory packages
-  COMMAND ${DOTNET_EXECUTABLE} build -c Release ${DOTNET_NATIVE_PROJECT}/${DOTNET_NATIVE_PROJECT}.csproj
-  COMMAND ${DOTNET_EXECUTABLE} pack -c Release ${DOTNET_NATIVE_PROJECT}/${DOTNET_NATIVE_PROJECT}.csproj
+add_custom_command(
+  OUTPUT ${DOTNET_NATIVE_PROJECT_DIR}/timestamp
+  COMMAND ${DOTNET_EXECUTABLE} build -c Release ${DOTNET_NATIVE_PROJECT}.csproj
+  COMMAND ${DOTNET_EXECUTABLE} pack -c Release ${DOTNET_NATIVE_PROJECT}.csproj
+  COMMAND ${CMAKE_COMMAND} -E touch ${DOTNET_NATIVE_PROJECT_DIR}/timestamp
+  DEPENDS
+   ${DOTNET_NATIVE_PROJECT_DIR}/${DOTNET_NATIVE_PROJECT}.csproj
+   mizux-cmakeswig-native
   BYPRODUCTS
-    dotnet/${DOTNET_NATIVE_PROJECT}/bin
-    dotnet/${DOTNET_NATIVE_PROJECT}/obj
-  WORKING_DIRECTORY dotnet
+    ${DOTNET_NATIVE_PROJECT_DIR}/bin
+    ${DOTNET_NATIVE_PROJECT_DIR}/obj
+  COMMENT "Generate .Net native package ${DOTNET_NATIVE_PROJECT} (${DOTNET_NATIVE_PROJECT_DIR}/timestamp)"
+  WORKING_DIRECTORY ${DOTNET_NATIVE_PROJECT_DIR}
 )
-add_dependencies(dotnet_native_package mizux-dotnetnative-native)
+
+add_custom_target(dotnet_native_package
+  DEPENDS
+    ${DOTNET_NATIVE_PROJECT_DIR}/timestamp
+  WORKING_DIRECTORY dotnet)
 
 ####################
 ##  .Net Package  ##
@@ -120,17 +129,25 @@ add_custom_command(
   WORKING_DIRECTORY ${DOTNET_PROJECT_DIR}
 )
 
-add_custom_target(dotnet_package ALL
-  DEPENDS ${DOTNET_PROJECT_DIR}/${DOTNET_PROJECT}.csproj
-  COMMAND ${DOTNET_EXECUTABLE} build -c Release ${DOTNET_PROJECT}/${DOTNET_PROJECT}.csproj
-  COMMAND ${DOTNET_EXECUTABLE} pack -c Release ${DOTNET_PROJECT}/${DOTNET_PROJECT}.csproj
+add_custom_command(
+  OUTPUT ${DOTNET_PROJECT_DIR}/timestamp
+  COMMAND ${DOTNET_EXECUTABLE} build -c Release ${DOTNET_PROJECT}.csproj
+  COMMAND ${DOTNET_EXECUTABLE} pack -c Release ${DOTNET_PROJECT}.csproj
+  COMMAND ${CMAKE_COMMAND} -E touch ${DOTNET_PROJECT_DIR}/timestamp
+  DEPENDS
+    ${DOTNET_PROJECT_DIR}/${DOTNET_PROJECT}.csproj
+    dotnet_native_package
   BYPRODUCTS
-    dotnet/${DOTNET_PROJECT}/bin
-    dotnet/${DOTNET_PROJECT}/obj
-    dotnet/packages
-  WORKING_DIRECTORY dotnet
+    ${DOTNET_PROJECT_DIR}/bin
+    ${DOTNET_PROJECT_DIR}/obj
+  COMMENT "Generate .Net package ${DOTNET_PROJECT} (${DOTNET_PROJECT_DIR}/timestamp)"
+  WORKING_DIRECTORY ${DOTNET_PROJECT_DIR}
 )
-add_dependencies(dotnet_package dotnet_native_package)
+
+add_custom_target(dotnet_package ALL
+  DEPENDS
+    ${DOTNET_PROJECT_DIR}/timestamp
+  WORKING_DIRECTORY dotnet)
 
 #################
 ##  .Net Test  ##
@@ -147,26 +164,40 @@ function(add_dotnet_test FILE_NAME)
   get_filename_component(COMPONENT_DIR ${FILE_NAME} DIRECTORY)
   get_filename_component(COMPONENT_NAME ${COMPONENT_DIR} NAME)
 
-  set(DOTNET_TEST_DIR ${PROJECT_BINARY_DIR}/dotnet/${TEST_NAME})
+  set(DOTNET_TEST_DIR ${PROJECT_BINARY_DIR}/dotnet/${COMPONENT_NAME}/${TEST_NAME})
   message(STATUS "build path: ${DOTNET_TEST_DIR}")
   file(MAKE_DIRECTORY ${DOTNET_TEST_DIR})
 
-  file(COPY ${FILE_NAME} DESTINATION ${DOTNET_TEST_DIR})
+  add_custom_command(
+    OUTPUT ${DOTNET_TEST_DIR}/${TEST_NAME}.cs
+    COMMAND ${CMAKE_COMMAND} -E copy ${FILE_NAME} ${DOTNET_TEST_DIR}/
+    MAIN_DEPENDENCY ${FILE_NAME}
+    VERBATIM
+  )
 
-  set(DOTNET_PACKAGES_DIR "${PROJECT_BINARY_DIR}/dotnet/packages")
   configure_file(
     ${PROJECT_SOURCE_DIR}/dotnet/Test.csproj.in
     ${DOTNET_TEST_DIR}/${TEST_NAME}.csproj
     @ONLY)
 
-  add_custom_target(dotnet_${COMPONENT_NAME}_${TEST_NAME} ALL
-    DEPENDS ${DOTNET_TEST_DIR}/${TEST_NAME}.csproj
+  add_custom_command(
+    OUTPUT ${DOTNET_TEST_DIR}/timestamp
     COMMAND ${DOTNET_EXECUTABLE} build -c Release
+    COMMAND ${CMAKE_COMMAND} -E touch ${DOTNET_TEST_DIR}/timestamp
+    DEPENDS
+      ${DOTNET_TEST_DIR}/${TEST_NAME}.csproj
+      ${DOTNET_TEST_DIR}/${TEST_NAME}.cs
+      dotnet_package
     BYPRODUCTS
       ${DOTNET_TEST_DIR}/bin
       ${DOTNET_TEST_DIR}/obj
+      COMMENT "Compiling .Net ${COMPONENT_NAME}/${TEST_NAME}.cs (${DOTNET_TEST_DIR}/timestamp)"
     WORKING_DIRECTORY ${DOTNET_TEST_DIR})
-  add_dependencies(dotnet_${COMPONENT_NAME}_${TEST_NAME} dotnet_package)
+
+  add_custom_target(dotnet_${COMPONENT_NAME}_${TEST_NAME} ALL
+    DEPENDS
+      ${DOTNET_TEST_DIR}/timestamp
+    WORKING_DIRECTORY dotnet)
 
   if(BUILD_TESTING)
     add_test(
@@ -174,7 +205,6 @@ function(add_dotnet_test FILE_NAME)
       COMMAND ${DOTNET_EXECUTABLE} test --no-build -c Release
       WORKING_DIRECTORY ${DOTNET_TEST_DIR})
   endif()
-
   message(STATUS "Configuring test ${FILE_NAME}: ...DONE")
 endfunction()
 
@@ -186,34 +216,48 @@ endfunction()
 # Parameters:
 #  the dotnet filename
 # e.g.:
-# add_dotnet_example(FooApp.cs)
+# add_dotnet_example(Foo.cs)
 function(add_dotnet_example FILE_NAME)
   message(STATUS "Configuring example ${FILE_NAME}: ...")
   get_filename_component(EXAMPLE_NAME ${FILE_NAME} NAME_WE)
   get_filename_component(COMPONENT_DIR ${FILE_NAME} DIRECTORY)
   get_filename_component(COMPONENT_NAME ${COMPONENT_DIR} NAME)
 
-  set(DOTNET_EXAMPLE_DIR ${PROJECT_BINARY_DIR}/dotnet/${EXAMPLE_NAME})
+  set(DOTNET_EXAMPLE_DIR ${PROJECT_BINARY_DIR}/dotnet/${COMPONENT_NAME}/${EXAMPLE_NAME})
   message(STATUS "build path: ${DOTNET_EXAMPLE_DIR}")
   file(MAKE_DIRECTORY ${DOTNET_EXAMPLE_DIR})
 
-  file(COPY ${FILE_NAME} DESTINATION ${DOTNET_EXAMPLE_DIR})
+  add_custom_command(
+    OUTPUT ${DOTNET_EXAMPLE_DIR}/${EXAMPLE_NAME}.cs
+    COMMAND ${CMAKE_COMMAND} -E copy ${FILE_NAME} ${DOTNET_EXAMPLE_DIR}/
+    MAIN_DEPENDENCY ${FILE_NAME}
+    VERBATIM
+  )
 
-  set(DOTNET_PACKAGES_DIR "${PROJECT_BINARY_DIR}/dotnet/packages")
   configure_file(
     ${PROJECT_SOURCE_DIR}/dotnet/Example.csproj.in
     ${DOTNET_EXAMPLE_DIR}/${EXAMPLE_NAME}.csproj
     @ONLY)
 
-  add_custom_target(dotnet_sample_${EXAMPLE_NAME} ALL
-    DEPENDS ${DOTNET_EXAMPLE_DIR}/${EXAMPLE_NAME}.csproj
+  add_custom_command(
+    OUTPUT ${DOTNET_EXAMPLE_DIR}/timestamp
     COMMAND ${DOTNET_EXECUTABLE} build -c Release
     COMMAND ${DOTNET_EXECUTABLE} pack -c Release
+    COMMAND ${CMAKE_COMMAND} -E touch ${DOTNET_EXAMPLE_DIR}/timestamp
+    DEPENDS
+      ${DOTNET_EXAMPLE_DIR}/${EXAMPLE_NAME}.csproj
+      ${DOTNET_EXAMPLE_DIR}/${EXAMPLE_NAME}.cs
+      dotnet_package
     BYPRODUCTS
       ${DOTNET_EXAMPLE_DIR}/bin
       ${DOTNET_EXAMPLE_DIR}/obj
+      COMMENT "Compiling .Net ${COMPONENT_NAME}/${EXAMPLE_NAME}.cs (${DOTNET_EXAMPLE_DIR}/timestamp)"
     WORKING_DIRECTORY ${DOTNET_EXAMPLE_DIR})
-  add_dependencies(dotnet_sample_${EXAMPLE_NAME} dotnet_package)
+
+  add_custom_target(dotnet_${COMPONENT_NAME}_${EXAMPLE_NAME} ALL
+    DEPENDS
+      ${DOTNET_EXAMPLE_DIR}/timestamp
+    WORKING_DIRECTORY dotnet)
 
   if(BUILD_TESTING)
     add_test(
@@ -221,7 +265,5 @@ function(add_dotnet_example FILE_NAME)
       COMMAND ${DOTNET_EXECUTABLE} run --no-build -c Release
       WORKING_DIRECTORY ${DOTNET_EXAMPLE_DIR})
   endif()
-
   message(STATUS "Configuring example ${FILE_NAME}: ...DONE")
 endfunction()
-
