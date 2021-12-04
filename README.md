@@ -143,8 +143,8 @@ We would like to build a `Mizux.DotnetNative.nupkg` package which only depends o
 
 The pipeline for `linux-x64` should be as follow:  
 note: The pipeline will be similar for `osx-x64` and `win-x64` architecture, don't hesitate to look at the CI log.
-![Local Pipeline](doc/local_pipeline.svg)
-![Legend](doc/legend.svg)
+![Local Pipeline](docs/local_pipeline.svg)
+![Legend](docs/legend.svg)
 
 #### Building local runtime Mizux.DotnetNative Package
 
@@ -278,8 +278,8 @@ We would like to build a `Mizux.DotnetNative.nupkg` package which depends on sev
 The pipeline should be as follow:  
 note: This pipeline should be run on any architecture,
 provided you have generated the three architecture dependent `Mizux.DotnetNative.runtime.{rid}.nupkg` nuget packages.
-![Full Pipeline](doc/full_pipeline.svg)
-![Legend](doc/legend.svg)
+![Full Pipeline](docs/full_pipeline.svg)
+![Legend](docs/legend.svg)
 
 #### Building All runtime Mizux.DotnetNative Package
 
