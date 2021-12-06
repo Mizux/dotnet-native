@@ -111,7 +111,7 @@ add_custom_command(
 add_custom_target(dotnet_native_package
   DEPENDS
     ${DOTNET_NATIVE_PROJECT_DIR}/timestamp
-  WORKING_DIRECTORY dotnet)
+  WORKING_DIRECTORY ${DOTNET_NATIVE_PROJECT_DIR})
 
 ####################
 ##  .Net Package  ##
@@ -145,7 +145,7 @@ add_custom_command(
 add_custom_target(dotnet_package ALL
   DEPENDS
     ${DOTNET_PROJECT_DIR}/timestamp
-  WORKING_DIRECTORY dotnet)
+  WORKING_DIRECTORY ${DOTNET_PROJECT_DIR})
 
 #################
 ##  .Net Test  ##
@@ -197,7 +197,7 @@ function(add_dotnet_test FILE_NAME)
   add_custom_target(dotnet_${COMPONENT_NAME}_${TEST_NAME} ALL
     DEPENDS
       ${DOTNET_TEST_DIR}/timestamp
-    WORKING_DIRECTORY dotnet)
+    WORKING_DIRECTORY ${DOTNET_TEST_DIR})
 
   if(BUILD_TESTING)
     add_test(
@@ -239,7 +239,7 @@ function(add_dotnet_example FILE_NAME)
       ${DOTNET_EXAMPLE_DIR}/
     MAIN_DEPENDENCY ${FILE_NAME}
     VERBATIM
-    WORKING_DIRECTORY ${DOTNET_TEST_DIR})
+    WORKING_DIRECTORY ${DOTNET_EXAMPLE_DIR})
 
   add_custom_command(
     OUTPUT ${DOTNET_EXAMPLE_DIR}/timestamp
@@ -259,7 +259,7 @@ function(add_dotnet_example FILE_NAME)
   add_custom_target(dotnet_${COMPONENT_NAME}_${EXAMPLE_NAME} ALL
     DEPENDS
       ${DOTNET_EXAMPLE_DIR}/timestamp
-    WORKING_DIRECTORY dotnet)
+    WORKING_DIRECTORY ${DOTNET_EXAMPLE_DIR})
 
   if(BUILD_TESTING)
     add_test(
