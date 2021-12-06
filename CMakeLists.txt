@@ -1,5 +1,7 @@
 # This file is just an orchestration
 cmake_minimum_required(VERSION 3.18)
+cmake_policy(SET CMP0122 NEW)
+
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 option(CMAKE_EXPORT_COMPILE_COMMANDS "Export compile command" TRUE)
