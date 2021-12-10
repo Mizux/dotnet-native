@@ -35,7 +35,7 @@ jobs:
     - name: Build
       run: cmake --build build --config Release --target ALL_BUILD -v
     - name: Test
-      run: cmake --build build --config Release --target RUN_TESTS -v
+      run: CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --config Release --target RUN_TESTS -v
     - name: Install
       run: cmake --build build --config Release --target install -v
   make:
@@ -64,6 +64,6 @@ jobs:
     - name: Build
       run: cmake --build build --target all -v
     - name: Test
-      run: cmake --build build --target test -v
+      run: CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test -v
     - name: Install
       run: cmake --build build --target install -v
