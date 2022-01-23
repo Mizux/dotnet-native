@@ -58,7 +58,7 @@ FROM env AS install_env
 COPY --from=build /home/project/build/dotnet/packages/*.nupkg ./
 
 FROM install_env AS install_devel
-WORKDIR /home/samples
+WORKDIR /home/sample
 COPY ci/samples .
 
 FROM install_devel AS install_build
