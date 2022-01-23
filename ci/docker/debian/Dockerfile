@@ -11,7 +11,7 @@ RUN apt-get update -qq \
 
 # Install swig
 RUN apt-get update -qq \
-&& apt-get install -yq libpcre3-dev automake \
+&& apt-get install -yq libpcre3-dev automake bison \
 && apt-get clean \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 RUN wget "https://github.com/swig/swig/archive/refs/tags/v4.0.2.tar.gz" -O swig-4.0.2.tar.gz \
