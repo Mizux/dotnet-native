@@ -1,6 +1,6 @@
 # Create a virtual environment with all tools installed
 # ref: https://hub.docker.com/_/centos
-FROM centos:latest AS env
+FROM quay.io/centos/centos:stream AS env
 LABEL maintainer="mizux.dev@gmail.com"
 # Install system build dependencies
 ENV PATH=/usr/local/bin:$PATH
@@ -15,10 +15,11 @@ RUN dnf -y update \
 && dnf -y install pcre-devel \
 && dnf clean all \
 && rm -rf /var/cache/dnf \
-&& wget -q "https://downloads.sourceforge.net/project/swig/swig/swig-4.0.2/swig-4.0.2.tar.gz" \
+&& wget "https://github.com/swig/swig/archive/refs/tags/v4.0.2.tar.gz" -O swig-4.0.2.tar.gz \
 && tar xvf swig-4.0.2.tar.gz \
 && rm swig-4.0.2.tar.gz \
 && cd swig-4.0.2 \
+&& ./autogen.sh \
 && ./configure --prefix=/usr \
 && make -j 4 \
 && make install \
