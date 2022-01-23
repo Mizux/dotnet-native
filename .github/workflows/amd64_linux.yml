@@ -23,10 +23,11 @@ jobs:
         sudo apt remove -y swig swig3.0
     - name: Install SWIG 4.0.2
       run: |
-        wget "https://downloads.sourceforge.net/project/swig/swig/swig-4.0.2/swig-4.0.2.tar.gz";
+        wget "https://github.com/swig/swig/archive/refs/tags/v4.0.2.tar.gz" -O swig-4.0.2.tar.gz;
         tar xvf swig-4.0.2.tar.gz;
         rm swig-4.0.2.tar.gz;
         cd swig-4.0.2;
+        ./autogen.sh;
         ./configure --prefix=/usr;
         make -j8;
         sudo make install;
