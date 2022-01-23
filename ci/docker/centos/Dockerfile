@@ -62,10 +62,10 @@ RUN cmake --build build --target test -v
 
 # Test install rules
 FROM env AS install_env
+WORKDIR /home/sample
 COPY --from=build /home/project/build/dotnet/packages/*.nupkg ./
 
 FROM install_env AS install_devel
-WORKDIR /home/sample
 COPY ci/samples .
 
 FROM install_devel AS install_build
