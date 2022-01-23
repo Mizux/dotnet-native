@@ -14,10 +14,11 @@ RUN apt-get update -qq \
 && apt-get install -yq libpcre3-dev \
 && apt-get clean \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-RUN wget "https://downloads.sourceforge.net/project/swig/swig/swig-4.0.2/swig-4.0.2.tar.gz" \
+RUN wget "https://github.com/swig/swig/archive/refs/tags/v4.0.2.tar.gz" -O swig-4.0.2.tar.gz \
 && tar xvf swig-4.0.2.tar.gz \
 && rm swig-4.0.2.tar.gz \
 && cd swig-4.0.2 \
+&& ./autogen.sh \
 && ./configure --prefix=/usr \
 && make -j 4 \
 && make install \
