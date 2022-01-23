@@ -14,7 +14,7 @@ RUN apt-get update -qq \
 && apt-get install -yq libpcre3-dev automake bison \
 && apt-get clean \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-RUN wget "https://github.com/swig/swig/archive/refs/tags/v4.0.2.tar.gz" -O swig-4.0.2.tar.gz \
+RUN wget -q "https://github.com/swig/swig/archive/refs/tags/v4.0.2.tar.gz" -O swig-4.0.2.tar.gz \
 && tar xvf swig-4.0.2.tar.gz \
 && rm swig-4.0.2.tar.gz \
 && cd swig-4.0.2 \
@@ -55,10 +55,10 @@ RUN cmake --build build --target test -v
 
 # Test install rules
 FROM env AS install_env
-WORKDIR /home/samples
 COPY --from=build /home/project/build/dotnet/packages/*.nupkg ./
 
 FROM install_env AS install_devel
+WORKDIR /home/samples
 COPY ci/samples .
 
 FROM install_devel AS install_build
