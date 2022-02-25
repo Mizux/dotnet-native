@@ -1,5 +1,5 @@
 # Create a virtual environment with all tools installed
-# ref: https://hub.docker.com/_/centos
+# ref: https://quay.io/repository/centos/centos
 FROM quay.io/centos/centos:stream AS env
 LABEL maintainer="mizux.dev@gmail.com"
 # Install system build dependencies
@@ -9,6 +9,7 @@ RUN dnf -y update \
 && dnf -y groupinstall "Development Tools" \
 && dnf clean all \
 && rm -rf /var/cache/dnf
+CMD [ "/usr/bin/bash" ]
 
 # Install SWIG 4.0.2
 RUN dnf -y update \
