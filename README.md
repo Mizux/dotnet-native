@@ -341,14 +341,16 @@ Few links on the subject...
 
 ### Resources
 Project layout:
-* The Pitchfork Layout Revision 1 (cxx-pflR1)
+* [The Pitchfork Layout](https://mizux.github.io/pitchfork/)
 
 CMake:
+* [CMake Reference Documentation](https://cmake.org/cmake/help/latest/index.html)
 * https://llvm.org/docs/CMakePrimer.html
 * https://cliutils.gitlab.io/modern-cmake/
 * https://cgold.readthedocs.io/en/latest/
 
 .Net:
+* [.Net Support Policy](https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core)
 * [.NET Core RID Catalog](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog)
 * [Creating native packages](https://docs.microsoft.com/en-us/nuget/create-packages/native-packages)
 * [Blog on Nuget Rid Graph](https://natemcmaster.com/blog/2016/05/19/nuget3-rid-graph/)
