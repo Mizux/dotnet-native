@@ -74,6 +74,16 @@ if(WIN32)
   message(STATUS "Getting SWIG: ...DONE")
 endif()
 
+# .Net Core 3.1 LTS is not available for osx arm64
+if(APPLE AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm64)")
+  set(USE_DOTNET_CORE_31 OFF)
+else()
+  option(USE_DOTNET_CORE_31 "Use .Net Core 3.1 LTS support" ON)
+endif()
+message(STATUS ".Net: Use .Net Core 3.1 LTS support: ${USE_DOTNET_CORE_31}")
+
+option(USE_DOTNET_6 "Use .Net 6 LTS support" ON)
+message(STATUS ".Net: Use .Net 6 LTS support: ${USE_DOTNET_6}")
 include(dotnet)
 
 add_subdirectory(tests)
