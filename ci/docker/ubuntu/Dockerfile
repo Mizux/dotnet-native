@@ -1,10 +1,10 @@
 # Create a virtual environment with all tools installed
 # ref: https://hub.docker.com/_/ubuntu
 FROM ubuntu:rolling AS env
-LABEL maintainer="mizux.dev@gmail.com"
+
 # Install system build dependencies
 ENV PATH=/usr/local/bin:$PATH
-RUN apt-get update -q \
+RUN apt-get update -qq \
 && DEBIAN_FRONTEND=noninteractive apt-get install -yq \
  git wget libssl-dev build-essential cmake \
 && apt-get clean \
@@ -20,10 +20,10 @@ RUN apt-get update -qq \
 # see: https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu
 RUN apt-get update -qq \
 && apt-get install -yq wget apt-transport-https \
-&& wget -q https://packages.microsoft.com/config/ubuntu/21.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
+&& wget -q https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
 && dpkg -i packages-microsoft-prod.deb \
 && apt-get update -qq \
-&& DEBIAN_FRONTEND=noninteractive apt-get install -yq dotnet-sdk-3.1 dotnet-sdk-6.0 \
+&& DEBIAN_FRONTEND=noninteractive apt-get install -yq dotnet-sdk-6.0\
 && apt-get clean \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # Trigger first run experience by running arbitrary cmd
@@ -35,14 +35,13 @@ COPY . .
 
 FROM devel AS build
 RUN cmake -version
-RUN cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release
+RUN cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release -DUSE_DOTNET_CORE_31=OFF
 RUN cmake --build build --target all -v
 RUN cmake --build build --target install -v
 
 FROM build AS test
-RUN cmake --build build --target test -v
+RUN CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test -v
 
-# Test install rules
 FROM env AS install_env
 WORKDIR /home/sample
 COPY --from=build /home/project/build/dotnet/packages/*.nupkg ./

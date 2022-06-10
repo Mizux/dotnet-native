@@ -1,13 +1,14 @@
 # Create a virtual environment with all tools installed
 # ref: https://hub.docker.com/r/opensuse/tumbleweed
 FROM opensuse/tumbleweed AS env
-LABEL maintainer="mizux.dev@gmail.com"
+
 # Install system build dependencies
 ENV PATH=/usr/local/bin:$PATH
-RUN zypper update -y \
+RUN zypper refresh \
 && zypper install -y git patch gcc gcc-c++ cmake \
 && zypper clean -a
 ENV CC=gcc CXX=g++
+CMD [ "/usr/bin/bash" ]
 
 # Install swig
 RUN zypper update -y \
@@ -16,21 +17,10 @@ RUN zypper update -y \
 
 # .NET install
 # see: https://docs.microsoft.com/en-us/dotnet/core/install/linux-opensuse
-RUN zypper update -y \
+RUN zypper refresh \
 && zypper install -y wget tar gzip libicu-devel \
 && mkdir -p /usr/share/dotnet \
 && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
-
-# see: https://dotnet.microsoft.com/download/dotnet-core/3.1
-RUN dotnet_sdk_version=3.1.415 \
-&& wget -qO dotnet.tar.gz \
-"https://dotnetcli.azureedge.net/dotnet/Sdk/${dotnet_sdk_version}/dotnet-sdk-${dotnet_sdk_version}-linux-x64.tar.gz" \
-&& dotnet_sha512='df7a6d1abed609c382799a8f69f129ec72ce68236b2faecf01aed4c957a40a9cfbbc9126381bf517dff3dbe0e488f1092188582701dd0fef09a68b8c5707c747' \
-&& echo "$dotnet_sha512  dotnet.tar.gz" | sha512sum -c - \
-&& tar -C /usr/share/dotnet -oxzf dotnet.tar.gz \
-&& rm dotnet.tar.gz
-# Trigger first run experience by running arbitrary cmd
-RUN dotnet --info
 
 # see: https://dotnet.microsoft.com/download/dotnet-core/6.0
 RUN dotnet_sdk_version=6.0.100 \
@@ -43,21 +33,19 @@ RUN dotnet_sdk_version=6.0.100 \
 # Trigger first run experience by running arbitrary cmd
 RUN dotnet --info
 
-# Add the library src to our build env
 FROM env AS devel
 WORKDIR /home/project
 COPY . .
 
 FROM devel AS build
 RUN cmake -version
-RUN cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release
+RUN cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release -DUSE_DOTNET_CORE_31=OFF
 RUN cmake --build build --target all -v
 RUN cmake --build build --target install -v
 
 FROM build AS test
-RUN cmake --build build --target test -v
+RUN CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test -v
 
-# Test install rules
 FROM env AS install_env
 WORKDIR /home/sample
 COPY --from=build /home/project/build/dotnet/packages/*.nupkg ./
