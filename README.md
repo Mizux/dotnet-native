@@ -40,7 +40,7 @@ You'll need:
 * "CMake >= 3.18".
 * ".Net Core SDK >= 3.1" to get the dotnet cli.
 
-note: We won't/can't rely on VS 2019 since we want a portable cross-platform [`dotnet/cli`](https://github.com/dotnet/cli) pipeline. 
+note: We won't/can't rely on VS 2019 since we want a portable cross-platform [`dotnet/cli`](https://github.com/dotnet/cli) pipeline.
 
 ## Codemap
 
@@ -114,6 +114,7 @@ To Create a native dependent package we will split it in two parts:
 [Runtime Identifier (RId)](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog) targeted containing the native libraries.
 * A generic package `Mizux.DotnetNative.nupkg` depending on each runtime packages and
 containing the managed .Net code.
+
 Actually, You don't need a specific variant of .Net Standard wrapper, simply omit the library extension and .Net magic will pick
 the correct native library.  
 ref: https://www.mono-project.com/docs/advanced/pinvoke/#library-names
@@ -121,30 +122,40 @@ ref: https://www.mono-project.com/docs/advanced/pinvoke/#library-names
 note: [`Microsoft.NetCore.App` packages](https://www.nuget.org/packages?q=Microsoft.NETCore.App)
 follow this layout.
 
-note: While Microsoft use `runtime-<rid>.Company.Project` for native package naming,
-it is very difficult to get ownership on it, so you should prefer to use`Company.Project.runtime-<rid>` instead since you can have ownership on `Company.*` prefix more easily.
+note: While Microsoft use `runtime-<rid>.Company.Project` for native libraries
+naming, it is very difficult to get ownership on it, so you should prefer to use
+`Company.Project.runtime-<rid>` instead since you can have ownership on
+`Company.*` prefix more easily.
 
 We have two use case scenario:
-1. Locally, be able to build a Mizux.DotnetNative package which **only** target the local `OS Platform`,
-i.e. building for only one 
-[Runtime Identifier (RID)](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog).  
-note: This is usefull when the C++ build is a complex process for Windows, Linux and MacOS.  
-i.e. You don't support cross-compilation for the native library.
 
-2. Be able to create a complete cross-platform (ed. platform as multiple rid) Mizux.DotnetNative package.  
-i.e. First you generate each native Nuget package (`Mizux.DotnetNative.runtime.{rid}.nupkg`) 
-on each native architecture, then copy paste these artifacts on one native machine
-to generate the meta-package `Mizux.DotnetNative`.
+1.  Locally, be able to build a Mizux.DotnetNative package which **only** target the
+    local `OS Platform`, i.e. building for only one
+    [Runtime Identifier (RID)](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog).
+    \
+    note: This is useful since the C++ build is a complex process for Windows,
+    Linux and MacOS. i.e. We don't support cross-compilation for the native
+    library generation.
+
+2.  Be able to create a complete cross-platform (ed. platform as multiple rid)
+    Mizux.DotnetNative package. \
+    i.e. First you generate each native Nuget package
+    (`Mizux.DotnetNative.runtime.{rid}.nupkg`) on each native architecture, then
+    copy paste these artifacts on one native machine to generate the
+    meta-package `Mizux.DotnetNative`.
 
 ### Local Mizux.DotnetNative Package
 
-Let's start with scenario 1: Create a *Local only* `Mizux.DotnetNative.nupkg` package targeting **one** [Runtime Identifier (RID)](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog).  
-We would like to build a `Mizux.DotnetNative.nupkg` package which only depends on one `Mizux.DotnetNative.runtime.{rid}.nupkg` in order to dev/test locally.  
+Let's start with scenario 1: Create a *Local only* `Mizux.DotnetNative.nupkg` package targeting **one**
+[Runtime Identifier (RID)](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog).  
+We would like to build a `Mizux.DotnetNative.nupkg` package which only depends
+on one `Mizux.DotnetNative.runtime.{rid}.nupkg` in order to work locally.
 
-The pipeline for `linux-x64` should be as follow:  
-note: The pipeline will be similar for `osx-x64` and `win-x64` architecture, don't hesitate to look at the CI log.
+The pipeline for `linux-x64` should be as follow:
 ![Local Pipeline](docs/local_pipeline.svg)
 ![Legend](docs/legend.svg)
+note: The pipeline will be similar for `osx-x64` and `win-x64` architecture,
+don't hesitate to look at the CI log.
 
 #### Building local runtime Mizux.DotnetNative Package
 
@@ -177,18 +188,21 @@ to add the tag `native` to the
     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
   </Content>
   ```
-* Generate the runtime package to a defined directory (i.e. so later in Mizux.DotnetNative package we will be able to locate it)
+* Generate the runtime package to a defined directory (i.e. so later in
+  `Mizux.DotnetNative` package we will be able to locate it)
   ```xml
   <PackageOutputPath>{...}/packages</PackageOutputPath>
   ```
 
 Then you can generate the package using:
+
 ```bash
 dotnet pack Mizux.DotnetNative.runtime.{rid}
 ```
 note: this will automatically trigger the `dotnet build`.
 
 If everything good the package (located where your `PackageOutputPath` was defined) should have this layout:
+
 ```
 {...}/packages/Mizux.DotnetNative.runtime.{rid}.nupkg:
 \- Mizux.DotnetNative.runtime.{rid}.nuspec
@@ -196,15 +210,17 @@ If everything good the package (located where your `PackageOutputPath` was defin
    \- {rid}
       \- native
          \- *.so / *.dylib / *.dll
-... 
+...
 ```
 note: `{rid}` could be `linux-x64` and `{framework}` could be `netstandard2.0`
 
-tips: since nuget package are zip archive you can use `unzip -l <package>.nupkg` to study their layout.
+tips: since nuget package are zip archive you can use `unzip -l <package>.nupkg`
+to study their layout.
 
 #### Building local Mizux.DotnetNative Package
 
-So now, let's create the local `Mizux.DotnetNative.nupkg` nuget package which will depend on our previous runtime package.
+So now, let's create the local `Mizux.DotnetNative.nupkg` nuget package which will
+depend on our previous runtime package.
 
 Here some dev-note concerning this `DotnetNative.csproj`.
 * Add the previous package directory:
@@ -226,20 +242,23 @@ Here some dev-note concerning this `DotnetNative.csproj`.
   without the need to upload it on [nuget.org](https://www.nuget.org/).
 
 Then you can generate the package using:
+
 ```bash
 dotnet pack Mizux.DotnetNative
 ```
 
-If everything good the package (located where your `PackageOutputPath` was defined) should have this layout:
+If everything good the package (located where your `PackageOutputPath` was
+defined) should have this layout:
+
 ```
 {...}/packages/Mizux.DotnetNative.nupkg:
 \- Mizux.DotnetNative.nuspec
 \- lib
    \- {framework}
       \- Mizux.DotnetNative.dll
-... 
+...
 ```
-note: `{framework}` could be `netstandard2.0` or/and `netstandard2.1`
+note: `{framework}` could be `netcoreapp3.1` or/and `net6.0`
 
 #### Testing local Mizux.DotnetNative.FooApp Package
 
@@ -272,21 +291,27 @@ $ dotnet run --project build/dotnet/FooApp/FooApp.csproj
 ```
 
 ### Complete Mizux.DotnetNative Package
-Let's start with scenario 2: Create a *Complete* `Mizux.DotnetNative.nupkg` package targeting multiple [Runtime Identifier (RID)](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog).  
-We would like to build a `Mizux.DotnetNative.nupkg` package which depends on several `Mizux.DotnetNative.runtime.{rid}.nupkg`.  
+
+Let's start with scenario 2: Create a *Complete* `Mizux.DotnetNative.nupkg` package
+targeting multiple
+[Runtime Identifier (RID)](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog).  
+We would like to build a `Mizux.DotnetNative.nupkg` package which depends on several
+`Mizux.DotnetNative.runtime.{rid}.nupkg`.
 
 The pipeline should be as follow:  
 note: This pipeline should be run on any architecture,
-provided you have generated the three architecture dependent `Mizux.DotnetNative.runtime.{rid}.nupkg` nuget packages.
+provided you have generated the three architecture dependent `Mizux.DotnetNative.runtime.{rid}.nupkg`
+nuget packages.
 ![Full Pipeline](docs/full_pipeline.svg)
 ![Legend](docs/legend.svg)
 
 #### Building All runtime Mizux.DotnetNative Package
 
-Like in the previous scenario, on each targeted OS Platform you can build the coresponding
-`Mizux.DotnetNative.runtime.{rid}.nupkg` package.
+Like in the previous scenario, on each targeted OS Platform you can build the
+coresponding `Mizux.DotnetNative.runtime.{rid}.nupkg` package.
 
-Simply run on each platform
+Simply run on each platform:
+
 ```bash
 cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release
 cmake --build build --config Release
@@ -302,6 +327,7 @@ This is the same step than in the previous scenario, since we "see" all runtime
 packages in `{...}/packages`, the project will depends on each of them.
 
 Once copied all runtime package locally, simply run:
+
 ```bash
 dotnet build <build_dir>/dotnet/Mizux.DotnetNative
 dotnet pack <build_dir>/dotnet/Mizux.DotnetNative
@@ -339,21 +365,36 @@ $ dotnet run --project build/dotnet/FooApp/FooApp.csproj
 
 Few links on the subject...
 
+.Net runtime can deduce library extension so don’t use a platform-specific
+library name in the `DllImport` statement.
+Instead, just use the library name itself, without any prefixes or suffixes,
+and rely on the runtime to find the appropriate library at runtime.\
+ref: [Mono `pinvoke#libraryname`](https://www.mono-project.com/docs/advanced/pinvoke/#library-names)
+
 ### Resources
-Project layout:
+
+#### Project layout
 * [The Pitchfork Layout](https://mizux.github.io/pitchfork/)
 
-CMake:
+#### CMake
 * [CMake Reference Documentation](https://cmake.org/cmake/help/latest/index.html)
 * https://llvm.org/docs/CMakePrimer.html
 * https://cliutils.gitlab.io/modern-cmake/
 * https://cgold.readthedocs.io/en/latest/
 
-.Net:
+#### Target Framework Moniker (TFM)
+
+* [.NET TFM list](https://docs.microsoft.com/en-us/dotnet/standard/frameworks)
+* [.NET Standard implementation support](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
+
+#### .Net:Runtime IDentifier (RID)
+
 * [.Net Support Policy](https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core)
 * [.NET Core RID Catalog](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog)
 * [Creating native packages](https://docs.microsoft.com/en-us/nuget/create-packages/native-packages)
 * [Blog on Nuget Rid Graph](https://natemcmaster.com/blog/2016/05/19/nuget3-rid-graph/)
+
+#### Reference on .csproj format
 
 * [Common MSBuild project properties](https://docs.microsoft.com/en-us/visualstudio/msbuild/common-msbuild-project-properties?view=vs-2017)
 * [MSBuild well-known item metadata](https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild-well-known-item-metadata?view=vs-2017)
@@ -362,12 +403,15 @@ CMake:
 ### Issues
 
 Some issue related to this process
+* [`PackageReference` only support `TargetFramework` condition](https://docs.microsoft.com/en-us/nuget/consume-packages/package-references-in-project-files#adding-a-packagereference-condition)
 * [Nuget needs to support dependencies specific to target runtime #1660](https://github.com/NuGet/Home/issues/1660)
 * [Improve documentation on creating native packages #238](https://github.com/NuGet/docs.microsoft.com-nuget/issues/238)
 * [Guide for packaging C# library using P/Invoke](https://github.com/NuGet/Home/issues/8623)
 
 ### Misc
+
 Image has been generated using [plantuml](http://plantuml.com/):
+
 ```bash
 plantuml -Tsvg docs/{file}.dot
 ```
