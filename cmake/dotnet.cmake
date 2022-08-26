@@ -76,7 +76,8 @@ set_target_properties(mizux-dotnetnative-native PROPERTIES
   POSITION_INDEPENDENT_CODE ON)
 # note: macOS is APPLE and also UNIX !
 if(APPLE)
-  set_target_properties(mizux-dotnetnative-native PROPERTIES INSTALL_RPATH "@loader_path")
+  set_target_properties(mizux-dotnetnative-native PROPERTIES
+    INSTALL_RPATH "@loader_path")
   # Xcode fails to build if library doesn't contains at least one source file.
   if(XCODE)
     file(GENERATE
@@ -85,7 +86,8 @@ if(APPLE)
     target_sources(mizux-dotnetnative-native PRIVATE ${PROJECT_BINARY_DIR}/mizux-dotnetnative-native/version.cpp)
   endif()
 elseif(UNIX)
-  set_target_properties(mizux-dotnetnative-native PROPERTIES INSTALL_RPATH "$ORIGIN")
+  set_target_properties(mizux-dotnetnative-native PROPERTIES
+    INSTALL_RPATH "$ORIGIN")
 endif()
 
 list(APPEND CMAKE_SWIG_FLAGS ${FLAGS} "-I${PROJECT_SOURCE_DIR}")

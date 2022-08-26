@@ -11,6 +11,9 @@ target_include_directories(FooBar
 target_compile_features(FooBar PUBLIC cxx_std_17)
 set_target_properties(FooBar PROPERTIES
   VERSION ${PROJECT_VERSION}
+  SOVERSION ${PROJECT_VERSION_MAJOR}
+  POSITION_INDEPENDENT_CODE ON
+  INTERFACE_POSITION_INDEPENDENT_CODE ON
   PUBLIC_HEADER include/foobar/FooBar.hpp)
 # note: macOS is APPLE and also UNIX !
 if(APPLE)

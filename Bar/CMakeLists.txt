@@ -11,6 +11,9 @@ target_include_directories(Bar
 target_compile_features(Bar PUBLIC cxx_std_17)
 set_target_properties(Bar PROPERTIES
   VERSION ${PROJECT_VERSION}
+  SOVERSION ${PROJECT_VERSION_MAJOR}
+  POSITION_INDEPENDENT_CODE ON
+  INTERFACE_POSITION_INDEPENDENT_CODE ON
   PUBLIC_HEADER include/bar/Bar.hpp)
 #target_link_libraries(Bar PUBLIC ...)
 add_library(${PROJECT_NAMESPACE}::Bar ALIAS Bar)

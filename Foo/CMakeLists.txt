@@ -10,6 +10,9 @@ target_include_directories(Foo
 target_compile_features(Foo PUBLIC cxx_std_17)
 set_target_properties(Foo PROPERTIES
   VERSION ${PROJECT_VERSION}
+  SOVERSION ${PROJECT_VERSION_MAJOR}
+  POSITION_INDEPENDENT_CODE ON
+  INTERFACE_POSITION_INDEPENDENT_CODE ON
   PUBLIC_HEADER include/foo/Foo.hpp)
 #target_link_libraries(Foo PUBLIC ...)
 add_library(${PROJECT_NAMESPACE}::Foo ALIAS Foo)
