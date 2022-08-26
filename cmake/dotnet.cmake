@@ -96,9 +96,9 @@ foreach(SUBPROJECT IN ITEMS Foo Bar FooBar)
   target_link_libraries(mizux-dotnetnative-native PRIVATE dotnet_${SUBPROJECT})
 endforeach()
 
-file(COPY ${PROJECT_SOURCE_DIR}/dotnet/logo.png DESTINATION dotnet)
+file(COPY ${PROJECT_SOURCE_DIR}/dotnet/logo.png DESTINATION ${PROJECT_BINARY_DIR}/dotnet)
 set(DOTNET_LOGO_DIR "${PROJECT_BINARY_DIR}/dotnet")
-configure_file(${PROJECT_SOURCE_DIR}/dotnet/Directory.Build.props.in dotnet/Directory.Build.props)
+configure_file(${PROJECT_SOURCE_DIR}/dotnet/Directory.Build.props.in ${PROJECT_BINARY_DIR}/dotnet/Directory.Build.props)
 
 file(MAKE_DIRECTORY ${DOTNET_PACKAGES_DIR})
 ############################
@@ -128,11 +128,13 @@ add_custom_command(
   COMMAND ${DOTNET_EXECUTABLE} pack -c Release ${DOTNET_NATIVE_PROJECT}.csproj
   COMMAND ${CMAKE_COMMAND} -E touch ${DOTNET_NATIVE_PROJECT_DIR}/timestamp
   DEPENDS
-   ${DOTNET_NATIVE_PROJECT_DIR}/${DOTNET_NATIVE_PROJECT}.csproj
-   mizux-dotnetnative-native
+    ${PROJECT_BINARY_DIR}/dotnet/Directory.Build.props
+    ${DOTNET_NATIVE_PROJECT_DIR}/${DOTNET_NATIVE_PROJECT}.csproj
+    mizux-dotnetnative-native
   BYPRODUCTS
     ${DOTNET_NATIVE_PROJECT_DIR}/bin
     ${DOTNET_NATIVE_PROJECT_DIR}/obj
+  VERBATIM
   COMMENT "Generate .Net native package ${DOTNET_NATIVE_PROJECT} (${DOTNET_NATIVE_PROJECT_DIR}/timestamp)"
   WORKING_DIRECTORY ${DOTNET_NATIVE_PROJECT_DIR})
 
@@ -167,6 +169,7 @@ add_custom_command(
   BYPRODUCTS
     ${DOTNET_PROJECT_DIR}/bin
     ${DOTNET_PROJECT_DIR}/obj
+  VERBATIM
   COMMENT "Generate .Net package ${DOTNET_PROJECT} (${DOTNET_PROJECT_DIR}/timestamp)"
   WORKING_DIRECTORY ${DOTNET_PROJECT_DIR})
 
@@ -219,7 +222,8 @@ function(add_dotnet_test FILE_NAME)
     BYPRODUCTS
       ${DOTNET_TEST_DIR}/bin
       ${DOTNET_TEST_DIR}/obj
-      COMMENT "Compiling .Net ${COMPONENT_NAME}/${TEST_NAME}.cs (${DOTNET_TEST_DIR}/timestamp)"
+    VERBATIM
+    COMMENT "Compiling .Net ${COMPONENT_NAME}/${TEST_NAME}.cs (${DOTNET_TEST_DIR}/timestamp)"
     WORKING_DIRECTORY ${DOTNET_TEST_DIR})
 
   add_custom_target(dotnet_${COMPONENT_NAME}_${TEST_NAME} ALL
@@ -281,7 +285,8 @@ function(add_dotnet_example FILE_NAME)
     BYPRODUCTS
       ${DOTNET_EXAMPLE_DIR}/bin
       ${DOTNET_EXAMPLE_DIR}/obj
-      COMMENT "Compiling .Net ${COMPONENT_NAME}/${EXAMPLE_NAME}.cs (${DOTNET_EXAMPLE_DIR}/timestamp)"
+    VERBATIM
+    COMMENT "Compiling .Net ${COMPONENT_NAME}/${EXAMPLE_NAME}.cs (${DOTNET_EXAMPLE_DIR}/timestamp)"
     WORKING_DIRECTORY ${DOTNET_EXAMPLE_DIR})
 
   add_custom_target(dotnet_${COMPONENT_NAME}_${EXAMPLE_NAME} ALL
