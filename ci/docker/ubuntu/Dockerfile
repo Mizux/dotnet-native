@@ -30,7 +30,7 @@ WORKDIR /home/project
 COPY . .
 
 FROM devel AS build
-RUN cmake -version
+RUN cmake --version
 RUN cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release -DUSE_DOTNET_CORE_31=OFF
 RUN cmake --build build --target all -v
 RUN cmake --build build --target install -v
