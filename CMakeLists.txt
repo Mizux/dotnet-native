@@ -75,6 +75,15 @@ if(WIN32)
   message(STATUS "Getting SWIG: ...DONE")
 endif()
 
+option(USE_DOTNET_48 "Use .Net Framework 4.8 support" OFF)
+message(STATUS ".Net: Use .Net Framework 4.8 support: ${USE_DOTNET_48}")
+
+option(USE_DOTNET_STD_20 "Use .Net Standard 2.0 support" OFF)
+message(STATUS ".Net: Use .Net Framework 2.0 support: ${USE_DOTNET_STD_20}")
+
+option(USE_DOTNET_STD_21 "Use .Net Standard 2.1 support" OFF)
+message(STATUS ".Net: Use .Net Framework 2.1 support: ${USE_DOTNET_STD_21}")
+
 # .Net Core 3.1 LTS is not available for osx arm64
 if(APPLE AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm64)")
   set(USE_DOTNET_CORE_31 OFF)
