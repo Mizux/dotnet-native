@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>@DOTNET_LANG@</LangVersion>
     @DOTNET_TFM@
     <RuntimeIdentifiers>linux-x64;osx-x64;win-x64</RuntimeIdentifiers>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
