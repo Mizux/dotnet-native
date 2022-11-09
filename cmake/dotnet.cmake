@@ -270,14 +270,14 @@ endfunction()
 # Parameters:
 #  the dotnet filename
 # e.g.:
-# add_dotnet_example(Foo.cs)
-function(add_dotnet_example FILE_NAME)
+# add_dotnet_example(Foo.cs net48)
+function(add_dotnet_example FILE_NAME TFM)
   message(STATUS "Configuring example ${FILE_NAME} ...")
   get_filename_component(EXAMPLE_NAME ${FILE_NAME} NAME_WE)
   get_filename_component(COMPONENT_DIR ${FILE_NAME} DIRECTORY)
   get_filename_component(COMPONENT_NAME ${COMPONENT_DIR} NAME)
 
-  set(DOTNET_EXAMPLE_DIR ${PROJECT_BINARY_DIR}/dotnet/${COMPONENT_NAME}/${EXAMPLE_NAME})
+  set(DOTNET_EXAMPLE_DIR ${PROJECT_BINARY_DIR}/dotnet/${COMPONENT_NAME}/${EXAMPLE_NAME}_${TFM})
   message(STATUS "build path: ${DOTNET_EXAMPLE_DIR}")
 
   configure_file(
@@ -308,7 +308,7 @@ function(add_dotnet_example FILE_NAME)
       ${DOTNET_EXAMPLE_DIR}/bin
       ${DOTNET_EXAMPLE_DIR}/obj
     VERBATIM
-    COMMENT "Compiling .Net ${COMPONENT_NAME}/${EXAMPLE_NAME}.cs (${DOTNET_EXAMPLE_DIR}/timestamp)"
+    COMMENT "Compiling .Net ${COMPONENT_NAME}/${EXAMPLE_NAME}.cs for ${TFM} (${DOTNET_EXAMPLE_DIR}/timestamp)"
     WORKING_DIRECTORY ${DOTNET_EXAMPLE_DIR})
 
   add_custom_target(dotnet_${COMPONENT_NAME}_${EXAMPLE_NAME} ALL
@@ -317,18 +317,10 @@ function(add_dotnet_example FILE_NAME)
     WORKING_DIRECTORY ${DOTNET_EXAMPLE_DIR})
 
   if(BUILD_TESTING)
-    if(USE_DOTNET_CORE_31)
-      add_test(
-        NAME dotnet_${COMPONENT_NAME}_${EXAMPLE_NAME}_netcoreapp31
-        COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME ${DOTNET_EXECUTABLE} run --no-build --framework netcoreapp3.1 -c Release ${EXAMPLE_NAME}.csproj
-        WORKING_DIRECTORY ${DOTNET_EXAMPLE_DIR})
-    endif()
-    if(USE_DOTNET_6)
-      add_test(
-        NAME dotnet_${COMPONENT_NAME}_${EXAMPLE_NAME}_net60
-        COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME ${DOTNET_EXECUTABLE} run --no-build --framework net6.0 -c Release ${EXAMPLE_NAME}.csproj
-        WORKING_DIRECTORY ${DOTNET_EXAMPLE_DIR})
-    endif()
+    add_test(
+      NAME dotnet_${COMPONENT_NAME}_${EXAMPLE_NAME}_${TFM}
+      COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME ${DOTNET_EXECUTABLE} run --no-build -c Release ${EXAMPLE_NAME}.csproj
+      WORKING_DIRECTORY ${DOTNET_EXAMPLE_DIR})
   endif()
   message(STATUS "Configuring example ${FILE_NAME} done")
 endfunction()

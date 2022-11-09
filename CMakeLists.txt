@@ -100,5 +100,6 @@ add_subdirectory(tests)
 
 option(BUILD_EXAMPLES "Build examples" ON)
 message(STATUS "Build examples: ${BUILD_EXAMPLES}")
+set(EXAMPLE_TFM "net6.0" CACHE STRING "TFM use in sample")
 add_subdirectory(examples)
 
