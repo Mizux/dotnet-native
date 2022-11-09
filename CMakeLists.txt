@@ -11,18 +11,14 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 option(CMAKE_EXPORT_COMPILE_COMMANDS "Export compile command" TRUE)
 
 set(COMPANY_NAME Mizux)
-project(DotnetNative VERSION 1.0 LANGUAGES CXX C)
+project(DotnetNative VERSION 1.0 LANGUAGES C CXX)
 set(PROJECT_NAMESPACE dn)
 message(STATUS "${PROJECT_NAME} version: ${PROJECT_VERSION}")
 #message(STATUS "major: ${PROJECT_VERSION_MAJOR}")
 #message(STATUS "minor: ${PROJECT_VERSION_MINOR}")
 #message(STATUS "patch: ${PROJECT_VERSION_PATCH}")
 
-if(MSVC)
-  set(CMAKE_CXX_STANDARD 20)
-else()
-  set(CMAKE_CXX_STANDARD 17)
-endif()
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -128,17 +124,17 @@ message(STATUS ".Net: Use .Net Framework 4.8 support: ${USE_DOTNET_48}")
 if(APPLE AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm64)")
   set(USE_DOTNET_CORE_31 OFF)
 else()
-  option(USE_DOTNET_CORE_31 "Use .Net Core 3.1 support" OFF) # EOL: 2022-12-13
+  option(USE_DOTNET_CORE_31 "Use .Net Core 3.1 LTS support" OFF) # EOL: 2022-12-13
 endif()
-message(STATUS ".Net: Use .Net Core 3.1 support: ${USE_DOTNET_CORE_31}")
+message(STATUS ".Net: Use .Net Core 3.1 LTS support: ${USE_DOTNET_CORE_31}")
 
-option(USE_DOTNET_6 "Use .Net 6 LTS support" ON) # EOL: 2024-11-12
+option(USE_DOTNET_6 "Use .Net 6 LTS support" OFF) # EOL: 2024-11-12
 message(STATUS ".Net: Use .Net 6 LTS support: ${USE_DOTNET_6}")
 
 option(USE_DOTNET_7 "Use .Net 7.0 support" OFF) # EOL: 2024-05-14
 message(STATUS ".Net: Use .Net 7.0 support: ${USE_DOTNET_7}")
 
-option(USE_DOTNET_8 "Use .Net 8.0 LTS support" OFF) # EOL: 2026-11-10
+option(USE_DOTNET_8 "Use .Net 8.0 LTS support" ON) # EOL: 2026-11-10
 message(STATUS ".Net: Use .Net 8.0 support: ${USE_DOTNET_8}")
 
 option(USE_DOTNET_9 "Use .Net 9.0 support" OFF) # EOL: 2026-05-14
