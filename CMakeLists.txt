@@ -65,8 +65,9 @@ message(STATUS "Build shared libs: ${BUILD_SHARED_LIBS}")
 
 # Disable CTest targets
 set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1)
-include(CTest)
 
+include(CTest)
+set(BUILD_TESTING OFF)
 include(cpp)
 
 if(WIN32)
@@ -103,11 +104,11 @@ message(STATUS ".Net: Use .Net Framework 2.1 support: ${USE_DOTNET_STD_21}")
 if(APPLE AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm64)")
   set(USE_DOTNET_CORE_31 OFF)
 else()
-  option(USE_DOTNET_CORE_31 "Use .Net Core 3.1 LTS support" ON)
+  option(USE_DOTNET_CORE_31 "Use .Net Core 3.1 LTS support" OFF)
 endif()
 message(STATUS ".Net: Use .Net Core 3.1 LTS support: ${USE_DOTNET_CORE_31}")
 
-option(USE_DOTNET_6 "Use .Net 6 LTS support" ON)
+option(USE_DOTNET_6 "Use .Net 6 LTS support" OFF)
 message(STATUS ".Net: Use .Net 6 LTS support: ${USE_DOTNET_6}")
 include(dotnet)
 
