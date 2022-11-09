@@ -3,6 +3,7 @@ build*/
 export/
 cache/
 
+obj/
 .vagrant/
 
 # IDE
