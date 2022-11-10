@@ -77,8 +77,7 @@ endif()
 
 # Language Version
 # see: https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/configure-language-version
-set(DOTNET_LANG "8.0" CACHE STRING "Specify the C# language version (default
-\"8.0\")")
+set(DOTNET_LANG "8.0" CACHE STRING "Specify the C# language version (default \"8.0\")")
 message(STATUS ".Net C# language version: ${DOTNET_LANG}")
 
 # Targeted Framework Moniker
