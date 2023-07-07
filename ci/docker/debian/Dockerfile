@@ -4,26 +4,17 @@ FROM debian:latest AS env
 
 # Install system build dependencies
 ENV PATH=/usr/local/bin:$PATH
-RUN apt-get update -qq \
-&& apt-get install -yq git wget libssl-dev build-essential cmake \
+RUN apt-get update -q \
+&& apt-get install -yq \
+ git wget libssl-dev build-essential cmake \
 && apt-get clean \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Install swig
-RUN apt-get update -qq \
-&& apt-get install -yq libpcre3-dev automake bison \
+RUN apt-get update -q \
+&& apt-get install -yq swig \
 && apt-get clean \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-RUN wget -q "https://github.com/swig/swig/archive/refs/tags/v4.0.2.tar.gz" -O swig-4.0.2.tar.gz \
-&& tar xvf swig-4.0.2.tar.gz \
-&& rm swig-4.0.2.tar.gz \
-&& cd swig-4.0.2 \
-&& ./autogen.sh \
-&& ./configure --prefix=/usr \
-&& make -j 4 \
-&& make install \
-&& cd .. \
-&& rm -rf swig-4.0.2
 
 # Install .NET SDK
 # see: https://docs.microsoft.com/en-us/dotnet/core/install/linux-debian
@@ -33,7 +24,7 @@ RUN apt-get update -qq \
 && dpkg -i packages-microsoft-prod.deb \
 && rm packages-microsoft-prod.deb \
 && apt-get update -qq \
-&& apt-get install -yq dotnet-sdk-3.1 dotnet-sdk-6.0 \
+&& apt-get install -yq dotnet-sdk-7.0 \
 && apt-get clean \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # Trigger first run experience by running arbitrary cmd

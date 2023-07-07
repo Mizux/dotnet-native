@@ -93,17 +93,6 @@ help:
 	@echo -e "\t\t${BOLD}test${RESET}"
 	@echo -e "\te.g. 'make aarch64-linux-gnu_test'"
 	@echo
-	@echo -e "\tBuild using a vagrant machine."
-	@echo -e "\t${BOLD}<vm>_<vms_stage>${RESET}: build the vagrant <vm> virtual machine."
-	@echo -e "\t${BOLD}clean_<vm>${RESET}: Remove virtual machine for the specified vm."
-	@echo -e "\t${BOLD}clean_vms${RESET}: Remove ALL vagrant box."
-	@echo
-	@echo -e "\t${BOLD}<vm>${RESET}:"
-	@echo -e "\t\t${BOLD}freebsd${RESET} (FreeBSD)"
-	@echo
-	@echo -e "\tWith ${BOLD}<vms_stage>${RESET}:"
-	@echo -e "\t\t${BOLD}build${RESET}"
-	@echo
 	@echo -e "\tGlobal targets."
 	@echo -e "\t${BOLD}clean${RESET}: Remove cache and ALL docker images."
 	@echo -e "\t${BOLD}distclean${RESET}: Remove everything."
@@ -329,30 +318,11 @@ $(foreach stage,$(TOOLCHAIN_STAGES),$(eval $(call toolchain-stage-target,$(stage
 clean_toolchains: $(addprefix clean_toolchain_, $(TOOLCHAIN_STAGES))
 	-rmdir $(addprefix cache/, $(TOOLCHAIN_TARGETS))
 
-#############
-## VAGRANT ##
-#############
-VMS = freebsd
-
-vms_targets = $(addsuffix _build, $(VMS))
-.PHONY: vms_build $(vms_targets)
-vms_build: $(vms_targets)
-$(vms_targets): %_build: vagrant/%/Vagrantfile
-	@cd vagrant/$* && vagrant destroy -f
-	cd vagrant/$* && vagrant up
-
-clean_vms_targets = $(addprefix clean_, $(VMS))
-.PHONY: clean_vms $(clean_vms_targets)
-clean_vms: $(clean_vms_targets)
-$(clean_vms_targets): clean_%:
-	cd vagrant/$* && vagrant destroy -f
-	-rm -rf vagrant/$*/.vagrant
-
 ###########
 ## CLEAN ##
 ###########
 .PHONY: clean
-clean: clean_native clean_platforms clean_toolchains clean_vms
+clean: clean_native clean_platforms clean_toolchains
 	docker container prune -f
 	docker image prune -f
 	-rmdir cache
@@ -361,4 +331,3 @@ clean: clean_native clean_platforms clean_toolchains clean_vms
 distclean: clean
 	-docker container rm -f $$(docker container ls -aq)
 	-docker image rm -f $$(docker image ls -aq)
-	-vagrant box remove -f generic/freebsd12
