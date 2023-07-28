@@ -9,8 +9,8 @@ jobs:
     strategy:
        matrix:
          lang: [7.3, 8.0, 9.0]
-         build: [46, 461, 462, 48, CORE_31, STD_20, STD_21, 6]
-         example: [net48, netstandard2.0, netstandard2.1, netcoreapp3.1, net6.0]
+         build: [46, 461, 462, 48, CORE_31, STD_20, STD_21, 6, 7]
+         example: [net48, netstandard2.0, netstandard2.1, netcoreapp3.1, net5.0, net6.0, net7.0]
        fail-fast: false
     steps:
     - uses: actions/checkout@v3
