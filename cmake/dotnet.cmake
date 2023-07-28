@@ -153,8 +153,10 @@ add_custom_command(
 
 add_custom_command(
   OUTPUT ${DOTNET_NATIVE_PROJECT_DIR}/timestamp
-  COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME ${DOTNET_EXECUTABLE} build -c Release /p:Platform=${DOTNET_PLATFORM} ${DOTNET_NATIVE_PROJECT}.csproj
-  COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME ${DOTNET_EXECUTABLE} pack -c Release ${DOTNET_NATIVE_PROJECT}.csproj
+  COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
+    ${DOTNET_EXECUTABLE} build --nologo -c Release /p:Platform=${DOTNET_PLATFORM} ${DOTNET_NATIVE_PROJECT}.csproj
+  COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
+    ${DOTNET_EXECUTABLE} pack --nologo -c Release ${DOTNET_NATIVE_PROJECT}.csproj
   COMMAND ${CMAKE_COMMAND} -E touch ${DOTNET_NATIVE_PROJECT_DIR}/timestamp
   DEPENDS
     ${PROJECT_BINARY_DIR}/dotnet/Directory.Build.props
@@ -189,8 +191,10 @@ add_custom_command(
 
 add_custom_command(
   OUTPUT ${DOTNET_PROJECT_DIR}/timestamp
-  COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME ${DOTNET_EXECUTABLE} build -c Release /p:Platform=${DOTNET_PLATFORM} ${DOTNET_PROJECT}.csproj
-  COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME ${DOTNET_EXECUTABLE} pack -c Release ${DOTNET_PROJECT}.csproj
+  COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
+    ${DOTNET_EXECUTABLE} build --nologo -c Release /p:Platform=${DOTNET_PLATFORM} ${DOTNET_PROJECT}.csproj
+  COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
+    ${DOTNET_EXECUTABLE} pack --nologo -c Release ${DOTNET_PROJECT}.csproj
   COMMAND ${CMAKE_COMMAND} -E touch ${DOTNET_PROJECT_DIR}/timestamp
   DEPENDS
     ${DOTNET_PROJECT_DIR}/${DOTNET_PROJECT}.csproj
@@ -242,7 +246,8 @@ function(add_dotnet_test FILE_NAME)
 
   add_custom_command(
     OUTPUT ${DOTNET_TEST_DIR}/timestamp
-    COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME ${DOTNET_EXECUTABLE} build -c Release ${TEST_NAME}.csproj
+    COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
+      ${DOTNET_EXECUTABLE} build --nologo -c Release ${TEST_NAME}.csproj
     COMMAND ${CMAKE_COMMAND} -E touch ${DOTNET_TEST_DIR}/timestamp
     DEPENDS
       ${DOTNET_TEST_DIR}/${TEST_NAME}.csproj
@@ -304,8 +309,10 @@ function(add_dotnet_example FILE_NAME TFM)
 
   add_custom_command(
     OUTPUT ${DOTNET_EXAMPLE_DIR}/timestamp
-    COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME ${DOTNET_EXECUTABLE} build -c Release ${EXAMPLE_NAME}.csproj
-    COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME ${DOTNET_EXECUTABLE} pack -c Release ${EXAMPLE_NAME}.csproj
+    COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
+      ${DOTNET_EXECUTABLE} build --nologo -c Release ${EXAMPLE_NAME}.csproj
+    COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
+      ${DOTNET_EXECUTABLE} pack --nologo -c Release ${EXAMPLE_NAME}.csproj
     COMMAND ${CMAKE_COMMAND} -E touch ${DOTNET_EXAMPLE_DIR}/timestamp
     DEPENDS
       ${DOTNET_EXAMPLE_DIR}/${EXAMPLE_NAME}.csproj
@@ -326,7 +333,8 @@ function(add_dotnet_example FILE_NAME TFM)
   if(BUILD_TESTING)
     add_test(
       NAME dotnet_${COMPONENT_NAME}_${EXAMPLE_NAME}_${TFM}
-      COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME ${DOTNET_EXECUTABLE} run --no-build -c Release ${EXAMPLE_NAME}.csproj
+      COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
+        ${DOTNET_EXECUTABLE} run --no-build -c Release ${EXAMPLE_NAME}.csproj
       WORKING_DIRECTORY ${DOTNET_EXAMPLE_DIR})
   endif()
   message(STATUS "Configuring example ${FILE_NAME} done")
