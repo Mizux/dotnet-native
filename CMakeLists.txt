@@ -61,6 +61,9 @@ else()
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/${OutputConfig}/${CMAKE_INSTALL_BINDIR})
   endforeach()
 endif()
+if(BUILD_SHARED_LIBS AND MSVC)
+  set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+endif()
 message(STATUS "Build shared libs: ${BUILD_SHARED_LIBS}")
 
 # Disable CTest targets
@@ -109,6 +112,9 @@ message(STATUS ".Net: Use .Net Core 3.1 LTS support: ${USE_DOTNET_CORE_31}")
 
 option(USE_DOTNET_6 "Use .Net 6 LTS support" ON)
 message(STATUS ".Net: Use .Net 6 LTS support: ${USE_DOTNET_6}")
+
+option(USE_DOTNET_7 "Use .Net 7.0 support" OFF)
+message(STATUS ".Net: Use .Net 7.0 support: ${USE_DOTNET_7}")
 include(dotnet)
 
 add_subdirectory(tests)
