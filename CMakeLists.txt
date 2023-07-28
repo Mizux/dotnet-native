@@ -1,5 +1,7 @@
 # This file is just an orchestration
 cmake_minimum_required(VERSION 3.18)
+
+# UseSWIG use library name conventions for CSharp language.
 if (POLICY CMP0122)
   cmake_policy(SET CMP0122 NEW)
 endif()
