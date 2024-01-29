@@ -1,17 +1,19 @@
 Github-CI:
-[![Build Status][github_linux_status]][github_linux_link]
-[![Build Status][github_macos_status]][github_macos_link]
-[![Build Status][github_windows_status]][github_windows_link]
-[![Build Status][github_amd64_docker_status]][github_amd64_docker_link]
+[![Build Status][amd64_linux_status]][amd64_linux_link]
+[![Build Status][amd64_macos_status]][amd64_macos_link]
+[![Build Status][amd64_windows_status]][amd64_windows_link]<br>
 
-[github_linux_status]: https://github.com/Mizux/dotnet-native/actions/workflows/amd64_linux.yml/badge.svg
-[github_linux_link]: https://github.com/Mizux/dotnet-native/actions/workflows/amd64_linux.yml
-[github_macos_status]: https://github.com/Mizux/dotnet-native/actions/workflows/amd64_macos.yml/badge.svg
-[github_macos_link]: https://github.com/Mizux/dotnet-native/actions/workflows/amd64_macos.yml
-[github_windows_status]: https://github.com/Mizux/dotnet-native/actions/workflows/amd64_windows.yml/badge.svg
-[github_windows_link]: https://github.com/Mizux/dotnet-native/actions/workflows/amd64_windows.yml
-[github_amd64_docker_status]: https://github.com/Mizux/dotnet-native/actions/workflows/amd64_docker.yml/badge.svg
-[github_amd64_docker_link]: https://github.com/Mizux/dotnet-native/actions/workflows/amd64_docker.yml
+[![Build Status][amd64_docker_status]][amd64_docker_link]
+
+[amd64_linux_status]: ./../../actions/workflows/amd64_linux.yml/badge.svg
+[amd64_linux_link]: ./../../actions/workflows/amd64_linux.yml
+[amd64_macos_status]: ./../../actions/workflows/amd64_macos.yml/badge.svg
+[amd64_macos_link]: ./../../actions/workflows/amd64_macos.yml
+[amd64_windows_status]: ./../../actions/workflows/amd64_windows.yml/badge.svg
+[amd64_windows_link]: ./../../actions/workflows/amd64_windows.yml
+
+[amd64_docker_status]: ./../../actions/workflows/amd64_docker.yml/badge.svg
+[amd64_docker_link]: ./../../actions/workflows/amd64_docker.yml
 
 # Introduction
 <nav for="project"> |
