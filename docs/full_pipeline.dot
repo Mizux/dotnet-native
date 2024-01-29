@@ -19,7 +19,7 @@ digraph CMake {
 
       LINUX_WRAPPER_CPP [label="fooCSHARP_wrap.cxx"];
       LINUX_WRAPPER_OBJ [label="fooCSHARP_wrap.cxx.o"];
-      LINUX_WRAPPER_LIB [label="mizux-dotnetnative-native.so\nruntimes/linux-x64/native/", shape=component];
+      LINUX_WRAPPER_LIB [label="DOTNET_NATIVE_LIBRARY.so\nruntimes/linux-x64/native/", shape=component];
 
       LINUX_WRAPPER_CPP -> LINUX_WRAPPER_OBJ [label="g++", style=bold];
       LINUX_WRAPPER_OBJ -> LINUX_WRAPPER_LIB [label="ld", style=bold];
@@ -55,7 +55,7 @@ digraph CMake {
 
       OSX_WRAPPER_CPP [label="fooCSHARP_wrap.cxx"];
       OSX_WRAPPER_OBJ [label="fooCSHARP_wrap.cxx.o"];
-      OSX_WRAPPER_LIB [label="mizux-dotnetnative-native.dylib\nruntimes/osx-x64/native/", shape=component];
+      OSX_WRAPPER_LIB [label="DOTNET_NATIVE_LIBRARY.dylib\nruntimes/osx-x64/native/", shape=component];
 
       OSX_WRAPPER_CPP -> OSX_WRAPPER_OBJ [label="g++", style=bold];
       OSX_WRAPPER_OBJ -> OSX_WRAPPER_LIB [label="ld", style=bold];
@@ -91,7 +91,7 @@ digraph CMake {
 
       WIN_WRAPPER_CPP [label="fooCSHARP_wrap.cxx"];
       WIN_WRAPPER_OBJ [label="fooCSHARP_wrap.cxx.o"];
-      WIN_WRAPPER_LIB [label="mizux-dotnetnative-native.dll\nruntimes/win-x64/native/", shape=component];
+      WIN_WRAPPER_LIB [label="DOTNET_NATIVE_LIBRARY.dll\nruntimes/win-x64/native/", shape=component];
 
       WIN_WRAPPER_CPP -> WIN_WRAPPER_OBJ [label="g++", style=bold];
       WIN_WRAPPER_OBJ -> WIN_WRAPPER_LIB [label="ld", style=bold];

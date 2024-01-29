@@ -1,7 +1,7 @@
 set_property(SOURCE foobar.i PROPERTY CPLUSPLUS ON)
 set_property(SOURCE foobar.i PROPERTY COMPILE_OPTIONS
   -namespace ${DOTNET_PROJECT}.FooBar
-  -dllimport mizux-dotnetnative-native)
+  -dllimport ${DOTNET_NATIVE_LIBRARY})
 swig_add_library(dotnet_FooBar
   TYPE OBJECT
   LANGUAGE csharp

@@ -1,7 +1,7 @@
 set_property(SOURCE bar.i PROPERTY CPLUSPLUS ON)
 set_property(SOURCE bar.i PROPERTY COMPILE_OPTIONS
   -namespace ${DOTNET_PROJECT}.Bar
-  -dllimport mizux-dotnetnative-native)
+  -dllimport ${DOTNET_NATIVE_LIBRARY})
 swig_add_library(dotnet_Bar
   TYPE OBJECT
   LANGUAGE csharp

@@ -3,7 +3,7 @@
     <OutputType>Library</OutputType>
     @DOTNET_TFM@
     <RuntimeIdentifier>@DOTNET_RID@</RuntimeIdentifier>
-    <AssemblyName>mizux-dotnetnative-native</AssemblyName>
+    <AssemblyName>@DOTNET_NATIVE_LIBRARY@</AssemblyName>
     <Version>@PROJECT_VERSION@</Version>
 
     <!-- Nuget Properties -->
@@ -24,7 +24,7 @@
     <!-- Native library must be in native directory... -->
     <!-- If project is built as a STATIC_LIBRARY (e.g. Windows) then we don't have to include it -->
     <Content Include="
-      $<TARGET_FILE:mizux-dotnetnative-native>
+      $<TARGET_FILE:@DOTNET_NATIVE_LIBRARY@>
       $<$<STREQUAL:$<TARGET_PROPERTY:Bar,TYPE>,SHARED_LIBRARY>:;$<TARGET_SONAME_FILE:Bar>>
       $<$<STREQUAL:$<TARGET_PROPERTY:Foo,TYPE>,SHARED_LIBRARY>:;$<TARGET_SONAME_FILE:Foo>>
       $<$<STREQUAL:$<TARGET_PROPERTY:FooBar,TYPE>,SHARED_LIBRARY>:;$<TARGET_SONAME_FILE:FooBar>>

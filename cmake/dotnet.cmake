@@ -20,8 +20,10 @@ else()
 endif()
 
 # Needed by dotnet/CMakeLists.txt
-set(DOTNET_PACKAGE Mizux.DotnetNative)
-set(DOTNET_PACKAGES_DIR "${PROJECT_BINARY_DIR}/dotnet/packages")
+set(DOTNET_PROJECT ${COMPANY_NAME}.${PROJECT_NAME})
+message(STATUS ".Net project: ${DOTNET_PROJECT}")
+set(DOTNET_PROJECT_DIR ${PROJECT_BINARY_DIR}/dotnet/${DOTNET_PROJECT})
+message(STATUS ".Net project build path: ${DOTNET_PROJECT_DIR}")
 
 # Runtime IDentifier
 # see: https://docs.microsoft.com/en-us/dotnet/core/rid-catalog
@@ -42,10 +44,12 @@ else()
 endif()
 message(STATUS ".Net RID: ${DOTNET_RID}")
 
-set(DOTNET_NATIVE_PROJECT ${DOTNET_PACKAGE}.runtime.${DOTNET_RID})
+set(DOTNET_NATIVE_PROJECT ${DOTNET_PROJECT}.runtime.${DOTNET_RID})
 message(STATUS ".Net runtime project: ${DOTNET_NATIVE_PROJECT}")
 set(DOTNET_NATIVE_PROJECT_DIR ${PROJECT_BINARY_DIR}/dotnet/${DOTNET_NATIVE_PROJECT})
 message(STATUS ".Net runtime project build path: ${DOTNET_NATIVE_PROJECT_DIR}")
+
+set(DOTNET_PACKAGES_DIR "${PROJECT_BINARY_DIR}/dotnet/packages")
 
 # Targeted Framework Moniker
 # see: https://docs.microsoft.com/en-us/dotnet/standard/frameworks
@@ -91,29 +95,27 @@ else()
   string(CONCAT DOTNET_TFM "<TargetFramework>" "${DOTNET_TFM}" "</TargetFramework>")
 endif()
 
-set(DOTNET_PROJECT ${DOTNET_PACKAGE})
-message(STATUS ".Net project: ${DOTNET_PROJECT}")
-set(DOTNET_PROJECT_DIR ${PROJECT_BINARY_DIR}/dotnet/${DOTNET_PROJECT})
-message(STATUS ".Net project build path: ${DOTNET_PROJECT_DIR}")
-
 # Create the native library
-add_library(mizux-dotnetnative-native SHARED "")
-set_target_properties(mizux-dotnetnative-native PROPERTIES
+string(TOLOWER "${COMPANY_NAME}_${PROJECT_NAME}_native" DOTNET_NATIVE_LIBRARY)
+message(STATUS ".Net runtime library: ${DOTNET_NATIVE_LIBRARY}")
+
+add_library(${DOTNET_NATIVE_LIBRARY} SHARED "")
+set_target_properties(${DOTNET_NATIVE_LIBRARY} PROPERTIES
   PREFIX ""
   POSITION_INDEPENDENT_CODE ON)
 # note: macOS is APPLE and also UNIX !
 if(APPLE)
-  set_target_properties(mizux-dotnetnative-native PROPERTIES
+  set_target_properties(${DOTNET_NATIVE_LIBRARY} PROPERTIES
     INSTALL_RPATH "@loader_path")
   # Xcode fails to build if library doesn't contains at least one source file.
   if(XCODE)
     file(GENERATE
-      OUTPUT ${PROJECT_BINARY_DIR}/mizux-dotnetnative-native/version.cpp
+      OUTPUT ${PROJECT_BINARY_DIR}/${DOTNET_NATIVE_LIBRARY}/version.cpp
       CONTENT "namespace {char* version = \"${PROJECT_VERSION}\";}")
-    target_sources(mizux-dotnetnative-native PRIVATE ${PROJECT_BINARY_DIR}/mizux-dotnetnative-native/version.cpp)
+    target_sources(${DOTNET_NATIVE_LIBRARY} PRIVATE ${PROJECT_BINARY_DIR}/${DOTNET_NATIVE_LIBRARY}/version.cpp)
   endif()
 elseif(UNIX)
-  set_target_properties(mizux-dotnetnative-native PROPERTIES
+  set_target_properties(${DOTNET_NATIVE_LIBRARY} PROPERTIES
     INSTALL_RPATH "$ORIGIN")
 endif()
 
@@ -122,7 +124,7 @@ list(APPEND CMAKE_SWIG_FLAGS ${FLAGS} "-I${PROJECT_SOURCE_DIR}")
 # Swig wrap all libraries
 foreach(SUBPROJECT IN ITEMS Foo Bar FooBar)
   add_subdirectory(${SUBPROJECT}/dotnet)
-  target_link_libraries(mizux-dotnetnative-native PRIVATE dotnet_${SUBPROJECT})
+  target_link_libraries(${DOTNET_NATIVE_LIBRARY} PRIVATE dotnet_${SUBPROJECT})
 endforeach()
 
 file(COPY ${PROJECT_SOURCE_DIR}/dotnet/logo.png DESTINATION ${PROJECT_BINARY_DIR}/dotnet)
@@ -137,7 +139,7 @@ file(MAKE_DIRECTORY ${DOTNET_PACKAGES_DIR})
 # CMake variable(s) (@PROJECT_NAME@) that configure_file() can manage and
 # generator expression ($<TARGET_FILE:...>) that file(GENERATE) can manage.
 configure_file(
-  ${PROJECT_SOURCE_DIR}/dotnet/${DOTNET_PACKAGE}.runtime.csproj.in
+  ${PROJECT_SOURCE_DIR}/dotnet/${DOTNET_PROJECT}.runtime.csproj.in
   ${DOTNET_NATIVE_PROJECT_DIR}/${DOTNET_NATIVE_PROJECT}.csproj.in
   @ONLY)
 file(GENERATE
@@ -161,7 +163,7 @@ add_custom_command(
   DEPENDS
     ${PROJECT_BINARY_DIR}/dotnet/Directory.Build.props
     ${DOTNET_NATIVE_PROJECT_DIR}/${DOTNET_NATIVE_PROJECT}.csproj
-    mizux-dotnetnative-native
+    ${DOTNET_NATIVE_LIBRARY}
   BYPRODUCTS
     ${DOTNET_NATIVE_PROJECT_DIR}/bin
     ${DOTNET_NATIVE_PROJECT_DIR}/obj

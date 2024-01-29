@@ -17,7 +17,7 @@ digraph CMake {
 
     WRAPPER_CPP [label="fooCSHARP_wrap.cxx"];
     WRAPPER_OBJ [label="fooCSHARP_wrap.cxx.o"];
-    WRAPPER_LIB [label="mizux-dotnetnative-native.so\nruntimes/linux-x64/native/", shape=component];
+    WRAPPER_LIB [label="DOTNET_NATIVE_LIBRARY.so\nruntimes/linux-x64/native/", shape=component];
 
     CPP -> WRAPPER_CPP [label="include", style=dashed];
     CPP -> LIB [label="g++, ld", style=bold];
