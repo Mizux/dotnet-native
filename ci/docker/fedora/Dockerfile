@@ -18,7 +18,7 @@ RUN dnf -y update \
 # Install .NET SDK
 # see: https://docs.microsoft.com/en-us/dotnet/core/install/linux-fedora
 RUN dnf -y update \
-&& dnf -y install dotnet-sdk-7.0 \
+&& dnf -y install dotnet-sdk-8.0 \
 && dnf clean all
 # Trigger first run experience by running arbitrary cmd
 RUN dotnet --info
