@@ -12,7 +12,7 @@ jobs:
          build: [462, 48, 6, 7, 8]
          example: [net462, net48, netcoreapp3.1, net6.0, net7.0, net8.0]
        fail-fast: false
-    name: msvc, lang:${{ matrix.lang }}, build:${{ matrix.build }}, test:${{ matrix.example }}
+    name: win,l:${{ matrix.lang }},b:${{ matrix.build }},t:${{ matrix.example }}
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v4
