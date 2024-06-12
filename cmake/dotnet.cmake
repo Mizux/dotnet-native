@@ -20,10 +20,8 @@ else()
 endif()
 
 # Needed by dotnet/CMakeLists.txt
-set(DOTNET_PROJECT ${COMPANY_NAME}.${PROJECT_NAME})
-message(STATUS ".Net project: ${DOTNET_PROJECT}")
-set(DOTNET_PROJECT_DIR ${PROJECT_BINARY_DIR}/dotnet/${DOTNET_PROJECT})
-message(STATUS ".Net project build path: ${DOTNET_PROJECT_DIR}")
+set(DOTNET_PACKAGE ${COMPANY_NAME}.${PROJECT_NAME})
+set(DOTNET_PACKAGES_DIR "${PROJECT_BINARY_DIR}/dotnet/packages")
 
 # Runtime IDentifier
 # see: https://docs.microsoft.com/en-us/dotnet/core/rid-catalog
@@ -44,12 +42,10 @@ else()
 endif()
 message(STATUS ".Net RID: ${DOTNET_RID}")
 
-set(DOTNET_NATIVE_PROJECT ${DOTNET_PROJECT}.runtime.${DOTNET_RID})
+set(DOTNET_NATIVE_PROJECT ${DOTNET_PACKAGE}.runtime.${DOTNET_RID})
 message(STATUS ".Net runtime project: ${DOTNET_NATIVE_PROJECT}")
 set(DOTNET_NATIVE_PROJECT_DIR ${PROJECT_BINARY_DIR}/dotnet/${DOTNET_NATIVE_PROJECT})
 message(STATUS ".Net runtime project build path: ${DOTNET_NATIVE_PROJECT_DIR}")
-
-set(DOTNET_PACKAGES_DIR "${PROJECT_BINARY_DIR}/dotnet/packages")
 
 # Targeted Framework Moniker
 # see: https://docs.microsoft.com/en-us/dotnet/standard/frameworks
@@ -81,6 +77,9 @@ endif()
 if(USE_DOTNET_7)
   list(APPEND TFM "net7.0")
 endif()
+if(USE_DOTNET_8)
+  list(APPEND TFM "net8.0")
+endif()
 
 list(LENGTH TFM TFM_LENGTH)
 if(TFM_LENGTH EQUAL "0")
@@ -95,10 +94,15 @@ else()
   string(CONCAT DOTNET_TFM "<TargetFramework>" "${DOTNET_TFM}" "</TargetFramework>")
 endif()
 
+
+set(DOTNET_PROJECT ${DOTNET_PACKAGE})
+message(STATUS ".Net project: ${DOTNET_PROJECT}")
+set(DOTNET_PROJECT_DIR ${PROJECT_BINARY_DIR}/dotnet/${DOTNET_PROJECT})
+message(STATUS ".Net project build path: ${DOTNET_PROJECT_DIR}")
+
 # Create the native library
 string(TOLOWER "${COMPANY_NAME}_${PROJECT_NAME}_native" DOTNET_NATIVE_LIBRARY)
 message(STATUS ".Net runtime library: ${DOTNET_NATIVE_LIBRARY}")
-
 add_library(${DOTNET_NATIVE_LIBRARY} SHARED "")
 set_target_properties(${DOTNET_NATIVE_LIBRARY} PROPERTIES
   PREFIX ""
@@ -118,100 +122,6 @@ elseif(UNIX)
   set_target_properties(${DOTNET_NATIVE_LIBRARY} PROPERTIES
     INSTALL_RPATH "$ORIGIN")
 endif()
-
-list(APPEND CMAKE_SWIG_FLAGS ${FLAGS} "-I${PROJECT_SOURCE_DIR}")
-
-# Swig wrap all libraries
-foreach(SUBPROJECT IN ITEMS Foo Bar FooBar)
-  add_subdirectory(${SUBPROJECT}/dotnet)
-  target_link_libraries(${DOTNET_NATIVE_LIBRARY} PRIVATE dotnet_${SUBPROJECT})
-endforeach()
-
-file(COPY ${PROJECT_SOURCE_DIR}/dotnet/logo.png DESTINATION ${PROJECT_BINARY_DIR}/dotnet)
-set(DOTNET_LOGO_DIR "${PROJECT_BINARY_DIR}/dotnet")
-configure_file(${PROJECT_SOURCE_DIR}/dotnet/Directory.Build.props.in ${PROJECT_BINARY_DIR}/dotnet/Directory.Build.props)
-
-file(MAKE_DIRECTORY ${DOTNET_PACKAGES_DIR})
-############################
-##  .Net Runtime Package  ##
-############################
-# *.csproj.in contains:
-# CMake variable(s) (@PROJECT_NAME@) that configure_file() can manage and
-# generator expression ($<TARGET_FILE:...>) that file(GENERATE) can manage.
-configure_file(
-  ${PROJECT_SOURCE_DIR}/dotnet/${DOTNET_PROJECT}.runtime.csproj.in
-  ${DOTNET_NATIVE_PROJECT_DIR}/${DOTNET_NATIVE_PROJECT}.csproj.in
-  @ONLY)
-file(GENERATE
-  OUTPUT ${DOTNET_NATIVE_PROJECT_DIR}/$<CONFIG>/${DOTNET_NATIVE_PROJECT}.csproj.in
-  INPUT ${DOTNET_NATIVE_PROJECT_DIR}/${DOTNET_NATIVE_PROJECT}.csproj.in)
-
-add_custom_command(
-  OUTPUT ${DOTNET_NATIVE_PROJECT_DIR}/${DOTNET_NATIVE_PROJECT}.csproj
-  COMMAND ${CMAKE_COMMAND} -E copy ./$<CONFIG>/${DOTNET_NATIVE_PROJECT}.csproj.in ${DOTNET_NATIVE_PROJECT}.csproj
-  DEPENDS
-    ${DOTNET_NATIVE_PROJECT_DIR}/$<CONFIG>/${DOTNET_NATIVE_PROJECT}.csproj.in
-  WORKING_DIRECTORY ${DOTNET_NATIVE_PROJECT_DIR})
-
-add_custom_command(
-  OUTPUT ${DOTNET_NATIVE_PROJECT_DIR}/timestamp
-  COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
-    ${DOTNET_EXECUTABLE} build --nologo -c Release /p:Platform=${DOTNET_PLATFORM} ${DOTNET_NATIVE_PROJECT}.csproj
-  COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
-    ${DOTNET_EXECUTABLE} pack --nologo -c Release ${DOTNET_NATIVE_PROJECT}.csproj
-  COMMAND ${CMAKE_COMMAND} -E touch ${DOTNET_NATIVE_PROJECT_DIR}/timestamp
-  DEPENDS
-    ${PROJECT_BINARY_DIR}/dotnet/Directory.Build.props
-    ${DOTNET_NATIVE_PROJECT_DIR}/${DOTNET_NATIVE_PROJECT}.csproj
-    ${DOTNET_NATIVE_LIBRARY}
-  BYPRODUCTS
-    ${DOTNET_NATIVE_PROJECT_DIR}/bin
-    ${DOTNET_NATIVE_PROJECT_DIR}/obj
-  VERBATIM
-  COMMENT "Generate .Net native package ${DOTNET_NATIVE_PROJECT} (${DOTNET_NATIVE_PROJECT_DIR}/timestamp)"
-  WORKING_DIRECTORY ${DOTNET_NATIVE_PROJECT_DIR})
-
-add_custom_target(dotnet_native_package
-  DEPENDS
-    ${DOTNET_NATIVE_PROJECT_DIR}/timestamp
-  WORKING_DIRECTORY ${DOTNET_NATIVE_PROJECT_DIR})
-
-####################
-##  .Net Package  ##
-####################
-configure_file(
-  ${PROJECT_SOURCE_DIR}/dotnet/${DOTNET_PROJECT}.csproj.in
-  ${DOTNET_PROJECT_DIR}/${DOTNET_PROJECT}.csproj.in
-  @ONLY)
-
-add_custom_command(
-  OUTPUT ${DOTNET_PROJECT_DIR}/${DOTNET_PROJECT}.csproj
-  COMMAND ${CMAKE_COMMAND} -E copy ${DOTNET_PROJECT}.csproj.in ${DOTNET_PROJECT}.csproj
-  DEPENDS
-    ${DOTNET_PROJECT_DIR}/${DOTNET_PROJECT}.csproj.in
-  WORKING_DIRECTORY ${DOTNET_PROJECT_DIR})
-
-add_custom_command(
-  OUTPUT ${DOTNET_PROJECT_DIR}/timestamp
-  COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
-    ${DOTNET_EXECUTABLE} build --nologo -c Release /p:Platform=${DOTNET_PLATFORM} ${DOTNET_PROJECT}.csproj
-  COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
-    ${DOTNET_EXECUTABLE} pack --nologo -c Release ${DOTNET_PROJECT}.csproj
-  COMMAND ${CMAKE_COMMAND} -E touch ${DOTNET_PROJECT_DIR}/timestamp
-  DEPENDS
-    ${DOTNET_PROJECT_DIR}/${DOTNET_PROJECT}.csproj
-    dotnet_native_package
-  BYPRODUCTS
-    ${DOTNET_PROJECT_DIR}/bin
-    ${DOTNET_PROJECT_DIR}/obj
-  VERBATIM
-  COMMENT "Generate .Net package ${DOTNET_PROJECT} (${DOTNET_PROJECT_DIR}/timestamp)"
-  WORKING_DIRECTORY ${DOTNET_PROJECT_DIR})
-
-add_custom_target(dotnet_package ALL
-  DEPENDS
-    ${DOTNET_PROJECT_DIR}/timestamp
-  WORKING_DIRECTORY ${DOTNET_PROJECT_DIR})
 
 #################
 ##  .Net Test  ##
@@ -270,11 +180,122 @@ function(add_dotnet_test FILE_NAME)
   if(BUILD_TESTING)
     add_test(
       NAME dotnet_${COMPONENT_NAME}_${TEST_NAME}
-      COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME ${DOTNET_EXECUTABLE} test --no-build -c Release ${TEST_NAME}.csproj
+      COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
+      ${DOTNET_EXECUTABLE} test --nologo --no-build -c Release ${TEST_NAME}.csproj
       WORKING_DIRECTORY ${DOTNET_TEST_DIR})
   endif()
-  message(STATUS "Configuring test ${FILE_NAME} done")
+  message(STATUS "Configuring test ${FILE_NAME} ...DONE")
 endfunction()
+
+
+#######################
+##  DOTNET WRAPPERS  ##
+#######################
+list(APPEND CMAKE_SWIG_FLAGS ${FLAGS} "-I${PROJECT_SOURCE_DIR}")
+
+# Swig wrap all libraries
+foreach(SUBPROJECT IN ITEMS
+ Foo
+ Bar
+ FooBar)
+  add_subdirectory(${SUBPROJECT}/dotnet)
+  target_link_libraries(${DOTNET_NATIVE_LIBRARY} PRIVATE dotnet_${SUBPROJECT})
+endforeach()
+
+file(COPY ${PROJECT_SOURCE_DIR}/dotnet/logo.png DESTINATION ${PROJECT_BINARY_DIR}/dotnet)
+set(DOTNET_LOGO_DIR "${PROJECT_BINARY_DIR}/dotnet")
+
+configure_file(
+  ${PROJECT_SOURCE_DIR}/dotnet/README.dotnet.md
+  ${PROJECT_BINARY_DIR}/dotnet/README.md
+  COPYONLY)
+set(DOTNET_README_DIR "${PROJECT_BINARY_DIR}/dotnet")
+
+configure_file(
+  ${PROJECT_SOURCE_DIR}/dotnet/Directory.Build.props.in
+  ${PROJECT_BINARY_DIR}/dotnet/Directory.Build.props)
+
+file(MAKE_DIRECTORY ${DOTNET_PACKAGES_DIR})
+############################
+##  .Net Runtime Package  ##
+############################
+# *.csproj.in contains:
+# CMake variable(s) (@PROJECT_NAME@) that configure_file() can manage and
+# generator expression ($<TARGET_FILE:...>) that file(GENERATE) can manage.
+configure_file(
+  ${PROJECT_SOURCE_DIR}/dotnet/${DOTNET_PACKAGE}.runtime.csproj.in
+  ${DOTNET_NATIVE_PROJECT_DIR}/${DOTNET_NATIVE_PROJECT}.csproj.in
+  @ONLY)
+file(GENERATE
+  OUTPUT ${DOTNET_NATIVE_PROJECT_DIR}/$<CONFIG>/${DOTNET_NATIVE_PROJECT}.csproj.in
+  INPUT ${DOTNET_NATIVE_PROJECT_DIR}/${DOTNET_NATIVE_PROJECT}.csproj.in)
+
+add_custom_command(
+  OUTPUT ${DOTNET_NATIVE_PROJECT_DIR}/${DOTNET_NATIVE_PROJECT}.csproj
+  COMMAND ${CMAKE_COMMAND} -E copy ./$<CONFIG>/${DOTNET_NATIVE_PROJECT}.csproj.in ${DOTNET_NATIVE_PROJECT}.csproj
+  DEPENDS
+    ${DOTNET_NATIVE_PROJECT_DIR}/$<CONFIG>/${DOTNET_NATIVE_PROJECT}.csproj.in
+  WORKING_DIRECTORY ${DOTNET_NATIVE_PROJECT_DIR})
+
+add_custom_command(
+  OUTPUT ${DOTNET_NATIVE_PROJECT_DIR}/timestamp
+  COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
+    ${DOTNET_EXECUTABLE} build --nologo -c Release -p:Platform=${DOTNET_PLATFORM} ${DOTNET_NATIVE_PROJECT}.csproj
+  COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
+    ${DOTNET_EXECUTABLE} pack --nologo -c Release -p:Platform=${DOTNET_PLATFORM} ${DOTNET_NATIVE_PROJECT}.csproj
+  COMMAND ${CMAKE_COMMAND} -E touch ${DOTNET_NATIVE_PROJECT_DIR}/timestamp
+  DEPENDS
+    ${PROJECT_BINARY_DIR}/dotnet/Directory.Build.props
+    ${DOTNET_NATIVE_PROJECT_DIR}/${DOTNET_NATIVE_PROJECT}.csproj
+    ${DOTNET_NATIVE_LIBRARY}
+  BYPRODUCTS
+    ${DOTNET_NATIVE_PROJECT_DIR}/bin
+    ${DOTNET_NATIVE_PROJECT_DIR}/obj
+  VERBATIM
+  COMMENT "Generate .Net native package ${DOTNET_NATIVE_PROJECT} (${DOTNET_NATIVE_PROJECT_DIR}/timestamp)"
+  WORKING_DIRECTORY ${DOTNET_NATIVE_PROJECT_DIR})
+
+add_custom_target(dotnet_native_package
+  DEPENDS
+    ${DOTNET_NATIVE_PROJECT_DIR}/timestamp
+  WORKING_DIRECTORY ${DOTNET_NATIVE_PROJECT_DIR})
+
+####################
+##  .Net Package  ##
+####################
+configure_file(
+  ${PROJECT_SOURCE_DIR}/dotnet/${DOTNET_PROJECT}.csproj.in
+  ${DOTNET_PROJECT_DIR}/${DOTNET_PROJECT}.csproj.in
+  @ONLY)
+
+add_custom_command(
+  OUTPUT ${DOTNET_PROJECT_DIR}/${DOTNET_PROJECT}.csproj
+  COMMAND ${CMAKE_COMMAND} -E copy ${DOTNET_PROJECT}.csproj.in ${DOTNET_PROJECT}.csproj
+  DEPENDS
+    ${DOTNET_PROJECT_DIR}/${DOTNET_PROJECT}.csproj.in
+  WORKING_DIRECTORY ${DOTNET_PROJECT_DIR})
+
+add_custom_command(
+  OUTPUT ${DOTNET_PROJECT_DIR}/timestamp
+  COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
+    ${DOTNET_EXECUTABLE} build --nologo -c Release -p:Platform=${DOTNET_PLATFORM} ${DOTNET_PROJECT}.csproj
+  COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
+    ${DOTNET_EXECUTABLE} pack --nologo -c Release -p:Platform=${DOTNET_PLATFORM} ${DOTNET_PROJECT}.csproj
+  COMMAND ${CMAKE_COMMAND} -E touch ${DOTNET_PROJECT_DIR}/timestamp
+  DEPENDS
+    ${DOTNET_PROJECT_DIR}/${DOTNET_PROJECT}.csproj
+    dotnet_native_package
+  BYPRODUCTS
+    ${DOTNET_PROJECT_DIR}/bin
+    ${DOTNET_PROJECT_DIR}/obj
+  VERBATIM
+  COMMENT "Generate .Net package ${DOTNET_PROJECT} (${DOTNET_PROJECT_DIR}/timestamp)"
+  WORKING_DIRECTORY ${DOTNET_PROJECT_DIR})
+
+add_custom_target(dotnet_package ALL
+  DEPENDS
+    ${DOTNET_PROJECT_DIR}/timestamp
+  WORKING_DIRECTORY ${DOTNET_PROJECT_DIR})
 
 ####################
 ##  .Net Example  ##

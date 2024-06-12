@@ -8,8 +8,8 @@
       <MinClientVersion>4.1.0</MinClientVersion>
       <NeutralLanguage>en-US</NeutralLanguage>
       <Authors>Mizux</Authors>
-      <Company>Google LLC</Company>
-      <Copyright>Copyright 2020 Google LLC</Copyright>
+      <Company>@COMPANY_NAME@</Company>
+      <Copyright>Copyright @COMPANY_NAME@</Copyright>
 
        <!-- Pack Option -->
        <PackageTags>native;sample</PackageTags>
@@ -26,6 +26,10 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="@DOTNET_LOGO_DIR@/logo.png">
+      <Pack>True</Pack>
+      <PackagePath>content</PackagePath>
+    </None>
+    <None Include="@DOTNET_README_DIR@/README.md">
       <Pack>True</Pack>
       <PackagePath>content</PackagePath>
     </None>

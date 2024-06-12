@@ -5,15 +5,15 @@
     @DOTNET_TFM@
     <RuntimeIdentifiers>linux-x64;osx-x64;win-x64</RuntimeIdentifiers>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <AssemblyName>@DOTNET_PROJECT@</AssemblyName>
+    <AssemblyName>@DOTNET_PACKAGE@</AssemblyName>
     <Version>@PROJECT_VERSION@</Version>
 
     <!-- Nuget Properties -->
     <Description>.NET wrapper for the DotnetNative project</Description>
 
     <!-- Pack Option -->
-    <Title>@DOTNET_PROJECT@ v@PROJECT_VERSION@</Title>
-    <PackageId>@DOTNET_PROJECT@</PackageId>
+    <Title>@DOTNET_PACKAGE@ v@PROJECT_VERSION@</Title>
+    <PackageId>@DOTNET_PACKAGE@</PackageId>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
@@ -24,20 +24,26 @@
   </PropertyGroup>
 
   <!-- Validate at least one runtime package has been generated -->
-  <Target Name="ValidateRuntimePack" BeforeTargets="GenerateNuspec">
+  <Target Name="ValidateRuntimePackage" BeforeTargets="GenerateNuspec">
     <ItemGroup>
-      <RuntimeLinux Include="@DOTNET_PACKAGES_DIR@/@DOTNET_PROJECT@.runtime.linux-x64.*.nupkg"/>
-      <RuntimeOsx Include="@DOTNET_PACKAGES_DIR@/@DOTNET_PROJECT@.runtime.osx-x64.*.nupkg"/>
-      <RuntimeWin Include="@DOTNET_PACKAGES_DIR@/@DOTNET_PROJECT@.runtime.win-x64.*.nupkg"/>
+      <RuntimeLinuxX64 Include="@DOTNET_PACKAGES_DIR@/@DOTNET_PACKAGE@.runtime.linux-x64.*.nupkg"/>
+      <RuntimeOsxX64 Include="@DOTNET_PACKAGES_DIR@/@DOTNET_PACKAGE@.runtime.osx-x64.*.nupkg"/>
+      <RuntimeWinX64 Include="@DOTNET_PACKAGES_DIR@/@DOTNET_PACKAGE@.runtime.win-x64.*.nupkg"/>
+      <RuntimeLinuxArm64 Include="@DOTNET_PACKAGES_DIR@/@DOTNET_PACKAGE@.runtime.linux-arm64.*.nupkg"/>
+      <RuntimeOsxArm64 Include="@DOTNET_PACKAGES_DIR@/@DOTNET_PACKAGE@.runtime.osx-arm64.*.nupkg"/>
     </ItemGroup>
-    <Message Importance="high" Text="Package @DOTNET_PROJECT@.runtime.linux-x64: found" Condition="Exists('@(RuntimeLinux)')"/>
     <Message Importance="high" Text="-------  $(OS)  "/>
-    <Message Importance="high" Text="Package @DOTNET_PROJECT@.runtime.linux-x64: not found" Condition="!Exists('@(RuntimeLinux)')"/>
-    <Message Importance="high" Text="Package @DOTNET_PROJECT@.runtime.osx-x64: found" Condition="Exists('@(RuntimeOsx)')"/>
-    <Message Importance="high" Text="Package @DOTNET_PROJECT@.runtime.osx-x64: not found" Condition="!Exists('@(RuntimeOsx)')"/>
-    <Message Importance="high" Text="Package @DOTNET_PROJECT@.runtime.win-x64: found" Condition="Exists('@(RuntimeWin)')"/>
-    <Message Importance="high" Text="Package @DOTNET_PROJECT@.runtime.win-x64: not found" Condition="!Exists('@(RuntimeWin)')"/>
-    <Error Text="You must locally 'dotnet pack' at least one @DOTNET_PROJECT@.runtime.{rid} Project." Condition="!Exists('@(RuntimeLinux)') AND !Exists('@(RuntimeOsx)') AND !Exists('@(RuntimeWin)')"/>
+    <Message Importance="high" Text="Package @DOTNET_PACKAGE@.runtime.linux-x64: found" Condition="Exists('@(RuntimeLinuxX64)')"/>
+    <Message Importance="high" Text="Package @DOTNET_PACKAGE@.runtime.linux-x64: not found" Condition="!Exists('@(RuntimeLinuxX64)')"/>
+    <Message Importance="high" Text="Package @DOTNET_PACKAGE@.runtime.osx-x64: found" Condition="Exists('@(RuntimeOsxX64)')"/>
+    <Message Importance="high" Text="Package @DOTNET_PACKAGE@.runtime.osx-x64: not found" Condition="!Exists('@(RuntimeOsxX64)')"/>
+    <Message Importance="high" Text="Package @DOTNET_PACKAGE@.runtime.win-x64: found" Condition="Exists('@(RuntimeWinX64)')"/>
+    <Message Importance="high" Text="Package @DOTNET_PACKAGE@.runtime.win-x64: not found" Condition="!Exists('@(RuntimeWinX64)')"/>
+    <Message Importance="high" Text="Package @DOTNET_PACKAGE@.runtime.linux-arm64: found" Condition="Exists('@(RuntimeLinuxArm64)')"/>
+    <Message Importance="high" Text="Package @DOTNET_PACKAGE@.runtime.linux-arm64: not found" Condition="!Exists('@(RuntimeLinuxArm64)')"/>
+    <Message Importance="high" Text="Package @DOTNET_PACKAGE@.runtime.osx-arm64: found" Condition="Exists('@(RuntimeOsxArm64)')"/>
+    <Message Importance="high" Text="Package @DOTNET_PACKAGE@.runtime.osx-arm64: not found" Condition="!Exists('@(RuntimeOsxArm64)')"/>
+    <Error Text="You must locally 'dotnet pack' at least one @DOTNET_PACKAGE@.runtime.{rid} Project." Condition="!Exists('@(RuntimeLinuxX64)') AND !Exists('@(RuntimeOsxX64)') AND !Exists('@(RuntimeWinX64)') AND !Exists('@(RuntimeLinuxArm64)') AND !Exists('@(RuntimeOsxArm64)')"/>
   </Target>
 
   <!-- Need to add required runtime dependencies so Meta-Project will pull runtime Nuget(s) -->
@@ -46,12 +52,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <RuntimeLinux Include="@DOTNET_PACKAGES_DIR@/@DOTNET_PROJECT@.runtime.linux-x64.*.nupkg"/>
-    <RuntimeOsx Include="@DOTNET_PACKAGES_DIR@/@DOTNET_PROJECT@.runtime.osx-x64.*.nupkg"/>
-    <RuntimeWin Include="@DOTNET_PACKAGES_DIR@/@DOTNET_PROJECT@.runtime.win-x64.*.nupkg"/>
-    <PackageReference Include="@DOTNET_PROJECT@.runtime.linux-x64" Version="@PROJECT_VERSION@" Condition="Exists('@(RuntimeLinux)')"/>
-    <PackageReference Include="@DOTNET_PROJECT@.runtime.osx-x64"   Version="@PROJECT_VERSION@" Condition="Exists('@(RuntimeOsx)')"  />
-    <PackageReference Include="@DOTNET_PROJECT@.runtime.win-x64"   Version="@PROJECT_VERSION@" Condition="Exists('@(RuntimeWin)')"  />
+    <RuntimeLinuxX64 Include="@DOTNET_PACKAGES_DIR@/@DOTNET_PACKAGE@.runtime.linux-x64.*.nupkg"/>
+    <RuntimeOsxX64 Include="@DOTNET_PACKAGES_DIR@/@DOTNET_PACKAGE@.runtime.osx-x64.*.nupkg"/>
+    <RuntimeWinX64 Include="@DOTNET_PACKAGES_DIR@/@DOTNET_PACKAGE@.runtime.win-x64.*.nupkg"/>
+    <RuntimeLinuxArm64 Include="@DOTNET_PACKAGES_DIR@/@DOTNET_PACKAGE@.runtime.linux-arm64.*.nupkg"/>
+    <RuntimeOsxArm64 Include="@DOTNET_PACKAGES_DIR@/@DOTNET_PACKAGE@.runtime.osx-arm64.*.nupkg"/>
+    <PackageReference Include="@DOTNET_PACKAGE@.runtime.linux-x64" Version="@PROJECT_VERSION@" Condition="Exists('@(RuntimeLinuxX64)')"/>
+    <PackageReference Include="@DOTNET_PACKAGE@.runtime.osx-x64"   Version="@PROJECT_VERSION@" Condition="Exists('@(RuntimeOsxX64)')"  />
+    <PackageReference Include="@DOTNET_PACKAGE@.runtime.win-x64"   Version="@PROJECT_VERSION@" Condition="Exists('@(RuntimeWinX64)')"  />
+    <PackageReference Include="@DOTNET_PACKAGE@.runtime.linux-arm64" Version="@PROJECT_VERSION@" Condition="Exists('@(RuntimeLinuxArm64)')"/>
+    <PackageReference Include="@DOTNET_PACKAGE@.runtime.osx-arm64"   Version="@PROJECT_VERSION@" Condition="Exists('@(RuntimeOsxArm64)')"  />
   </ItemGroup>
 </Project>
 

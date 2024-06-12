@@ -129,6 +129,9 @@ message(STATUS ".Net: Use .Net 6 LTS support: ${USE_DOTNET_6}")
 
 option(USE_DOTNET_7 "Use .Net 7.0 support" OFF)
 message(STATUS ".Net: Use .Net 7.0 support: ${USE_DOTNET_7}")
+
+option(USE_DOTNET_8 "Use .Net 8.0 LTS support" OFF)
+message(STATUS ".Net: Use .Net 8.0 support: ${USE_DOTNET_8}")
 include(dotnet)
 
 add_subdirectory(tests)
