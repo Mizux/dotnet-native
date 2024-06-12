@@ -7,7 +7,7 @@ target_include_directories(Foo
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>)
-target_compile_features(Foo PUBLIC cxx_std_17)
+#target_compile_features(Foo PUBLIC cxx_std_17)
 set_target_properties(Foo PROPERTIES
   VERSION ${PROJECT_VERSION}
   SOVERSION ${PROJECT_VERSION_MAJOR}

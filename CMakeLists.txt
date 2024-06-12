@@ -11,12 +11,23 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 option(CMAKE_EXPORT_COMPILE_COMMANDS "Export compile command" TRUE)
 
 set(COMPANY_NAME Mizux)
-project(DotnetNative VERSION 1.0 LANGUAGES CXX)
+project(DotnetNative VERSION 1.0 LANGUAGES CXX C)
 set(PROJECT_NAMESPACE dn)
 message(STATUS "${PROJECT_NAME} version: ${PROJECT_VERSION}")
 #message(STATUS "major: ${PROJECT_VERSION_MAJOR}")
 #message(STATUS "minor: ${PROJECT_VERSION_MINOR}")
 #message(STATUS "patch: ${PROJECT_VERSION_PATCH}")
+
+if(MSVC)
+  set(CMAKE_CXX_STANDARD 20)
+else()
+  set(CMAKE_CXX_STANDARD 17)
+endif()
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# Set max os target version.
+set(CMAKE_OSX_DEPLOYMENT_TARGET 10.15)
 
 get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
 if(isMultiConfig)
