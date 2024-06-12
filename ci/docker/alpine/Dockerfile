@@ -5,35 +5,20 @@ FROM alpine:edge AS env
 # Install system build dependencies
 ENV PATH=/usr/local/bin:$PATH
 RUN apk add --no-cache git build-base linux-headers cmake
+CMD [ "/bin/sh" ]
 
 # Install swig
 RUN apk add --no-cache swig
 
 # Install .NET SDK
 # see: https://docs.microsoft.com/en-us/dotnet/core/install/linux-alpine
-RUN apk add --no-cache wget icu-libs libintl \
-&& mkdir -p /usr/share/dotnet \
-&& ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
+RUN apk add --no-cache bash wget icu-libs libintl
 
-# see: https://dotnet.microsoft.com/download/dotnet-core/3.1
-RUN dotnet_sdk_version=3.1.415 \
-&& wget -qO dotnet.tar.gz \
-"https://dotnetcli.azureedge.net/dotnet/Sdk/${dotnet_sdk_version}/dotnet-sdk-${dotnet_sdk_version}-linux-musl-x64.tar.gz" \
-&& dotnet_sha512='20297eb436db2fe0cb3d8edfe4ad5b7c7871116616843314830533471a344f0ca943fbc5f92685113afc331a64c90f271245a36be1c232c364add936dd06d13d' \
-&& echo "$dotnet_sha512  dotnet.tar.gz" | sha512sum -c - \
-&& tar -C /usr/share/dotnet -oxzf dotnet.tar.gz \
-&& rm dotnet.tar.gz
-# Trigger first run experience by running arbitrary cmd
-RUN dotnet --info
-
-# see: https://dotnet.microsoft.com/download/dotnet-core/6.0
-RUN dotnet_sdk_version=6.0.100 \
-&& wget -qO dotnet.tar.gz \
-"https://dotnetcli.azureedge.net/dotnet/Sdk/${dotnet_sdk_version}/dotnet-sdk-${dotnet_sdk_version}-linux-musl-x64.tar.gz" \
-&& dotnet_sha512='428082c31fd588b12fd34aeae965a58bf1c26b0282184ae5267a85cdadc503f667c7c00e8641892c97fbd5ef26a38a605b683b45a0fef2da302ec7f921cf64fe' \
-&& echo "$dotnet_sha512  dotnet.tar.gz" | sha512sum -c - \
-&& tar -C /usr/share/dotnet -oxzf dotnet.tar.gz \
-&& rm dotnet.tar.gz
+# see: https://learn.microsoft.com/en-us/dotnet/core/install/linux-scripted-manual#scripted-install
+RUN wget -q "https://dot.net/v1/dotnet-install.sh" \
+&& chmod a+x dotnet-install.sh \
+&& ./dotnet-install.sh -c 3.1 -i /usr/local/bin \
+&& ./dotnet-install.sh -c 6.0 -i /usr/local/bin
 # Trigger first run experience by running arbitrary cmd
 RUN dotnet --info
 
