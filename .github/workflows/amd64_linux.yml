@@ -59,4 +59,3 @@ jobs:
           --config ${{ matrix.cmake.config }}
           --target install
           -v
-          -- DESTDIR=install
