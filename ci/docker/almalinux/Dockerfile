@@ -3,7 +3,7 @@
 FROM almalinux:latest AS env
 
 # Install system build dependencies
-#ENV PATH=/usr/local/bin:$PATH
+ENV PATH=/usr/local/bin:$PATH
 RUN dnf -y update \
 && dnf -y install git wget openssl-devel cmake \
 && dnf -y groupinstall "Development Tools" \
@@ -11,21 +11,21 @@ RUN dnf -y update \
 && rm -rf /var/cache/dnf
 CMD [ "/usr/bin/bash" ]
 
-# Install SWIG 4.2.0
+# Install SWIG 4.2.1
 RUN dnf -y update \
 && dnf -y install pcre2-devel \
 && dnf clean all \
 && rm -rf /var/cache/dnf \
-&& wget -q "https://github.com/swig/swig/archive/refs/tags/v4.2.0.tar.gz" -O swig-4.2.0.tar.gz \
-&& tar xvf swig-4.2.0.tar.gz \
-&& rm swig-4.2.0.tar.gz \
-&& cd swig-4.2.0 \
+&& wget -q "https://github.com/swig/swig/archive/refs/tags/v4.2.1.tar.gz" -O swig-4.2.1.tar.gz \
+&& tar xvf swig-4.2.1.tar.gz \
+&& rm swig-4.2.1.tar.gz \
+&& cd swig-4.2.1 \
 && ./autogen.sh \
 && ./configure --prefix=/usr \
 && make -j 4 \
 && make install \
 && cd .. \
-&& rm -rf swig-4.2.0
+&& rm -rf swig-4.2.1
 
 # Install .NET SDK
 # see: https://learn.microsoft.com/en-us/dotnet/core/install/linux-scripted-manual#scripted-install
