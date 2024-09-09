@@ -131,8 +131,65 @@ endif()
 #################
 ##  .Net Test  ##
 #################
+# add_dotnet_tfm_test()
+# CMake function to generate and build dotnet test for a specific TFM.
+# warning: only net6.0, net7.0 and net8.0 are supported
+# Parameters:
+#  the dotnet filename
+# e.g.:
+# add_dotnet_test(FooTests.cs net8.0)
+function(add_dotnet_tfm_test FILE_NAME TEST_TFM)
+  message(STATUS "  Configuring test ${FILE_NAME} (${TEST_TFM}) ...")
+  get_filename_component(TEST_NAME ${FILE_NAME} NAME_WE)
+  get_filename_component(COMPONENT_DIR ${FILE_NAME} DIRECTORY)
+  get_filename_component(COMPONENT_NAME ${COMPONENT_DIR} NAME)
+
+  set(DOTNET_TEST_DIR ${PROJECT_BINARY_DIR}/dotnet/${COMPONENT_NAME}/${TEST_NAME})
+
+  if(TEST_TFM STREQUAL "net6.0")
+    set(TEST_SUFFIX net60)
+  elseif(TEST_TFM STREQUAL "net7.0")
+    set(TEST_SUFFIX net70)
+  elseif(TEST_TFM STREQUAL "net8.0")
+    set(TEST_SUFFIX net80)
+  else()
+    message(FATAL_ERROR "TFM: ${TEST_TFM} is not supported.")
+  endif()
+
+  add_custom_command(
+    OUTPUT ${DOTNET_TEST_DIR}/timestamp_${TEST_SUFFIX}
+    COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
+    ${DOTNET_EXECUTABLE} build --nologo --framework ${TEST_TFM} -c Release ${TEST_NAME}.csproj
+    COMMAND ${CMAKE_COMMAND} -E touch ${DOTNET_TEST_DIR}/timestamp
+    DEPENDS
+      ${DOTNET_TEST_DIR}/${TEST_NAME}.csproj
+      ${DOTNET_TEST_DIR}/${TEST_NAME}.cs
+      dotnet_package
+    BYPRODUCTS
+      ${DOTNET_TEST_DIR}/bin
+      ${DOTNET_TEST_DIR}/obj
+    VERBATIM
+    COMMENT "Compiling .Net ${COMPONENT_NAME}/${TEST_NAME}.cs (${TEST_TFM})"
+    WORKING_DIRECTORY ${DOTNET_TEST_DIR})
+
+  add_custom_target(dotnet_${COMPONENT_NAME}_${TEST_NAME}_${TEST_SUFFIX} ALL
+    DEPENDS
+    ${DOTNET_TEST_DIR}/timestamp_${TEST_SUFFIX}
+    WORKING_DIRECTORY ${DOTNET_TEST_DIR})
+
+  if(BUILD_TESTING)
+      add_test(
+        NAME dotnet_${COMPONENT_NAME}_${TEST_NAME}_${TEST_SUFFIX}
+        COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
+        ${DOTNET_EXECUTABLE} test --nologo --framework ${TEST_TFM} -c Release
+          WORKING_DIRECTORY ${DOTNET_TEST_DIR})
+  endif()
+  message(STATUS "  Configuring test ${FILE_NAME} (${TEST_TFM}) ...DONE")
+endfunction()
+
 # add_dotnet_test()
 # CMake function to generate and build dotnet test.
+# Currently only net6.0, net7.0 and net8.0 are supported
 # Parameters:
 #  the dotnet filename
 # e.g.:
@@ -161,53 +218,17 @@ function(add_dotnet_test FILE_NAME)
     VERBATIM
     WORKING_DIRECTORY ${DOTNET_TEST_DIR})
 
-  add_custom_command(
-    OUTPUT ${DOTNET_TEST_DIR}/timestamp
-    COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
-      ${DOTNET_EXECUTABLE} build --nologo -c Release ${TEST_NAME}.csproj
-    COMMAND ${CMAKE_COMMAND} -E touch ${DOTNET_TEST_DIR}/timestamp
-    DEPENDS
-      ${DOTNET_TEST_DIR}/${TEST_NAME}.csproj
-      ${DOTNET_TEST_DIR}/${TEST_NAME}.cs
-      dotnet_package
-    BYPRODUCTS
-      ${DOTNET_TEST_DIR}/bin
-      ${DOTNET_TEST_DIR}/obj
-    VERBATIM
-    COMMENT "Compiling .Net ${COMPONENT_NAME}/${TEST_NAME}.cs (${DOTNET_TEST_DIR}/timestamp)"
-    WORKING_DIRECTORY ${DOTNET_TEST_DIR})
-
-  add_custom_target(dotnet_${COMPONENT_NAME}_${TEST_NAME} ALL
-    DEPENDS
-      ${DOTNET_TEST_DIR}/timestamp
-    WORKING_DIRECTORY ${DOTNET_TEST_DIR})
-
-  if(BUILD_TESTING)
-   if(USE_DOTNET_6)
-      add_test(
-        NAME dotnet_${COMPONENT_NAME}_${TEST_NAME}_net60
-        COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
-          ${DOTNET_EXECUTABLE} test --nologo --framework net6.0 -c Release
-          WORKING_DIRECTORY ${DOTNET_TEST_DIR})
-    endif()
-    if(USE_DOTNET_7)
-      add_test(
-        NAME dotnet_${COMPONENT_NAME}_${TEST_NAME}_net70
-        COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
-          ${DOTNET_EXECUTABLE} test --nologo --framework net7.0 -c Release
-          WORKING_DIRECTORY ${DOTNET_TEST_DIR})
-    endif()
-    if(USE_DOTNET_8)
-      add_test(
-        NAME dotnet_${COMPONENT_NAME}_${TEST_NAME}_net80
-        COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
-          ${DOTNET_EXECUTABLE} test --nologo --framework net8.0 -c Release
-          WORKING_DIRECTORY ${DOTNET_TEST_DIR})
-    endif()
+  if(USE_DOTNET_6)
+    add_dotnet_tfm_test(${FILE_NAME} net6.0)
+  endif()
+  if(USE_DOTNET_7)
+    add_dotnet_tfm_test(${FILE_NAME} net7.0)
+  endif()
+  if(USE_DOTNET_8)
+    add_dotnet_tfm_test(${FILE_NAME} net8.0)
   endif()
   message(STATUS "Configuring test ${FILE_NAME} ...DONE")
 endfunction()
-
 
 #######################
 ##  DOTNET WRAPPERS  ##
@@ -328,7 +349,7 @@ add_custom_target(dotnet_package ALL
 # e.g.:
 # add_dotnet_example(Foo.cs net48)
 function(add_dotnet_example FILE_NAME EXAMPLE_TFM)
-  message(STATUS "Configuring example ${FILE_NAME} ...")
+  message(STATUS "Configuring example ${FILE_NAME} (${EXAMPLE_TFM}) ...")
   get_filename_component(EXAMPLE_NAME ${FILE_NAME} NAME_WE)
   get_filename_component(COMPONENT_DIR ${FILE_NAME} DIRECTORY)
   get_filename_component(COMPONENT_NAME ${COMPONENT_DIR} NAME)
@@ -355,7 +376,7 @@ function(add_dotnet_example FILE_NAME EXAMPLE_TFM)
   add_custom_command(
     OUTPUT ${DOTNET_EXAMPLE_DIR}/timestamp
     COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
-      ${DOTNET_EXECUTABLE} build --nologo -c Release ${EXAMPLE_NAME}.csproj
+    ${DOTNET_EXECUTABLE} build --nologo --framework ${EXAMPLE_TFM} -c Release ${EXAMPLE_NAME}.csproj
     COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
       ${DOTNET_EXECUTABLE} pack --nologo -c Release ${EXAMPLE_NAME}.csproj
     COMMAND ${CMAKE_COMMAND} -E touch ${DOTNET_EXAMPLE_DIR}/timestamp
@@ -370,7 +391,7 @@ function(add_dotnet_example FILE_NAME EXAMPLE_TFM)
     COMMENT "Compiling .Net ${COMPONENT_NAME}/${EXAMPLE_NAME}.cs for ${EXAMPLE_TFM} (${DOTNET_EXAMPLE_DIR}/timestamp)"
     WORKING_DIRECTORY ${DOTNET_EXAMPLE_DIR})
 
-  add_custom_target(dotnet_${COMPONENT_NAME}_${EXAMPLE_NAME} ALL
+  add_custom_target(dotnet_${COMPONENT_NAME}_${EXAMPLE_NAME}_${EXAMPLE_TFM} ALL
     DEPENDS
       ${DOTNET_EXAMPLE_DIR}/timestamp
     WORKING_DIRECTORY ${DOTNET_EXAMPLE_DIR})
@@ -379,8 +400,8 @@ function(add_dotnet_example FILE_NAME EXAMPLE_TFM)
     add_test(
       NAME dotnet_${COMPONENT_NAME}_${EXAMPLE_NAME}_${EXAMPLE_TFM}
       COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
-      ${DOTNET_EXECUTABLE} run --no-build -r ${DOTNET_RID} -c Release ${EXAMPLE_NAME}.csproj
+      ${DOTNET_EXECUTABLE} run --no-build --framework ${EXAMPLE_TFM} -c Release ${EXAMPLE_NAME}.csproj
       WORKING_DIRECTORY ${DOTNET_EXAMPLE_DIR})
   endif()
-  message(STATUS "Configuring example ${FILE_NAME} done")
+  message(STATUS "Configuring example ${FILE_NAME} (${EXAMPLE_TFM}) done")
 endfunction()
