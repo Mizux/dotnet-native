@@ -357,7 +357,7 @@ function(add_dotnet_example FILE_NAME TFM)
     add_test(
       NAME dotnet_${COMPONENT_NAME}_${EXAMPLE_NAME}_${TFM}
       COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
-        ${DOTNET_EXECUTABLE} run --no-build -c Release ${EXAMPLE_NAME}.csproj
+      ${DOTNET_EXECUTABLE} run --no-build -r ${DOTNET_RID} -c Release ${EXAMPLE_NAME}.csproj
       WORKING_DIRECTORY ${DOTNET_EXAMPLE_DIR})
   endif()
   message(STATUS "Configuring example ${FILE_NAME} done")
