@@ -175,7 +175,9 @@ $(targets_export): %_export: %_build | export/%
 ##############
 ## PLATFORM ##
 ##############
-PLATFORMS = amd64 386 arm64 arm riscv64
+# ref: https://go.dev/doc/install/source#environment
+# ref: https://github.com/containerd/containerd/blob/269548fa27e0089a8b8278fc4fc781d7f65a939b/platforms/platforms.go#L80-L94
+PLATFORMS := amd64 386 arm64 arm riscv64
 
 define make-platform-stage-target =
 #$$(info PLATFORM: $1)
