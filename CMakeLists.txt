@@ -147,6 +147,26 @@ add_subdirectory(tests)
 
 option(BUILD_EXAMPLES "Build examples" ON)
 message(STATUS "Build examples: ${BUILD_EXAMPLES}")
-set(EXAMPLE_TFM "net6.0" CACHE STRING "TFM use in sample")
+
+if(USE_DOTNET_8)
+  set(EXAMPLE_DEFAULT_TFM "net8.0")
+elseif(USE_DOTNET_7)
+  set(EXAMPLE_DEFAULT_TFM "net7.0")
+elseif(USE_DOTNET_6)
+  set(EXAMPLE_DEFAULT_TFM "net6.0")
+elseif(USE_DOTNET_48)
+  set(EXAMPLE_DEFAULT_TFM "net48")
+elseif(USE_DOTNET_47)
+  set(EXAMPLE_DEFAULT_TFM "net47")
+elseif(USE_DOTNET_462)
+  set(EXAMPLE_DEFAULT_TFM "net462")
+else()
+  message(WARNING "Default TFM for examples is set to net6.0 which is not enable")
+  set(EXAMPLE_DEFAULT_TFM "net6.0")
+endif()
+
+set(EXAMPLE_TFM ${EXAMPLE_DEFAULT_TFM} CACHE STRING "TFM use in sample")
+message(STATUS ".Net: TFM for examples: ${EXAMPLE_TFM}")
+
 add_subdirectory(examples)
 
