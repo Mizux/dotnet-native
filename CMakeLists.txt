@@ -98,40 +98,49 @@ set(DOTNET_LANG "8.0" CACHE STRING "Specify the C# language version (default \"8
 message(STATUS ".Net C# language version: ${DOTNET_LANG}")
 
 # Targeted Framework Moniker
-# see: https://docs.microsoft.com/en-us/dotnet/standard/frameworks
+# see: https://learn.microsoft.com/en-us/dotnet/standard/frameworks
 # see: https://learn.microsoft.com/en-us/dotnet/standard/net-standard
-option(USE_DOTNET_46 "Use .Net Framework 4.6 support" OFF)
+
+## .Net Standard
+option(USE_DOTNET_STD_20 "Use .Net Standard 2.0 support" OFF)
+message(STATUS ".Net: Use .Net Standard 2.0 support: ${USE_DOTNET_STD_20}")
+option(USE_DOTNET_STD_21 "Use .Net Standard 2.1 support" OFF)
+message(STATUS ".Net: Use .Net Standard 2.1 support: ${USE_DOTNET_STD_21}")
+
+## .Net Framework
+# see: https://learn.microsoft.com/en-us/lifecycle/products/microsoft-net-framework
+option(USE_DOTNET_46 "Use .Net Framework 4.6 support" OFF) # EOL: 2022-04-22
 message(STATUS ".Net: Use .Net Framework 4.6 support: ${USE_DOTNET_46}")
-option(USE_DOTNET_461 "Use .Net Framework 4.6.1 support" OFF)
+option(USE_DOTNET_461 "Use .Net Framework 4.6.1 support" OFF) # EOL: 2022-04-22
 message(STATUS ".Net: Use .Net Framework 4.6.1 support: ${USE_DOTNET_461}")
-option(USE_DOTNET_462 "Use .Net Framework 4.6.2 support" OFF)
+option(USE_DOTNET_462 "Use .Net Framework 4.6.2 support" OFF) # EOL: 2027-01-12
 message(STATUS ".Net: Use .Net Framework 4.6.2 support: ${USE_DOTNET_462}")
 
-option(USE_DOTNET_48 "Use .Net Framework 4.8 support" OFF)
+option(USE_DOTNET_47 "Use .Net Framework 4.7 support" OFF) # EOL: NA
+message(STATUS ".Net: Use .Net Framework 4.7 support: ${USE_DOTNET_47}")
+
+option(USE_DOTNET_48 "Use .Net Framework 4.8 support" OFF) # EOL: NA
 message(STATUS ".Net: Use .Net Framework 4.8 support: ${USE_DOTNET_48}")
 
-option(USE_DOTNET_STD_20 "Use .Net Standard 2.0 support" OFF)
-message(STATUS ".Net: Use .Net Framework 2.0 support: ${USE_DOTNET_STD_20}")
-
-option(USE_DOTNET_STD_21 "Use .Net Standard 2.1 support" OFF)
-message(STATUS ".Net: Use .Net Framework 2.1 support: ${USE_DOTNET_STD_21}")
-
+## .Net and .Net Core
+# see: https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core
 # .Net Core 3.1 LTS is not available for osx arm64
 if(APPLE AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm64)")
   set(USE_DOTNET_CORE_31 OFF)
 else()
-  option(USE_DOTNET_CORE_31 "Use .Net Core 3.1 LTS support" OFF)
+  option(USE_DOTNET_CORE_31 "Use .Net Core 3.1 support" OFF) # EOL: 2022-12-13
 endif()
-message(STATUS ".Net: Use .Net Core 3.1 LTS support: ${USE_DOTNET_CORE_31}")
+message(STATUS ".Net: Use .Net Core 3.1 support: ${USE_DOTNET_CORE_31}")
 
-option(USE_DOTNET_6 "Use .Net 6 LTS support" ON)
+option(USE_DOTNET_6 "Use .Net 6 LTS support" ON) # EOL: 2024-11-12
 message(STATUS ".Net: Use .Net 6 LTS support: ${USE_DOTNET_6}")
 
-option(USE_DOTNET_7 "Use .Net 7.0 support" OFF)
+option(USE_DOTNET_7 "Use .Net 7.0 support" OFF) # EOL: 2024-05-14
 message(STATUS ".Net: Use .Net 7.0 support: ${USE_DOTNET_7}")
 
-option(USE_DOTNET_8 "Use .Net 8.0 LTS support" OFF)
+option(USE_DOTNET_8 "Use .Net 8.0 LTS support" OFF) # EOL: 2026-11-10
 message(STATUS ".Net: Use .Net 8.0 support: ${USE_DOTNET_8}")
+
 include(dotnet)
 
 add_subdirectory(tests)

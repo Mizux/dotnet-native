@@ -2,7 +2,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <LangVersion>@DOTNET_LANG@</LangVersion>
-    <TargetFramework>@TFM@</TargetFramework>
+    <TargetFramework>@EXAMPLE_TFM@</TargetFramework>
     <EnableDefaultItems>false</EnableDefaultItems>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <!-- see https://github.com/dotnet/docs/issues/12237 -->

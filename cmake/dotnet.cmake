@@ -50,6 +50,13 @@ message(STATUS ".Net runtime project build path: ${DOTNET_NATIVE_PROJECT_DIR}")
 # Targeted Framework Moniker
 # see: https://docs.microsoft.com/en-us/dotnet/standard/frameworks
 # see: https://learn.microsoft.com/en-us/dotnet/standard/net-standard
+if(USE_DOTNET_STD_20)
+  list(APPEND TFM "netstandard2.0")
+endif()
+if(USE_DOTNET_STD_21)
+  list(APPEND TFM "netstandard2.1")
+endif()
+
 if(USE_DOTNET_46)
   list(APPEND TFM "net46")
 endif()
@@ -59,15 +66,13 @@ endif()
 if(USE_DOTNET_462)
   list(APPEND TFM "net462")
 endif()
+if(USE_DOTNET_47)
+  list(APPEND TFM "net47")
+endif()
 if(USE_DOTNET_48)
   list(APPEND TFM "net48")
 endif()
-if(USE_DOTNET_STD_20)
-  list(APPEND TFM "netstandard2.0")
-endif()
-if(USE_DOTNET_STD_21)
-  list(APPEND TFM "netstandard2.1")
-endif()
+
 if(USE_DOTNET_CORE_31)
   list(APPEND TFM "netcoreapp3.1")
 endif()
@@ -178,11 +183,27 @@ function(add_dotnet_test FILE_NAME)
     WORKING_DIRECTORY ${DOTNET_TEST_DIR})
 
   if(BUILD_TESTING)
-    add_test(
-      NAME dotnet_${COMPONENT_NAME}_${TEST_NAME}
-      COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
-      ${DOTNET_EXECUTABLE} test --nologo --no-build -c Release ${TEST_NAME}.csproj
-      WORKING_DIRECTORY ${DOTNET_TEST_DIR})
+   if(USE_DOTNET_6)
+      add_test(
+        NAME dotnet_${COMPONENT_NAME}_${TEST_NAME}_net60
+        COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
+          ${DOTNET_EXECUTABLE} test --nologo --framework net6.0 -c Release
+          WORKING_DIRECTORY ${DOTNET_TEST_DIR})
+    endif()
+    if(USE_DOTNET_7)
+      add_test(
+        NAME dotnet_${COMPONENT_NAME}_${TEST_NAME}_net70
+        COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
+          ${DOTNET_EXECUTABLE} test --nologo --framework net7.0 -c Release
+          WORKING_DIRECTORY ${DOTNET_TEST_DIR})
+    endif()
+    if(USE_DOTNET_8)
+      add_test(
+        NAME dotnet_${COMPONENT_NAME}_${TEST_NAME}_net80
+        COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
+          ${DOTNET_EXECUTABLE} test --nologo --framework net8.0 -c Release
+          WORKING_DIRECTORY ${DOTNET_TEST_DIR})
+    endif()
   endif()
   message(STATUS "Configuring test ${FILE_NAME} ...DONE")
 endfunction()
@@ -306,13 +327,14 @@ add_custom_target(dotnet_package ALL
 #  the dotnet filename
 # e.g.:
 # add_dotnet_example(Foo.cs net48)
-function(add_dotnet_example FILE_NAME TFM)
+function(add_dotnet_example FILE_NAME EXAMPLE_TFM)
   message(STATUS "Configuring example ${FILE_NAME} ...")
   get_filename_component(EXAMPLE_NAME ${FILE_NAME} NAME_WE)
   get_filename_component(COMPONENT_DIR ${FILE_NAME} DIRECTORY)
   get_filename_component(COMPONENT_NAME ${COMPONENT_DIR} NAME)
 
-  set(DOTNET_EXAMPLE_DIR ${PROJECT_BINARY_DIR}/dotnet/${COMPONENT_NAME}/${EXAMPLE_NAME}_${TFM})
+  set(DOTNET_EXAMPLE_DIR
+    ${PROJECT_BINARY_DIR}/dotnet/${COMPONENT_NAME}/${EXAMPLE_NAME}_${EXAMPLE_TFM})
   message(STATUS "build path: ${DOTNET_EXAMPLE_DIR}")
 
   configure_file(
@@ -345,7 +367,7 @@ function(add_dotnet_example FILE_NAME TFM)
       ${DOTNET_EXAMPLE_DIR}/bin
       ${DOTNET_EXAMPLE_DIR}/obj
     VERBATIM
-    COMMENT "Compiling .Net ${COMPONENT_NAME}/${EXAMPLE_NAME}.cs for ${TFM} (${DOTNET_EXAMPLE_DIR}/timestamp)"
+    COMMENT "Compiling .Net ${COMPONENT_NAME}/${EXAMPLE_NAME}.cs for ${EXAMPLE_TFM} (${DOTNET_EXAMPLE_DIR}/timestamp)"
     WORKING_DIRECTORY ${DOTNET_EXAMPLE_DIR})
 
   add_custom_target(dotnet_${COMPONENT_NAME}_${EXAMPLE_NAME} ALL
@@ -355,7 +377,7 @@ function(add_dotnet_example FILE_NAME TFM)
 
   if(BUILD_TESTING)
     add_test(
-      NAME dotnet_${COMPONENT_NAME}_${EXAMPLE_NAME}_${TFM}
+      NAME dotnet_${COMPONENT_NAME}_${EXAMPLE_NAME}_${EXAMPLE_TFM}
       COMMAND ${CMAKE_COMMAND} -E env --unset=TARGETNAME
       ${DOTNET_EXECUTABLE} run --no-build -r ${DOTNET_RID} -c Release ${EXAMPLE_NAME}.csproj
       WORKING_DIRECTORY ${DOTNET_EXAMPLE_DIR})
