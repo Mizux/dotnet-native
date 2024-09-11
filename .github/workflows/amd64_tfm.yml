@@ -37,7 +37,14 @@ jobs:
     - name: Check cmake
       run: cmake --version
     - name: Configure
-      run: cmake -S. -Bbuild -DDOTNET_LANG="${{ matrix.lang }}" -DUSE_DOTNET_${{ matrix.build }}=ON -DEXAMPLE_TFM="${{ matrix.example }}" -G "Visual Studio 17 2022" -DCMAKE_CONFIGURATION_TYPES=Release -DCMAKE_INSTALL_PREFIX=install
+      run: >
+        cmake -S. -Bbuild
+        -DDOTNET_LANG="${{ matrix.lang }}"
+        -DUSE_DOTNET_${{ matrix.build }}=ON
+        -DEXAMPLE_TFM="${{ matrix.example }}"
+        -G "Visual Studio 17 2022"
+        -DCMAKE_CONFIGURATION_TYPES=Release
+        -DCMAKE_INSTALL_PREFIX=install
     - name: Build
       run: cmake --build build --config Release --target ALL_BUILD -v
     - name: Test
