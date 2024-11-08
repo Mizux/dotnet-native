@@ -141,6 +141,9 @@ message(STATUS ".Net: Use .Net 7.0 support: ${USE_DOTNET_7}")
 option(USE_DOTNET_8 "Use .Net 8.0 LTS support" OFF) # EOL: 2026-11-10
 message(STATUS ".Net: Use .Net 8.0 support: ${USE_DOTNET_8}")
 
+option(USE_DOTNET_9 "Use .Net 9.0 support" OFF) # EOL: 2026-05-14
+message(STATUS ".Net: Use .Net 9.0 support: ${USE_DOTNET_9}")
+
 include(dotnet)
 
 add_subdirectory(tests)
@@ -148,7 +151,9 @@ add_subdirectory(tests)
 option(BUILD_EXAMPLES "Build examples" ON)
 message(STATUS "Build examples: ${BUILD_EXAMPLES}")
 
-if(USE_DOTNET_8)
+if(USE_DOTNET_9)
+  set(EXAMPLE_DEFAULT_TFM "net9.0")
+elseif(USE_DOTNET_8)
   set(EXAMPLE_DEFAULT_TFM "net8.0")
 elseif(USE_DOTNET_7)
   set(EXAMPLE_DEFAULT_TFM "net7.0")
