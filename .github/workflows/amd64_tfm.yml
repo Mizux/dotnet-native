@@ -12,10 +12,10 @@ jobs:
   msvc:
     strategy:
        matrix:
-         # 8:Core3.0, 9:.Net5, 10:.Net6, 11:.Net7, 12:.Net8
+         # C# language: 8:Core3.0, 9:.Net5, 10:.Net6, 11:.Net7, 12:.Net8
          lang: [8.0, 10.0, 11.0, 12.0]
-         build: [462, 48, 6, 7, 8]
-         example: [net462, net48, netcoreapp3.1, net6.0, net7.0, net8.0]
+         build: [462, 48, 6, 7, 8, 9]
+         example: [net462, net48, netcoreapp3.1, net6.0, net7.0, net8.0, net9.0]
        fail-fast: false
     name: win,l:${{ matrix.lang }},b:${{ matrix.build }},t:${{ matrix.example }}
     runs-on: windows-latest
@@ -29,13 +29,14 @@ jobs:
     - name: Check swig
       run: swig -version
       # Install .NET SDKs
-    - name: Setup .NET Core 3.1, 6.0, 8.0
+    - name: Setup .NET Core 3.1, 6.0, 8.0, 9.0
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: |
           3.1.x
           6.0.x
           8.0.x
+          9.0.x
     - name: Check dotnet
       run: dotnet --info
     - name: Check cmake
