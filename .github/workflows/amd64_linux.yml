@@ -3,6 +3,10 @@ name: amd64 Linux
 
 on: [push, pull_request, workflow_dispatch]
 
+concurrency:
+  group: ${{github.workflow}}-${{github.ref}}
+  cancel-in-progress: true
+
 # Building using the github runner environement directly.
 jobs:
   native:
@@ -14,7 +18,7 @@ jobs:
            {generator: "Ninja Multi-Config", config: "Release"}
          ]
        fail-fast: false
-    name: Ubuntu • ${{ matrix.cmake.generator }}
+    name: amd64•Linux•CMake(${{matrix.cmake.generator}},${{matrix.cmake.config}})
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -32,30 +36,36 @@ jobs:
           dotnet-version: 6.0.x
       - name: Check dotnet
         run: dotnet --info
-      - name: Check cmake
+      - name: Check CMake
         run: cmake --version
       - name: Configure
         run: >
           cmake -S. -Bbuild
-          -G "${{ matrix.cmake.generator }}"
-          -DCMAKE_BUILD_TYPE=${{ matrix.cmake.config }}
+          -G "${{matrix.cmake.generator}}"
+          -DCMAKE_BUILD_TYPE="${{matrix.cmake.config}}"
           -DCMAKE_INSTALL_PREFIX=install
       - name: Build
         run: >
           cmake --build build
-          --config ${{ matrix.cmake.config }}
+          --config ${{matrix.cmake.config}}
           --target all
           -v -j2
       - name: Test
         run: >
           CTEST_OUTPUT_ON_FAILURE=1
           cmake --build build
-          --config ${{ matrix.cmake.config }}
+          --config ${{matrix.cmake.config}}
           --target test
           -v
       - name: Install
         run: >
           cmake --build build
-          --config ${{ matrix.cmake.config }}
+          --config ${{matrix.cmake.config}}
           --target install
           -v
+
+  amd64_linux:
+    runs-on: ubuntu-latest
+    needs: native
+    steps:
+      - uses: actions/checkout@v4

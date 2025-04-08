@@ -3,35 +3,47 @@ name: amd64 Docker
 
 on: [push, pull_request, workflow_dispatch]
 
+concurrency:
+  group: ${{github.workflow}}-${{github.ref}}
+  cancel-in-progress: true
+
 jobs:
   Distros:
-    runs-on: ubuntu-latest
     strategy:
       matrix:
-        distro: [almalinux, alpine, archlinux, debian, fedora, opensuse, rockylinux, ubuntu]
+        distro: [
+          almalinux,
+          alpine,
+          archlinux,
+          debian,
+          fedora,
+          opensuse,
+          rockylinux,
+          ubuntu
+        ]
       fail-fast: false
-    env:
-      DISTRO: amd64_${{ matrix.distro }}
+    name: amd64•${{matrix.distro}}
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Check docker
-      run: |
-        docker info
-        docker buildx ls
-    - name: Build env image
-      run: make --directory=ci ${DISTRO}_env
-    - name: Build devel project
-      run: make --directory=ci ${DISTRO}_devel
-    - name: Build project
-      run: make --directory=ci ${DISTRO}_build
-    - name: Test project
-      run: make --directory=ci ${DISTRO}_test
+      - uses: actions/checkout@v4
+      - name: Check docker
+        run: |
+          docker info
+          docker buildx ls
+      - name: Build env image
+        run: make --directory=ci amd64_${{matrix.distro}}_env
+      - name: Build devel image
+        run: make --directory=ci amd64_${{matrix.distro}}_devel
+      - name: Build project
+        run: make --directory=ci amd64_${{matrix.distro}}_build
+      - name: Test project
+        run: make --directory=ci amd64_${{matrix.distro}}_test
 
-    - name: Build install env image
-      run: make --directory=ci ${DISTRO}_install_env
-    - name: Build install devel project
-      run: make --directory=ci ${DISTRO}_install_devel
-    - name: Build install project
-      run: make --directory=ci ${DISTRO}_install_build
-    - name: Test install project
-      run: make --directory=ci ${DISTRO}_install_test
+      - name: Build install env image
+        run: make --directory=ci amd64_${{matrix.distro}}_install_env
+      - name: Build install devel image
+        run: make --directory=ci amd64_${{matrix.distro}}_install_devel
+      - name: Build install project
+        run: make --directory=ci amd64_${{matrix.distro}}_install_build
+      - name: Test install project
+        run: make --directory=ci amd64_${{matrix.distro}}_install_test

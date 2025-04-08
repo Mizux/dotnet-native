@@ -3,6 +3,10 @@ name: amd64 TFM
 
 on: [push, pull_request, workflow_dispatch]
 
+concurrency:
+  group: ${{github.workflow}}-${{github.ref}}
+  cancel-in-progress: true
+
 jobs:
   # Building using the github runner environement directly.
   msvc:
