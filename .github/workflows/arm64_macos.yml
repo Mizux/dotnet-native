@@ -59,7 +59,7 @@ jobs:
           --target ${{matrix.cmake.install}}
           -v
 
-  amd64_macos:
+  arm64_macos:
     runs-on: ubuntu-latest
     needs: native
     steps:
