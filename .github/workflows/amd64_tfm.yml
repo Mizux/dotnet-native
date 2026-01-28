@@ -20,7 +20,7 @@ jobs:
     name: win,l:${{ matrix.lang }},b:${{ matrix.build }},t:${{ matrix.example }}
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Install SWIG 4.2.1
       run: |
         (New-Object System.Net.WebClient).DownloadFile("http://prdownloads.sourceforge.net/swig/swigwin-4.2.1.zip","swigwin-4.2.1.zip");
@@ -30,7 +30,7 @@ jobs:
       run: swig -version
       # Install .NET SDKs
     - name: Setup .NET Core 3.1, 6.0, 8.0, 9.0
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: |
           3.1.x
