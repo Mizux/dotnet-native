@@ -4,16 +4,17 @@ FROM ubuntu:rolling AS env
 
 # Install system build dependencies
 ENV PATH=/usr/local/bin:$PATH
-RUN apt-get update -qq \
-&& DEBIAN_FRONTEND=noninteractive apt-get install -yq \
- git wget libssl-dev build-essential cmake \
-&& apt-get clean \
+RUN apt update -q \
+&& DEBIAN_FRONTEND=noninteractive apt install -yq \
+ git wget libssl-dev \
+ build-essential cmake \
+&& apt clean \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Install swig
-RUN apt-get update -qq \
-&& apt-get install -yq swig \
-&& apt-get clean \
+RUN apt update -q \
+&& apt install -yq swig \
+&& apt clean \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Install .NET SDK
@@ -25,6 +26,7 @@ RUN apt-get update -qq \
 # Trigger first run experience by running arbitrary cmd
 RUN dotnet --info
 
+# Add the library src to our build env
 FROM env AS devel
 WORKDIR /home/project
 COPY . .
@@ -38,12 +40,13 @@ RUN cmake --build build --target install -v
 FROM build AS test
 RUN CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test -v
 
+# Test install rules
 FROM env AS install_env
 WORKDIR /home/sample
 COPY --from=build /home/project/build/dotnet/packages/*.nupkg ./
 
 FROM install_env AS install_devel
-COPY ci/samples .
+COPY ci/sample .
 
 FROM install_devel AS install_build
 RUN dotnet build

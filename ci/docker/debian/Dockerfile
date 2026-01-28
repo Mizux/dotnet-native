@@ -4,16 +4,16 @@ FROM debian:latest AS env
 
 # Install system build dependencies
 ENV PATH=/usr/local/bin:$PATH
-RUN apt-get update -q \
-&& apt-get install -yq \
+RUN apt update -qq \
+&& apt install -yq \
  git wget libssl-dev build-essential cmake \
-&& apt-get clean \
+&& apt clean \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Install swig
-RUN apt-get update -q \
-&& apt-get install -yq swig \
-&& apt-get clean \
+RUN apt update -qq \
+&& apt install -yq swig \
+&& apt clean \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Install .NET SDK
@@ -42,7 +42,7 @@ RUN cmake --build build --target all -v
 RUN cmake --build build --target install -v
 
 FROM build AS test
-RUN cmake --build build --target test -v
+RUN CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test -v
 
 # Test install rules
 FROM env AS install_env
@@ -50,7 +50,7 @@ WORKDIR /home/sample
 COPY --from=build /home/project/build/dotnet/packages/*.nupkg ./
 
 FROM install_env AS install_devel
-COPY ci/samples .
+COPY ci/sample .
 
 FROM install_devel AS install_build
 RUN dotnet build

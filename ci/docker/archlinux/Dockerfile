@@ -14,6 +14,7 @@ RUN pacman -Syu --noconfirm dotnet-sdk
 # Trigger first run experience by running arbitrary cmd
 RUN dotnet --info
 
+# Add the library src to our build env
 FROM env AS devel
 WORKDIR /home/project
 COPY . .
@@ -25,14 +26,15 @@ RUN cmake --build build --target all -v
 RUN cmake --build build --target install -v
 
 FROM build AS test
-RUN cmake --build build --target test -v
+RUN CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test -v
 
+# Test install rules
 FROM env AS install_env
 WORKDIR /home/sample
 COPY --from=build /home/project/build/dotnet/packages/*.nupkg ./
 
 FROM install_env AS install_devel
-COPY ci/samples .
+COPY ci/sample .
 
 FROM install_devel AS install_build
 RUN dotnet build

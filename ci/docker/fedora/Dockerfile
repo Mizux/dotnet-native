@@ -5,9 +5,10 @@ FROM fedora:latest AS env
 # Install system build dependencies
 ENV PATH=/usr/local/bin:$PATH
 RUN dnf -y update \
-&& dnf -y install git wget \
-&& dnf -y install @development-tools \
-&& dnf -y install gcc-c++ cmake \
+&& dnf -y install \
+ git wget \
+ @development-tools \
+ gcc-c++ cmake \
 && dnf clean all
 
 # Install swig
@@ -28,6 +29,9 @@ FROM env AS devel
 WORKDIR /home/project
 COPY . .
 
+ARG CMAKE_BUILD_PARALLEL_LEVEL
+ENV CMAKE_BUILD_PARALLEL_LEVEL=${CMAKE_BUILD_PARALLEL_LEVEL:-4}
+
 FROM devel AS build
 RUN cmake --version
 RUN cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release
@@ -35,7 +39,7 @@ RUN cmake --build build --target all -v
 RUN cmake --build build --target install -v
 
 FROM build AS test
-RUN cmake --build build --target test -v
+RUN CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test -v
 
 # Test install rules
 FROM env AS install_env
@@ -43,7 +47,7 @@ WORKDIR /home/sample
 COPY --from=build /home/project/build/dotnet/packages/*.nupkg ./
 
 FROM install_env AS install_devel
-COPY ci/samples .
+COPY ci/sample .
 
 FROM install_devel AS install_build
 RUN dotnet build

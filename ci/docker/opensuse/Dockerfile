@@ -4,7 +4,7 @@ FROM opensuse/tumbleweed AS env
 
 # Install system build dependencies
 ENV PATH=/usr/local/bin:$PATH
-RUN zypper refresh \
+RUN zypper update -y \
 && zypper install -y git patch gcc gcc-c++ cmake \
 && zypper clean -a
 ENV CC=gcc CXX=g++
@@ -33,6 +33,7 @@ RUN dotnet_sdk_version=6.0.100 \
 # Trigger first run experience by running arbitrary cmd
 RUN dotnet --info
 
+# Add the library src to our build env
 FROM env AS devel
 WORKDIR /home/project
 COPY . .
@@ -46,12 +47,13 @@ RUN cmake --build build --target install -v
 FROM build AS test
 RUN CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test -v
 
+# Test install rules
 FROM env AS install_env
 WORKDIR /home/sample
 COPY --from=build /home/project/build/dotnet/packages/*.nupkg ./
 
 FROM install_env AS install_devel
-COPY ci/samples .
+COPY ci/sample .
 
 FROM install_devel AS install_build
 RUN dotnet build
