@@ -1,19 +1,20 @@
-Github-CI:
-[![Build Status][amd64_linux_status]][amd64_linux_link]
-[![Build Status][amd64_macos_status]][amd64_macos_link]
-[![Build Status][amd64_windows_status]][amd64_windows_link]<br>
+Github-CI:<br>
+[![Build Status][github_amd64_linux_status]][github_amd64_linux_link]
+[![Build Status][github_amd64_macos_status]][github_amd64_macos_link]
+[![Build Status][github_arm64_macos_status]][github_arm64_macos_link]
+[![Build Status][github_amd64_windows_status]][github_amd64_windows_link]<br>
+[![Build Status][github_amd64_docker_status]][github_amd64_docker_link]
 
-[![Build Status][amd64_docker_status]][amd64_docker_link]
-
-[amd64_linux_status]: ./../../actions/workflows/amd64_linux.yml/badge.svg
-[amd64_linux_link]: ./../../actions/workflows/amd64_linux.yml
-[amd64_macos_status]: ./../../actions/workflows/amd64_macos.yml/badge.svg
-[amd64_macos_link]: ./../../actions/workflows/amd64_macos.yml
-[amd64_windows_status]: ./../../actions/workflows/amd64_windows.yml/badge.svg
-[amd64_windows_link]: ./../../actions/workflows/amd64_windows.yml
-
-[amd64_docker_status]: ./../../actions/workflows/amd64_docker.yml/badge.svg
-[amd64_docker_link]: ./../../actions/workflows/amd64_docker.yml
+[github_amd64_linux_status]: ./../../actions/workflows/amd64_linux.yml/badge.svg
+[github_amd64_linux_link]: ./../../actions/workflows/amd64_linux.yml
+[github_amd64_macos_status]: ./../../actions/workflows/amd64_macos.yml/badge.svg
+[github_amd64_macos_link]: ./../../actions/workflows/amd64_macos.yml
+[github_arm64_macos_status]: ./../../actions/workflows/arm64_macos.yml/badge.svg
+[github_arm64_macos_link]: ./../../actions/workflows/arm64_macos.yml
+[github_amd64_windows_status]: ./../../actions/workflows/amd64_windows.yml/badge.svg
+[github_amd64_windows_link]: ./../../actions/workflows/amd64_windows.yml
+[github_amd64_docker_status]: ./../../actions/workflows/amd64_docker.yml/badge.svg
+[github_amd64_docker_link]: ./../../actions/workflows/amd64_docker.yml
 
 # Introduction
 <nav for="project"> |
