@@ -20,7 +20,7 @@ jobs:
     name: win,l:${{ matrix.lang }},b:${{ matrix.build }},t:${{ matrix.example }}
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - name: Install SWIG 4.2.1
       run: |
         (New-Object System.Net.WebClient).DownloadFile("http://prdownloads.sourceforge.net/swig/swigwin-4.2.1.zip","swigwin-4.2.1.zip");
