@@ -47,7 +47,7 @@ jobs:
         -DDOTNET_LANG="${{ matrix.lang }}"
         -DUSE_DOTNET_${{ matrix.build }}=ON
         -DEXAMPLE_TFM="${{ matrix.example }}"
-        -G "Visual Studio 17 2022"
+        -G "Visual Studio 18 2026"
         -DCMAKE_CONFIGURATION_TYPES=Release
         -DCMAKE_INSTALL_PREFIX=install
     - name: Build
